@@ -393,9 +393,9 @@ void(string gibname, float dm) ThrowHead = { setmodel(self, gibname);
 
 void(entity monster) remove_monster = { monster.effects = EF_NODRAW;
 	monster.solid = SOLID_NOT;
-	monster.velocity = 0;
+	monster.velocity = '0 0 0';
 	monster.wrathflags += FL_GARBAGE;
-	monster.movetype = 0;
+	monster.movetype = MOVETYPE_NONE;
 	monster.think = SUB_Remove;
 	monster.nextthink = time + 5;
 
@@ -754,4 +754,4 @@ vector(string tagname, entity e) tag_origin = { local float tagindex;local vecto
 	return tagorg;
 };
 
-///////////////////////////////////end of qc file
+///////////////////////////////////end of qc filez

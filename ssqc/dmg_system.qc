@@ -474,7 +474,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 
 	local vector vec2, inflictorangles;
 	vec2 = inflictor.origin - targ.origin;
-	inflictorangles = vectoangles(vec);
+	inflictorangles = vectoangles(vec2);
 
 	if ((!(targ.flags &FL_GODMODE)) && ((targ.Aegis_time < time)))
 	{

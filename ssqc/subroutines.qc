@@ -1,4 +1,4 @@
-void(vector tdest, float tspeed, void() func) SUB_CalcMove;
+﻿void(vector tdest, float tspeed, void() func) SUB_CalcMove;
 void(entity ent, vector tdest, float tspeed, void() func) SUB_CalcMoveEnt;
 void(vector destangle, float tspeed, void() func) SUB_CalcAngleMove;
 void() SUB_CalcMoveDone;
@@ -590,7 +590,7 @@ void() paste_old_data = { if (self.classname == "enemy_spawner")
 	self.targetname = self.targetname;
 	self.target = self.oldtarget;
 	self.think = self.oldthink;
-	self.enemy = 0;
+	self.enemy = world;
 	if (self.classname == "trigger_once")
 		self.touch = multi_touch;
 	if (self.classname == "coffer_key")

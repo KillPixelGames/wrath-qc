@@ -1357,6 +1357,11 @@ void() invader_gibdead = { local string tagname;local float tagindex;local vecto
 
 void() invader_death = {	//	if(self.pain_finished > time)
 	//		return;
+
+	local string tagname;
+	local float tagindex;
+	local vector tagorg;
+
 	if (self.deathanim)
 		return;
 	self.solid = SOLID_NOT;
@@ -1404,9 +1409,6 @@ void() invader_death = {	//	if(self.pain_finished > time)
 		ai_face();
 		if (self.skin != 1)
 		{
-			local string tagname;
-			local float tagindex;
-			local vector tagorg;
 			tagname = ("tag_head");
 			tagindex = gettagindex(self, tagname);
 			tagorg = gettaginfo(self, tagindex);

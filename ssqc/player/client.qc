@@ -1185,7 +1185,7 @@ void() monster_relocator = { local entity monster;
 			monster.angles = monster.oldangles;
 			monster.think = monster.th_stand;
 			monster.nextthink = time;
-			monster.enemy = 0;
+			monster.enemy = world;
 		}
 
 		monster = monster.chain;	//links every monstergram found so they all go BOOM!

@@ -744,7 +744,7 @@ string(entity ent) etos = #65;
 //idea: divVerent
 //darkplaces implementation: divVerent
 //builtin definitions:
-string(void) getextresponse = #624;
+string() getextresponse = #624;
 //description:
 //returns a string of the form "\"ipaddress:port\" data...", or the NULL string
 //if no packet was found. Packets can be queued into the client/server by

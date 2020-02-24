@@ -1088,18 +1088,15 @@ void() item_spawner = { /*	if (!self.classitem0)
 void() PreStartItem = { StartItem(self.PreStartItemvalue);
 };
 .float counter_coffer_use;
-void(vector org, string class, float ammount, entity ownr) drop_item = { local entity dropped;
+void(vector org, string class, float ammount, entity ownr) drop_item = { local entity dropped; local vector revel;
 	dropped = spawn();
 	dropped.origin = org;
 	dropped.movetype = MOVETYPE_TOSS;
 	dropped.owner = ownr;
 	dropped.angles = ownr.angles;
 	
-	
-	
 	if ((dropped.owner.flags &FL_MONSTER))
 	{
-		local vector revel;
 		makevectors(ownr.angles);
 		revel = v_forward *(120 + random() *50);
 		revel_z += (150 + random() *50);
@@ -1954,6 +1951,9 @@ void() key_yellow = { self.noise = "items/glyph.ogg";
 
 void() relic_touch = { if (other.classname != "player")
 		return;
+
+	local string slotdigits;
+
 	if ((other.relics &self.relics))
 	{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
 	other.relics += self.relics;
@@ -1965,7 +1965,7 @@ void() relic_touch = { if (other.classname != "player")
 			other.slot_relics = self.slot_relics * 1000;
 		else
 		{
-			local string slotdigits, slotdigitsdozen, slotdigitscent;
+			local string slotdigitsdozen, slotdigitscent;
 			local float slotdozens, slotcents;
 			slotdigits = ftos(other.slot_relics);
 			slotdigitscent = substring(slotdigits, 1, 2);
