@@ -1195,10 +1195,12 @@ void() fallen_paind20 =[$fn_mutilated20, fallen_paind20]
 
 void(entity attacker, float damage) fallen_pain = { if ((time < self.pain_finished) && (self.enemy.weapon != IT_COACHGUN))
 		return;
+
+	local float r;
+
 	if ((self.health <= 75) && (!self.mutilated))
 	{
 		self.pain_finished = time + 0.4;
-		local float r;
 		r = random();
 
 		if (r > 0.66)

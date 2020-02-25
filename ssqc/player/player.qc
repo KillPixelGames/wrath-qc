@@ -371,6 +371,7 @@ void(float isheavy) playerlandsound = { if (self.landsoundtime > time)
 
 	if (isheavy == 2)
 	{
+		local float mat;
 		mat = floor(random() *2 + 1);
 		r = ftos(floor(mat));
 		landingsound = strcat("player/landings/heavy_land", r, ".ogg");

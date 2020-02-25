@@ -1,6 +1,6 @@
-void(float index, float type, .string) SV_AddStatString = #232;
+void(float index, float type, .string value) SV_AddStatString = #232;
 
-void(float index, float type, .float) SV_AddStatFloat = #232;
+void(float index, float type, .float value) SV_AddStatFloat = #232;
 
 
 // Entity Sending

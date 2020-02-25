@@ -532,7 +532,7 @@ void() trigger_restart_touch = { if (other.classname != "player")
 	{
 		other.maxspeed = 0;
 		other.movetype = 0;
-		other.velocity = 0;
+		other.velocity = '0 0 0';
 		other.solid = 0;
 		other.vhud = 2;
 		self.think = end_trigger_restart2;
