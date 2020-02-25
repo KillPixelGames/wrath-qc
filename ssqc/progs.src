@@ -2,6 +2,7 @@
 
 progsdefs.qc                                             // Definitions
 dpextensions.qc
+nodegraph/definitions.qc
 ../shared.qc
 ../shared_menu.qc
 wrathdefs.qc
@@ -74,3 +75,5 @@ monsters/fallen.qc
 monsters/spawner.qc
 ///////
 monsters/dummy.qc
+
+nodegraph/nodegraph.qc
