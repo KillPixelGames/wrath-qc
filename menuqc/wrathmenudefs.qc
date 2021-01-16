@@ -1,3 +1,4 @@
+float menuversion = 1.285;
 void check_keys(float a, float b);
 void m_hide();
 float Menu_Active;
@@ -69,6 +70,9 @@ float M_TYPE_CONFIRMBIND = 21;
 float M_TYPE_PLAYING = 22;
 float M_TYPE_SELECT_DIFFICULT = 23;
 float M_TYPE_DELETEPROFILE = 24;
+float M_TYPE_CONTROLBINDS = 25;
+float M_TYPE_CONTROLRESTART = 26;
+
 float profileslotpage;
 float checksaves;
 
@@ -104,13 +108,17 @@ float currentprofilessaves;
 
 float profilesammount;
 
-vector(vector vctr) fixed_vector = { local vector vectr;
+vector(vector vctr) fixed_vector = 
+{
+	local vector vectr;
 	vectr_x = vctr_x * vx_rel;
 	vectr_y = vctr_y * vy_rel;
 	return (vectr);
 };
 
-vector(vector vctr) fixed_vector2 = { local vector vectr;
+vector(vector vctr) fixed_vector2 = 
+{
+	local vector vectr;
 	vectr_x = vctr_x * vy_rel;
 	vectr_y = vctr_y * vy_rel;
 

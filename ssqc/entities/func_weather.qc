@@ -3,7 +3,9 @@
 .float density;
 void() lightning_think;
 
-void() weather_think = { if (self.using == 1)
+void() weather_think = 
+{
+	if (self.using == 1)
 	{
 		if (self.type == 1)
 			te_particlesnow(self.absmin, self.absmax, self.dest, self.count, self.fcolor);
@@ -14,7 +16,9 @@ void() weather_think = { if (self.using == 1)
 	self.nextthink = time + self.delay;
 };
 
-void() func_weather = { if (!self.using)
+void() func_weather = 
+{
+	if (!self.using)
 		self.using = 1;
 	if (!self.delay)
 		self.delay = 0.1;
@@ -35,14 +39,18 @@ void() func_weather = { if (!self.using)
 	self.nextthink = time + 0.1;
 };
 
-void() pspawner_think = { if (self.owner.using == 1)
+void() pspawner_think = 
+{
+	if (self.owner.using == 1)
 		pointparticles(particleeffectnum(self.owner.particlename), self.origin, '0 0 0', 1);
 	self.nextthink = time + (self.owner.delay);
 	self.think = pspawner_think;
 };
 
 
-void(entity powner) spawn_particle_emitter = { local entity pspawner;
+void(entity powner) spawn_particle_emitter = 
+{
+	local entity pspawner;
 	pspawner = spawn();
 	pspawner.owner = powner;
 	pspawner.origin_x = self.absmin_x + (random() *powner.size_x);
@@ -56,14 +64,18 @@ void(entity powner) spawn_particle_emitter = { local entity pspawner;
 	pspawner.nextthink = time + random();
 };
 
-void() func_particles_think = { while (self.count > -1)
+void() func_particles_think = 
+{
+	while (self.count > -1)
 	{
 		spawn_particle_emitter(self);
 		self.count -= 1;
 	}
 };
 
-void() func_particles = { if (!self.using)
+void() func_particles = 
+{
+	if (!self.using)
 		self.using = 1;
 	if (!self.delay)
 		self.delay = 0.5;
@@ -80,7 +92,9 @@ void() func_particles = { if (!self.using)
 	self.think = func_particles_think;
 	self.nextthink = time + 0.1;
 };
-void() pspawner_think2 = { if (self.using == 1)
+void() pspawner_think2 = 
+{
+	if (self.using == 1)
 	pointparticles(particleeffectnum(self.particlename), self.origin, '0 0 0', 1);
 
 	if ((self.minpitch && self.maxpitch) && (self.noise))
@@ -94,7 +108,9 @@ void() pspawner_think2 = { if (self.using == 1)
 	self.nextthink = time + (self.delay * random()) + self.wait;
 	self.think = pspawner_think2;
 };
-void() point_particles = { if (!self.using)
+void() point_particles = 
+{
+	if (!self.using)
 		self.using = 1;
 	if (!self.delay)
 		self.delay = 0.5;
@@ -128,17 +144,21 @@ void() point_particles = { if (!self.using)
 	self.think = pspawner_think2;
 	self.nextthink = time + self.wait;
 };
-void() lightninwait = { if (self.style == 12)
+void() lightninwait = 
+{
+	if (self.style == 12)
 		lightstyle(12, "a");
 	if (self.style == 13)
-		lightstyle(12, "a");
+		lightstyle(13, "a");
 	if (self.style == 14)
-		lightstyle(12, "a");
+		lightstyle(14, "a");
 	self.think = lightning_think;
 	self.nextthink = time + self.delay + self.wait* random();
 };
 
-void() lightning_think = { local float rn, rls;
+void() lightning_think = 
+{
+	local float rn, rls;
 	local string tnoise;
 	rls = random();
 	if (rls < 0.33333)
@@ -185,7 +205,9 @@ void() lightning_think = { local float rn, rls;
 	self.think = lightninwait;
 };
 
-void() misc_lightning = { if (!self.style)
+void() misc_lightning = 
+{
+	if (!self.style)
 		self.style = 12;
 	if (self.style < 12)
 		self.style = 12;
@@ -214,6 +236,89 @@ void() misc_lightning = { if (!self.style)
 };
 
 
+void() lightningt_think =
+{
+
+	if(self.cnt)
+	{
+		if(self.cnt == 1)
+		{
+			lightstyle(0, "prsmzoprsmnspwrsprqnsnqn");
+			self.nextthink = time + 1;
+		}
+		else
+		{
+			lightstyle(0, "zxyzrstzxzywtuvzuvyxzzmnzznzmzznnxz");
+			self.nextthink = time +random(1.5,2.5);
+		}
+		self.cnt --;
+		self.think = lightningt_think;
+	}
+	else
+	{
+		lightstyle(0, "m");
+		self.think = SUB_Null;
+		self.nextthink = time;
+	}
+
+};
+.float lightning_time;
+void() trigger_lightning_touch =
+{	
+	if (other.classname != "player")
+	return;
+	if(self.using == 0)
+	return;
+	if ((self.lightning_time < time) && (other.lightning_time < time))
+	{	
+		if(self.wait != -1)
+		self.lightning_time = time + self.wait + (self.delay * random());
+		else
+		self.using = 0;
+
+		other.lightning_time =  self.lightning_time;
+		float rls = rint (random(1,3));
+		if (rls == 1)
+			string tnoise = self.noise;
+		if (rls == 2)
+			tnoise = self.noise1;
+		if (rls == 3)
+			tnoise = self.noise2;
+		sound7(self, CHAN_AUTO,tnoise, random(0.75,1), 0.001, random(80,120),0);
+
+		self.cnt = 2;
+		self.think = lightningt_think;
+		self.nextthink = time;
+	}
+
+};
+void() trigger_lightning =
+{
+	if (!self.noise)
+		self.noise = "env/amb/thunder1.ogg";
+	if (!self.noise1)
+		self.noise1 = "env/amb/thunder2.ogg";
+	if (!self.noise2)
+		self.noise2 = "env/amb/thunder3.ogg";
+
+	precache_sound (self.noise1);
+	precache_sound (self.noise2);
+	precache_sound (self.noise3);
+
+	if(!self.delay)
+	self.delay = 10;
+	if(!self.wait)
+	self.wait = 10;
+
+	self.solid = SOLID_TRIGGER;
+	setmodel(self, self.model);
+	self.modelindex = 0;
+	self.model = string_null;
+	self.touch = trigger_lightning_touch;
+	if(!self.using)
+	self.using = 1;
+	self.use = toggle_use;
+};
 
 .float time_fog;
 .float falpha;

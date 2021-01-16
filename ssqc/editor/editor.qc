@@ -26,7 +26,9 @@
 .float langlesz;
 ////////////////////////////end-editor
 
-void() PlayerValuesEditor = {	///////////////////////////////editor//////////////////////////
+void() PlayerValuesEditor = 
+{
+	///////////////////////////////editor//////////////////////////
 	self.lradius = 200;
 	self.lcorona = 0;
 	self.lcoronasize = 0;
@@ -49,7 +51,9 @@ void() PlayerValuesEditor = {	///////////////////////////////editor/////////////
 	///////////////////////////////editor//////////////////////////
 };
 
-void(float orientation) Check_Editor_Commands = {	//local string selfcommand;
+void(float orientation) Check_Editor_Commands = 
+{
+	//local string selfcommand;
 	local float selfvalue, selfvalueb, selfvaluec;
 	if (self.button3)
 	{
@@ -253,7 +257,9 @@ void(float orientation) Check_Editor_Commands = {	//local string selfcommand;
 	}
 };
 
-void() Toggle_ShadowLights = { if (self.lshadows)
+void() Toggle_ShadowLights = 
+{
+ if (self.lshadows)
 	{
 		self.lshadows = 0;
 		localcmd("r_editlights_edit shadows 0\n");
@@ -265,7 +271,9 @@ void() Toggle_ShadowLights = { if (self.lshadows)
 	}
 };
 
-void() Toggle_NormalLights = { if (self.lnormal)
+void() Toggle_NormalLights = 
+{
+ if (self.lnormal)
 	{
 		self.lnormal = 0;
 		localcmd("r_editlights_edit normalmode 0\n");
@@ -277,7 +285,9 @@ void() Toggle_NormalLights = { if (self.lnormal)
 	}
 };
 
-void() Toggle_Angles = { if (self.editingangles)
+void() Toggle_Angles = 
+{ 
+	if (self.editingangles)
 	{
 		self.editingangles = 0;
 		centerprint(self, "Editando Origen\n");
@@ -289,7 +299,9 @@ void() Toggle_Angles = { if (self.editingangles)
 	}
 };
 
-void() Toggle_Mode = { if (self.modeeditor)
+void() Toggle_Mode = 
+{ 
+	if (self.modeeditor)
 	{
 		self.modeeditor = 0;
 		self.movetype = MOVETYPE_WALK;

@@ -5,22 +5,30 @@ void() door_puse;
 .string targetname2;
 .entity followner;
 
-void() switching_following = {	//self.velocity = self.followner.velocity;
+void() switching_following = 
+{
+	//self.velocity = self.followner.velocity;
 	self.think = switching_following;
 	self.nextthink = time;
 };
 
-void() object_switch_fire_wait = { self.skin = 0;
+void() object_switch_fire_wait = 
+{
+	self.skin = 0;
 	self.usable = 1;
 	self.think = SUB_Null;
 };
 
-void() object_switch_fire_wait2 = { self.skin = 0;
+void() object_switch_fire_wait2 = 
+{
+	self.skin = 0;
 	SUB_UseTargets();
 	self.think = SUB_Null;
 };
 
-void() object_switch_fire1 = { self.skin = 1;
+void() object_switch_fire1 = 
+{
+	self.skin = 1;
 	self.usable = 0;
 	if (self.spawnflags == 1)
 		self.think = SUB_Null;
@@ -29,7 +37,9 @@ void() object_switch_fire1 = { self.skin = 1;
 	self.nextthink = time + self.wait;
 };
 
-void() object_switch_fire = { self.skin = 1;
+void() object_switch_fire = 
+{
+	self.skin = 1;
 	SUB_UseTargets();
 	self.usable = 0;
 	if (self.spawnflags == 1)
@@ -38,7 +48,9 @@ void() object_switch_fire = { self.skin = 1;
 		self.think = object_switch_fire_wait;
 	self.nextthink = time + self.wait;
 };
-void() object_switch = { if (!self.wait)
+void() object_switch = 
+{
+	if (!self.wait)
 		self.wait = 2;
 	if (self.wait < 0)
 		self.spawnflags = 1;
@@ -58,7 +70,9 @@ void() object_switch = { if (!self.wait)
 
 .float switch_state;
 
-void() nonsolidswitch_fire_off = { if (self.frame == 9)
+void() nonsolidswitch_fire_off = 
+{
+	if (self.frame == 9)
 		sound(self, CHAN_AUTO, self.noise2, 1, 1);
 	self.frame -= 1;
 	self.glowmod_x += 0.1;
@@ -75,7 +89,9 @@ void() nonsolidswitch_fire_off = { if (self.frame == 9)
 	self.nextthink = time + 0.05;
 };
 
-void() nonsolidswitch_fire = { self.frame += 1;
+void() nonsolidswitch_fire = 
+{
+	self.frame += 1;
 	self.usable = 0;
 	if (self.frame == 1)
 	{
@@ -102,7 +118,9 @@ void() nonsolidswitch_fire = { self.frame += 1;
 	}
 };
 
-void() switch_e1_switch1 = { precache_model("models/objects/switches/e1_switch1.md3");
+void() switch_e1_switch1 = 
+{
+	precache_model("models/objects/switches/e1_switch1.md3");
 	precache_sound("objects/switches/e1_switch1.ogg");
 	precache_sound("objects/switches/e1_switch_reset.ogg");
 	self.noise = "objects/switches/e1_switch1.ogg";
@@ -120,14 +138,18 @@ void() switch_e1_switch1 = { precache_model("models/objects/switches/e1_switch1.
 	self.glowmod_y = 1;
 	self.glowmod_z = 1;
 };
-void(entity e, vector v) SetVel = { e.velocity = v;
+void(entity e, vector v) SetVel = 
+{
+	e.velocity = v;
 };
 void() use_coffer;
 .float buttondecal;
 void() bboxbutton_think;
 .float keyrequired;
 
-void(float keynumber) quitkey = { string cent, dozen, unit, slotdigits;
+void(float keynumber) quitkey = 
+{
+	string cent, dozen, unit, slotdigits;
 	float cent_s, dozen_s, unit_s, currentslotkeyvalue, multiplier, slotkeynumber;
 	slotdigits = ftos(self.slot_keys);
 	cent = substring(slotdigits, 0, 1);
@@ -164,7 +186,9 @@ void(float keynumber) quitkey = { string cent, dozen, unit, slotdigits;
 	self.slot_keys = slotkeynumber;
 };
 
-void(float keynumber) quitrelic = { string dthous, thous, cent, dozen, unit, slotdigits;
+void(float keynumber) quitrelic = 
+{
+	string dthous, thous, cent, dozen, unit, slotdigits;
 	float dthous_s, thous_s, cent_s, dozen_s, unit_s, currentslotkeyvalue, multiplier, slotkeynumber;
 	slotdigits = ftos(self.slot_relics);
 	dthous = substring(slotdigits, 0, 1);
@@ -231,7 +255,9 @@ void(float keynumber) quitrelic = { string dthous, thous, cent, dozen, unit, slo
 .entity bkeyson;
 .entity rkeyson;
 
-void() Use_Func = { local vector source;
+void() Use_Func = 
+{
+	local vector source;
 	makevectors(self.v_angle);
 	source = self.origin + self.view_ofs - v_forward * 4;	// 
 	wtraceline(source, source + v_forward *72, FALSE, self);
@@ -459,6 +485,14 @@ void() Use_Func = { local vector source;
 		trace_ent.duser = self;
 		trace_ent.think = door_puse;
 		trace_ent.nextthink = trace_ent.ltime + 0.01;
+		return;
+	}
+
+	if (trace_ent.use)
+	{
+		trace_ent.enemy = self;
+		trace_ent.think = trace_ent.use;
+		trace_ent.nextthink = time + 0.01;
 		return;
 	}
 };

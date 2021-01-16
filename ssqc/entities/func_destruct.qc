@@ -1,11 +1,15 @@
 .float gibcount;
-.float type;
+
 .float tre;
 .string typegib;
 
-void() air_touch = {};
+void() air_touch = 
+{
+};
 
-void() becomesolid = { self.tre += 1;
+void() becomesolid = 
+{
+ self.tre += 1;
 	if (self.solid != SOLID_CORPSE)
 		self.solid = SOLID_CORPSE;
 	self.avelocity = '0 0 0';
@@ -81,7 +85,9 @@ void() becomesolid = { self.tre += 1;
 .vector enemyangle;
 .float rfactor;
 .float mass;
-void() prebecomesolid = { if (!(self.flags &FL_ONGROUND))
+void() prebecomesolid = 
+{
+ if (!(self.flags &FL_ONGROUND))
 	{
 		self.think = prebecomesolid;
 	}
@@ -161,7 +167,9 @@ void() prebecomesolid = { if (!(self.flags &FL_ONGROUND))
 };
 
 .float spread_vel;
-void(string gibname, float dm, entity ouner, float bf) LanzarGib = { local entity new;
+void(string gibname, float dm, entity ouner, float bf) LanzarGib = 
+{
+ local entity new;
 
 	new = spawn();
 	new.owner = ouner;
@@ -221,7 +229,9 @@ void(string gibname, float dm, entity ouner, float bf) LanzarGib = { local entit
 
 .entity autotrigger;
 
-void() destruct_gibs = { local float ngibs;
+void() destruct_gibs = 
+{
+ local float ngibs;
 	local string gibmodel, numbergib;
 
 	local entity pl;
@@ -276,12 +286,15 @@ void() destruct_gibs = { local float ngibs;
 		self.gibcount -= 1;
 	}
 
+	if(self.autotrigger)
 	remove(self.autotrigger);
 	self.think = SUB_Remove;
 	self.nextthink = time;
 };
 
-void() destruct_die = { float nsnd, rnsnd;
+void() destruct_die = 
+{
+ float nsnd, rnsnd;
 
 	if (!self.type)
 	{
@@ -419,8 +432,10 @@ else
 	}
 };
 
-
-void() func_destruct = { precache_model("models/gibs/gib_stone1.bsp");
+.float fakelight;
+void() func_destruct = 
+{
+ precache_model("models/gibs/gib_stone1.bsp");
 	precache_model("models/gibs/gib_stone2.bsp");
 	precache_model("models/gibs/gib_stone3.bsp");
 	precache_model("models/gibs/gib_stone4.bsp");
@@ -468,6 +483,12 @@ void() func_destruct = { precache_model("models/gibs/gib_stone1.bsp");
 		self.noise3 = ("impact/destruct/glass_break3.ogg");
 	}
 
+
+	if (self.fakelight == 1)
+	{
+			vector borg = b_org(self);
+			fake_light (self,borg);
+	}
 	if (self.gibmodel1)
 	{
 		precache_model(self.gibmodel1);
@@ -543,10 +564,19 @@ void() func_destruct = { precache_model("models/gibs/gib_stone1.bsp");
 		setsize(auto_triggerhurt, (self.absmin - ('20 20 2')), (self.absmax + ('20 20 2')));
 		auto_triggerhurt.touch = auto_triggerhurt_touch;
 	}
-	
+	if(self.startnonsolid == 1)
+	{
+	self.oldsolid = self.solid;
+	self.wrathflags += FL_STARTNONSOLID;
+	self.solid = SOLID_NOT;
+	self.think = turn_solid;
+	self.nextthink =  self.ltime + 1;
+	}
 };
 
-void() rotate_stop = { if (self.noise2)
+void() rotate_stop = 
+{
+ if (self.noise2)
 		sound(self, CHAN_VOICE, self.noise2, self.volume, self.rad_sound);
 	self.avelocity = '0 0 0';
 	SUB_UseTargets();
@@ -563,7 +593,9 @@ void() rotate_stop = { if (self.noise2)
 .float wait4;
 .float wait5;
 
-void() rotdoor_use = { local float angvmul;
+void() rotdoor_use = 
+{
+ local float angvmul;
 	angvmul = 1 / self.wait;
 	if (self.noise)
 		sound(self, CHAN_VOICE, self.noise, self.volume, self.rad_sound);
@@ -576,7 +608,9 @@ void() rotdoor_use = { local float angvmul;
 	self.think = rotate_stop;
 };
 
-void() func_rotate = { if (!self.volume)
+void() func_rotate = 
+{
+ if (!self.volume)
 		self.volume = 1;
 	if (!self.rad_sound)
 		self.rad_sound = 512;
@@ -590,16 +624,22 @@ void() func_rotate = { if (!self.volume)
 
 void() func_fan_on;
 
-void() func_fan_off = { self.avelocity = '0 0 0';
+void() func_fan_off = 
+{
+ self.avelocity = '0 0 0';
 	self.use = func_fan_on;
 };
 
-void() func_fan_on = { self.avelocity = self.rot_ang;
+void() func_fan_on = 
+{
+ self.avelocity = self.rot_ang;
 	self.use = func_fan_off;
 	self.nextthink = 999999999999999999999999;
 };
 
-void() func_fan = { self.movetype = MOVETYPE_PUSH;
+void() func_fan = 
+{
+ self.movetype = MOVETYPE_PUSH;
 	self.solid = SOLID_BSP;
 	setmodel(self, self.model);
 	self.use = func_fan_on;
@@ -610,21 +650,29 @@ void() func_fan = { self.movetype = MOVETYPE_PUSH;
 	}
 };
 
-void() func_wall = { self.movetype = MOVETYPE_PUSH;
+void() func_wall = 
+{
+ self.movetype = MOVETYPE_PUSH;
 	self.solid = SOLID_BSP;
 	setmodel(self, self.model);
 
 };
 
-void() func_brush = { setmodel(self, self.model);
+void() func_brush = 
+{
+ setmodel(self, self.model);
 };
 
-void() func_clip = { setmodel(self, self.model);
+void() func_clip = 
+{
+ setmodel(self, self.model);
 	self.effects = EF_NODRAW;
 	self.solid = SOLID_BBOX;
 };
 
-void() func_illusionary = { setmodel(self, self.model);
+void() func_illusionary = 
+{
+ setmodel(self, self.model);
 	if (self.type == 1)
 		self.effects = EF_DOUBLESIDED;
 	if (self.type == 2)
@@ -651,7 +699,9 @@ void() func_illusionary = { setmodel(self, self.model);
 .float scale_var;
 .float change_vel;
 
-void() fadewall_use = { if (self.invertfade)
+void() fadewall_use = 
+{
+ if (self.invertfade)
 		self.alpha += self.cnt;
 	else
 		self.alpha -= self.cnt;
@@ -703,7 +753,9 @@ void() fadewall_use = { if (self.invertfade)
 	self.nextthink = time + 0.05;
 };
 
-void() fadewall_preuse = { self.move3_time = time + self.move1_time + self.move2_time + self.move3_time;
+void() fadewall_preuse = 
+{
+ self.move3_time = time + self.move1_time + self.move2_time + self.move3_time;
 	self.move2_time = time + self.move1_time + self.move2_time;
 	self.move1_time = time + self.move1_time;
 	if (self.invertfade == 1)
@@ -736,7 +788,9 @@ move3_dist third movement distance vector
 rot_ang vector angles at start
 rot_ang_end vector angles at end
 */
-void() func_figment = { self.movetype = MOVETYPE_NOCLIP;
+void() func_figment = 
+{
+ self.movetype = MOVETYPE_NOCLIP;
 	if (!self.move1_time)
 		self.move1_time = 0.35;
 	if (!self.move2_time)
@@ -781,7 +835,9 @@ void() func_figment = { self.movetype = MOVETYPE_NOCLIP;
 	self.use = fadewall_preuse;
 };
 
-void() func_fakeshadowthink = { if (self.count == 1)
+void() func_fakeshadowthink = 
+{
+ if (self.count == 1)
 	{
 		self.alpha += 0.0025;
 		if (self.alpha >= 0.75)
@@ -796,7 +852,9 @@ void() func_fakeshadowthink = { if (self.count == 1)
 
 	self.nextthink = time + 0.01;
 };
-void() func_fakeshadow = { if (self.alpha == 0.1)
+void() func_fakeshadow = 
+{
+ if (self.alpha == 0.1)
 		self.count = 1;
 	else
 		self.count = 0;
@@ -810,7 +868,9 @@ void() func_fakeshadow = { if (self.alpha == 0.1)
 .float min_angle_y;
 .float virtualangles_y;
 
-float(entity bloke, entity rotate) backtouch2 = { local float result;
+float(entity bloke, entity rotate) backtouch2 = 
+{
+ local float result;
 	local vector veca, vecb;
 
 	makevectors(bloke.v_angle);
@@ -828,7 +888,9 @@ float(entity bloke, entity rotate) backtouch2 = { local float result;
 	return result;
 
 };
-float(entity targ, entity eself) backtouch = { local vector vec;
+float(entity targ, entity eself) backtouch = 
+{
+ local vector vec;
 	local float dot;
 
 	makevectors2(eself.angles);
@@ -846,10 +908,14 @@ float(entity targ, entity eself) backtouch = { local vector vec;
 float ROTATE_STOP = 0;
 float ROTATE_FORWARD = 1;
 float ROTATE_REVERSE = 2;
-void() rotate_fance_stop = { self.cnt = 0;
+void() rotate_fance_stop = 
+{
+ self.cnt = 0;
 	self.avelocity = '0 0 0';
 };
-void() func_rotate_fence_rotates = { if (((self.skin <= -90) && (self.rotate_flags == ROTATE_REVERSE)) || ((self.skin >= 90) && (self.rotate_flags == ROTATE_FORWARD)))
+void() func_rotate_fence_rotates = 
+{
+ if (((self.skin <= -90) && (self.rotate_flags == ROTATE_REVERSE)) || ((self.skin >= 90) && (self.rotate_flags == ROTATE_FORWARD)))
 	{
 		self.avelocity_y = 0;
 		self.think = rotate_fance_stop;
@@ -880,7 +946,9 @@ void() func_rotate_fence_rotates = { if (((self.skin <= -90) && (self.rotate_fla
 	self.nextthink = self.ltime + 0.05;
 };
 
-float(entity plyr) horizontalvel = { float hor_vel;
+float(entity plyr) horizontalvel = 
+{
+ float hor_vel;
 	float x_vel = other.velocity_x;
 	float y_vel = other.velocity_y;
 	if (x_vel < 0)
@@ -891,7 +959,9 @@ float(entity plyr) horizontalvel = { float hor_vel;
 	bprint(ftos(hor_vel), "\n");
 	return hor_vel;
 };
-void() func_rotate_fence_touch = { if (other.classname != "player")
+void() func_rotate_fence_touch = 
+{
+ if (other.classname != "player")
 		return;
 	if (backtouch(other, self))
 	{
@@ -917,7 +987,9 @@ void() func_rotate_fence_touch = { if (other.classname != "player")
 	self.nextthink = self.ltime + 0.05;
 };
 
-void() func_rotate_fence = { self.movetype = MOVETYPE_PUSH;
+void() func_rotate_fence = 
+{
+ self.movetype = MOVETYPE_PUSH;
 	self.rotate_flags = ROTATE_STOP;
 	self.solid = SOLID_BSP;
 	setmodel(self, self.model);
@@ -927,9 +999,167 @@ void() func_rotate_fence = { self.movetype = MOVETYPE_PUSH;
 		self.wait = 1;
 };
 
-void() func_monsterclip = { self.solid = SOLID_BSP;
+void() func_monsterclip = 
+{
+ self.solid = SOLID_BSP;
 	setmodel(self, self.model);
 	self.dphitcontentsmask = DPCONTENTS_SOLID;
+}
+
+
+void(vector inflictor_origin, entity targ, float damage, float pushfactor) explo_physics_bmodels = 
+{ 
+		vector dir, z_vel;
+
+		vector borg = b_org(targ);
+		dir = borg - inflictor_origin;
+		dir = normalize(dir);
+		targ.movetype = MOVETYPE_BOUNCE;
+		if (targ.flags &FL_ONGROUND)
+			targ.flags -= FL_ONGROUND;
+
+		z_vel_z =pushfactor * 12;
+		targ.velocity = targ.velocity + dir *damage * pushfactor +z_vel;
+		targ.avelocity_x = random(90, 180);
+		targ.avelocity_y = random(90, 180);
+		targ.avelocity_z = random(90, 180);
+};
+
+
+
+void() use_debris =
+{
+self.solid = SOLID_CORPSE;	
+self.effects = EF_DYNAMICMODELLIGHT;
+explo_physics_bmodels(self.oldorigin, self, 130, 1);
+};
+
+void()debris_think = 
+{
+
+	if(!self.oldorigin) 
+	{
+		entity t = find(world, target, self.targetname);
+		self.oldorigin = b_org(t);
+	}
+	if(self.flags & FL_ONGROUND)
+	{
+		self.avelocity = '0 0 0';
+		self.velocity = '0 0 0';
+		self.think = SUB_Null;
+		self.nextthink = time + 10;
+	}
+	else 
+	{
+		self.think = debris_think;
+		self.nextthink = time + 0.05;
+	}
+}
+
+void() func_debris  = 
+{
+	setmodel(self, self.model);
+	self.effects = EF_NODRAW;
+	self.solid = SOLID_NOT;
+	self.use = use_debris;
+	self.think = debris_think;
+	self.nextthink = time + 0.1;
+}
+.vector intensity;
+.float sradius;
+.float sattenuation;
+void()trigger_shake_use = 
+{
+
+	if(self.sradius)
+	{
+		float distancetoplayer = vlen (self.origin - single_player.origin);
+		if (distancetoplayer >= self.sradius)
+		{
+			remove(self); 
+			return;
+		}
+		else
+		{	
+		if(self.sattenuation == 1)
+		float modifier = 1 / (self.sradius / (self.sradius - distancetoplayer ));
+		else
+		modifier = 1;
+		self.intensity_x = self.intensity_x * modifier;  
+		self.intensity_y = self.intensity_y * modifier;
+		}
+
+
+	}
+
+	single_player.shaked = 1;
+	single_player.shake_camera_time = time + self.wait;
+	single_player.shake_camera_ammountx = self.intensity_x * 0.1;
+
+
+	float r = random();
+	if (r > 0.5)
+		single_player.shake_camera_ammounty = self.intensity_y * 0.1;
+	else
+		single_player.shake_camera_ammounty = self.intensity_y *-1 * 0.1;
+
+	single_player.shake_camera_refresh_rate = self.shake_camera_refresh_rate;
+
+	remove(self);
+}
+
+void() trigger_shake = 
+{
+if(!self.wait)
+self.wait = 1;
+if(!self.intensity_x)
+self.intensity_x = 10;
+if(!self.intensity_y)
+self.intensity_y = 10;
+if(!self.shake_camera_refresh_rate)
+self.shake_camera_refresh_rate = 0.05;
+
+self.use = trigger_shake_use;
+};
+.float stepheighttime;
+.float stepheight;
+
+.float oldstepheight_delta;
+
+void() restore_oldstepheight =
+{
+self.owner.stepheight_delta = self.owner.oldstepheight_delta;
+self.owner.colormod = '1 1 1';
+remove(self);
+}
+void() trigger_stepheight_touch =
+{
+
+	if((other.flags & FL_MONSTER) && (other.stepheighttime < time))
+	{
+	local float dev = cvar ("developer");
+	if(dev == 1)
+	other.colormod = '1 1 0';
+
+	other.stepheight_delta = self.stepheight + 1;
+	other.stepheighttime = time + self.wait;
+	entity stepheight_restorer = spawn();
+	stepheight_restorer.owner = other;
+	stepheight_restorer.think = restore_oldstepheight;
+	stepheight_restorer.nextthink = time + self.wait;
+	}
+
+};
+void() trigger_stepheight =
+{
+setmodel (self, self.model);
+self.effects = EF_NODRAW;
+self.solid = SOLID_TRIGGER;
+if(!self.wait)
+self.wait = 3;
+if(!self.stepheight)
+self.stepheight = 16;
+self.touch = trigger_stepheight_touch;
 }
 
 //////////////////////////////////end of qc file/

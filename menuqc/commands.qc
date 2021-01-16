@@ -9,11 +9,14 @@
 
  void() menuprofile_select;
 
- void(float local_option) order_fill = { 
-
+ void(float local_option) order_fill = 
+{
+	
+	//local_option = selected_option;	
+	//selected_option = 0;
  	switch (local_option)
  	{
-		 		case 101:
+		case 101:
  			string sens, sensv;
  			float senv;
  			if (senm > 1)
@@ -221,7 +224,9 @@
 	}
 };
 
- void(float local_option, float isenter) check_keys = { if ((!mouseactive) && (isenter == 1))
+ void(float local_option, float isenter) check_keys = 
+{
+	if ((!mouseactive) && (isenter == 1))
  		return;
 
  	if (local_option > 0)
@@ -244,6 +249,8 @@
  		gkcommand = local_option - 499;
  	}
 
+	local_option = selected_option;	
+	selected_option = 0;
  	switch (local_option)
  	{
  		case 1:
@@ -257,6 +264,7 @@
 			check_profilemenuversion();
 			selected_option = 0;
 			nprof = 0;
+			oldprofileslot = 0;
  			menutype = M_TYPE_RESUME;
  			break;
  		case 3:
@@ -302,7 +310,9 @@
  			}
 
  			if (type_load_selected == 1)
+			{
  				load_autosave();
+			}
  			if (type_load_selected == 2)
  			{
  				write_tether2(1);
@@ -370,6 +380,7 @@
  			break;
  		case 17:		
 			deleteprofile ();
+			oldprofileslot = 0;
 			profileslot = 8;
 			profileslotpage = 8;
 			profilesammount = current_local_profilenames();
@@ -388,6 +399,7 @@
 			check_profilemenuversion();
 			selected_option = 0;
 			nprof = 0;
+			type_load_selected = 0;
  			menutype = M_TYPE_RESUME;
 			}
 			selected_option = 0;
@@ -398,6 +410,13 @@
  			vid_wres = cvar("vid_width");
  			vid_hres = cvar("vid_height");
  			break;
+ 		case 19:
+ 			menutype = M_TYPE_CONTROLBINDS;
+ 				last_selected_option = 0;
+ 				mouseactive = 1;
+ 				selected_option = 0;
+ 		break;
+
  		case 34:
  			if (coronaoclussion == 1)
  				cmd("r_coronas_occlusionquery 0\n");
@@ -636,7 +655,31 @@
  				cmd("cl_togglerun 1\n");
  			break;
 
- 			//////////// VOLUME BUTTONS
+ 		case 119:
+			cmd("unbindall\n");
+			cmd("exec gamebuttons.cfg\n");
+			menutype = M_TYPE_CONTROLBINDS;
+ 		break;
+ 		case 120:
+			menutype = M_TYPE_CONTROLRESTART;
+ 		break;
+ 		case 121:
+ 			float checked_punchangle;
+ 			checked_punchangle = cvar("cl_punch");
+ 			if (checked_punchangle == 1)
+ 				cmd("seta cl_punch 0\n");
+ 			else
+ 				cmd("seta cl_punch 1\n");
+ 			break;
+ 		case 122:
+ 			float checked_timestamp;
+ 			checked_timestamp = cvar("show_dates");
+ 			if (checked_timestamp == 1)
+ 				cmd("seta show_dates 0\n");
+ 			else
+ 				cmd("seta show_dates 1\n");
+ 			break; 			
+		//////////// VOLUME BUTTONS
  		case 201:
  			string mvolumes, mvolumesv;
  			float mvolumev;
@@ -798,10 +841,14 @@
  			cmd("vid_height 1440\n");
  			break;
  			case 274:
+ 			cmd("vid_width 3800\n");
+ 			cmd("vid_height 1600\n");
+ 			break;
+ 			case 275:
  			cmd("vid_width 5120\n");
  			cmd("vid_height 2160\n");
  			break;
- 			case 275:
+ 			case 276:
  			cmd("vid_width 4096\n");
  			cmd("vid_height 2160\n");
  			break;
@@ -856,9 +903,9 @@
  			break;
 
  		case 290:
- 			float checked6;
- 			checked6 = cvar("vid_vsync");
- 			if (checked6 == 1)
+ 			float checked14;
+ 			checked14 = cvar("vid_vsync");
+ 			if (checked14 == 1)
  				cmd("vid_vsync 0\n");
  			else
  				cmd("vid_vsync 1\n");
@@ -943,7 +990,24 @@
  			fov_c = strcat("fov ", fov_s, " \n");
  			cmd(fov_c);
  			break;
+		 //////// CROSSHAIR SCALE
+ 		case 720:
+ 			cmd("saved8 1\n");
+ 		break;
+ 		case 721:
+ 			cmd("saved8 1.5\n");
+ 		break;
+ 		case 722:
+ 			cmd("saved8 2\n");
+ 		break;
+ 		case 723:
+ 			cmd("saved8 2.5\n");
+ 		break;
+ 		case 724:
+ 			cmd("saved8 3\n");
+ 		break;
 		 //////// FPS CAP
+
  		case 710:
  			cmd("cl_maxfps 60\n");
  			break;
@@ -960,7 +1024,7 @@
  			cmd("cl_maxfps 500\n");
  			break;	
  		case 715:
- 			cmd("cl_maxfps 0\n");
+ 			cmd("cl_maxfps 1000\n");
  			break;	
  			//////// PIXEL SCALING
  		case 700:
@@ -1018,9 +1082,9 @@
  			menutype = M_TYPE_VIDEO;
  			break;
  		case 314:
- 			float checked7;
- 			checked7 = cvar("r_fxaa");
- 			if (checked7 == 1)
+ 			float checked9;
+ 			checked9 = cvar("r_fxaa");
+ 			if (checked9 == 1)
  				cmd("r_fxaa 0\n");
  			else
  				cmd("r_fxaa 1\n");
@@ -1046,9 +1110,9 @@
  				cmd("r_mipskins 1\n");
  			break;
  		case 319:
- 			float checked9;
- 			checked9 = cvar("r_lerpmodels");
- 			if (checked9 == 1)
+ 			float checked15;
+ 			checked15 = cvar("r_lerpmodels");
+ 			if (checked15 == 1)
  				cmd("r_lerpmodels 0\n");
  			else
  				cmd("r_lerpmodels 1\n");

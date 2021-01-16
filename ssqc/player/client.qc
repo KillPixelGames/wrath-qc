@@ -14,12 +14,15 @@ void() info_player_start = {	//if(!self.location)
 void() info_player_deathmatch = {	//if(!self.location)
 	//self.effects = 1024 + 128;
 };
+.float walking;
 void() ClientKill = {};
 void() ClientConnect = {};
 void() ClientDisconnect = {};
 void() WeaponFrames;
 void() raise_weapon;
-void(string locsound, float rnd) playersound = { local float r;
+void(string locsound, float rnd) playersound = 
+{
+	local float r;
 	local string monstersound, rsound;
 	r = floor(random() *rnd) + 1;
 	if (r == self.chattersnd)
@@ -33,7 +36,9 @@ void(string locsound, float rnd) playersound = { local float r;
 };
 .float psound_cnt;
 
-void(string locsound, float rnd, float nchannel) playersound2 = { local float r;
+void(string locsound, float rnd, float nchannel) playersound2 = 
+{
+	local float r;
 	local string monstersound, rsound;
 
 	r = floor(random() *rnd) + 1;
@@ -48,7 +53,9 @@ void(string locsound, float rnd, float nchannel) playersound2 = { local float r;
 	sound(self, nchannel, monstersound, 1, ATTN_NORM);
 };
 
-void() delete_shrine = { local float writeparms;
+void() delete_shrine = 
+{
+	local float writeparms;
 	local string writethis;
 	read_currentprofileslot();
 	local string campaignloc;
@@ -63,7 +70,9 @@ void() delete_shrine = { local float writeparms;
 .float playerdeadtime;
 void() PlayerDeathThink;
 void(entity ownr) client_garbage_collector;
-void() Player_Die = { 
+void() Player_Die = 
+{
+	
 	delete_shrine();
 	if (self.health >= 0)
 		self.health = -1;
@@ -85,7 +94,9 @@ void() Player_Die = {
 
 //void(string snd, float r, float vol) playersound;
 
-void(entity attacker, float dmg) Player_Pain = { if (self.pain_finished > time)
+void(entity attacker, float dmg) Player_Pain = 
+{
+	if (self.pain_finished > time)
 		return;
 	self.pain_finished = time + 0.25;
 	if (self.waterlevel >= 3)
@@ -98,7 +109,9 @@ void(entity attacker, float dmg) Player_Pain = { if (self.pain_finished > time)
 
 };
 
-void() PlayerDeathThink = { local float forward;
+void() PlayerDeathThink = 
+{
+	local float forward;
 
 	if (self.deadflag == DEAD_DEAD)
 	{
@@ -162,8 +175,11 @@ void() PlayerDeathThink = { local float forward;
 .float extraongroundtime;
 .float onground_time;
 .float jumptime;
-void() PlayerJump = { if (self.flags &FL_WATERJUMP)
+void() PlayerJump = 
+{
+	if (self.flags &FL_WATERJUMP)
 		return;
+
 	if (self.waterlevel >= 2)
 	{
 		if (self.watertype == CONTENT_WATER)
@@ -204,15 +220,29 @@ void() PlayerJump = { if (self.flags &FL_WATERJUMP)
 	//	local string snd;
 	//	snd = strcat ("player/jump", ftos (fsnd),".ogg");
 	//	sound (self, CHAN_VOICE, snd, 1, ATTN_NORM);
-	self.jumptime = time + 0,2;
+	self.jumptime = time + 0.2;
+
+
+	if((self.view_ofs_z < player_zviewofs) && (self.view_ofs_z > 6))
+	self.velocity_z = 92;
+	else
 	self.velocity_z += 270;
+
+/*	if(!(self.walking))
+	{	
+	makevectors2 (self.angles);
+	self.velocity += v_forward * 12;
+	}*/
+
 	self.onground_time = 0;
 };
 .float underwater_time;
 .float jumpinwater;
 .float jumpinwatertime;
 .float fakewatertype;
-void() WaterMove = { if (self.movetype == MOVETYPE_NOCLIP)
+void() WaterMove = 
+{
+	if (self.movetype == MOVETYPE_NOCLIP)
 		return;
 	if (self.health < 0)
 		return;
@@ -223,6 +253,7 @@ void() WaterMove = { if (self.movetype == MOVETYPE_NOCLIP)
 		else
 			playersound2("player/breathe", 3, CHAN_VOICE2);
 		playersound2("player/water_surfacing", 3, CHAN_AUTO);
+		self.surfacing_sound_time = time + random(0.5,1);
 		self.underwaterdamaged = 0;
 		self.underwater_time = 0;
 	}
@@ -318,11 +349,14 @@ void() WaterMove = { if (self.movetype == MOVETYPE_NOCLIP)
 		}
 	}
 
+
 	if (!(self.flags &FL_WATERJUMP))
 		self.velocity = self.velocity - 0.8 *self.waterlevel *frametime *self.velocity;
 };
 
-void() CheckWaterJump = { local vector start, end;
+void() CheckWaterJump = 
+{
+	local vector start, end;
 	// check for a jump-out-of-water
 	makevectors(self.angles);
 	start = self.origin;
@@ -350,7 +384,10 @@ void() CheckWaterJump = { local vector start, end;
 	}
 };
 
-float(entity targ) crouchcheck = { makevectors(self.v_angle);
+
+float(entity targ) crouchcheck = 
+{
+	makevectors(self.v_angle);
 	tracebox(self.origin, VEC_HULL_MIN, '16 16 0', self.origin + '0 0 48', FALSE, self);
 	if (trace_fraction == 1)	//hits nothing go ahead
 		{
@@ -362,11 +399,14 @@ float(entity targ) crouchcheck = { makevectors(self.v_angle);
 	return FALSE;
 };
 
-void() Crouch_Off = { if (self.crouch && (crouchcheck(self)))	//get up
+void() Crouch_Off = 
+{
+	if (self.crouch && (crouchcheck(self)))	//get up
 	{
 		
-		if(self.groundentity.solid == SOLID_BBOX)
-		self.velocity_z  += 270;
+		if((self.groundentity.solid == SOLID_BBOX) &&  (self.flags &FL_ONGROUND))
+		self.velocity_z  = 90;
+
 		if(!(self.flags & FL_JUMPRELEASED))
 		self.flags += FL_JUMPRELEASED;
 		setsize(self, '-16 -16 -32', '16 16 32');	//changes the size of the player to the normal size
@@ -380,7 +420,9 @@ void() Crouch_Off = { if (self.crouch && (crouchcheck(self)))	//get up
 	self.attemptcrouch = 1;
 };
 
-void() Crouch_On = { if ((!self.crouch) /*&& (!self.velocity_z)*/)	//crouch down
+void() Crouch_On = 
+{
+	if ((!self.crouch) /*&& (!self.velocity_z)*/)	//crouch down
 	{
 		setsize(self, '-16 -16 -16', '16 16 8');	//changes the size of the player !!! 
 		self.crouch = 1;
@@ -398,28 +440,37 @@ void() Crouch_On = { if ((!self.crouch) /*&& (!self.velocity_z)*/)	//crouch down
 
 	self.attemptcrouch = 0;
 };
+.float crushingtime;
 
-void() UpdateViewOfs = { if (self.crouch)
+void() UpdateViewOfs = 
+{
+	if (self.crouch)
 	{
-		if (self.view_ofs_z == 6)
+		if(self.crushingtime > time)
+		float minviewofsz = -4;
+		else
+		minviewofsz = 6;
+
+
+		if (self.view_ofs_z == minviewofsz)
 			return;
-		if (self.view_ofs_z > 6)
+		if (self.view_ofs_z > minviewofsz)
 		{
 			self.view_ofs_z = self.view_ofs_z - 1;
 		}
 		else
-			self.view_ofs_z = 6;
+			self.view_ofs_z = minviewofsz;
 	}
 	else
 	{
-		if (self.view_ofs_z == 22)
+		if (self.view_ofs_z == player_zviewofs)
 			return;
-		if (self.view_ofs_z < 22)
+		if (self.view_ofs_z < player_zviewofs)
 		{
 			self.view_ofs_z = self.view_ofs_z + 1;
 		}
 		else
-			self.view_ofs_z = 22;
+			self.view_ofs_z = player_zviewofs;
 	}
 };
 .float nowatershift;
@@ -427,7 +478,9 @@ void() UpdateViewOfs = { if (self.crouch)
 .float slowmouse;
 .float noshake;
 
-void() slowmovement = { self.slowmouse = 1;
+void() slowmovement = 
+{
+	self.slowmouse = 1;
 	local float invrtms;
 	if (stof(cvar_string("m_pitch")) < 0)
 		invrtms = 1;
@@ -492,7 +545,9 @@ void() quickmovement
 .float autosaved;
 .float menuactive;
 
-void() autosave = { read_currentprofileslot();
+void() autosave = 
+{
+	read_currentprofileslot();
 	self.autosaved = 1;
 	string saveloc;
 	saveloc = strcat("save data/profiles/", profilename, "/autosave\n");
@@ -502,6 +557,8 @@ void() autosave = { read_currentprofileslot();
 	stuffcmd(self, "scratch1 0\n");
 	if (profilename)
 		strunzone(profilename);
+	save_screenshot(1, 1.5);
+	writedates(1);
 };
 
 .float strafetime;
@@ -523,8 +580,33 @@ void() refresh_custom_cvars;
 .float lift_touch_time;
 .float on_lift;
 .float gameplayfix_stepdown;
+.float timeviewzoom;
+.float walktime;
+
 void() PlayerPreThink = 
 { 		
+
+
+	if (time > self.timeviewzoom)
+	{
+		if(self.lance_viewzoom_time > time)
+		{	
+			if (self.viewzoom > self.lance_viewzoom)
+				self.viewzoom -= self.lance_viewzoom_rate / 100;
+		}
+		if((self.lance_viewzoom_time < time) && (self.viewzoom != 1))
+		{
+			if (self.viewzoom < 1)
+				self.viewzoom += self.lance_viewzoom_rate  / 50;
+		}
+		self.timeviewzoom = time +0.01;
+	}
+	
+	if (self.viewzoom < self.lance_viewzoom)
+		self.viewzoom = self.lance_viewzoom;
+	if (self.viewzoom > 1)
+	self.viewzoom = 1;
+
 
 	/*
 	if(self.lift_touch_time > time)
@@ -563,6 +645,10 @@ void() PlayerPreThink =
 	{
 	self.flags -= FL_IGNOREINPUT;
 	}
+
+	if((self.flags & FL_IGNOREINPUT)&& (self.flags & FL_ONGROUND))
+	self.flags -= FL_IGNOREINPUT;
+
 	if ((self.autosavetime > time) && (self.impulse))
 		self.impulse = 0;
 
@@ -630,7 +716,7 @@ void() PlayerPreThink =
 	if (!self.crouch)
 	{
 	
-		float walking, button7pressed;
+		float button7pressed;
 		{
 			if(self.togglerun != 1)
 			{
@@ -658,19 +744,19 @@ void() PlayerPreThink =
 		if (self.alwaysrun == 1)
 		{
 			 if (button7pressed == 1)
-				walking = 1;
+				self.walking = 1;
 			else
-				walking = 0;
+				self.walking = 0;
 		}
 		else
 		{
 			 if (button7pressed == 1) 
-				walking = 0;
+				self.walking = 0;
 			else
-				walking = 1;
+				self.walking = 1;
 		}
 
-		if ((walking == 1))
+		if ((self.walking == 1))
 		{
 			if (!(self.effects &256))
 			{
@@ -784,6 +870,7 @@ void() PlayerPreThink =
 
 	if ((self.button2) && (!self.crouch))
 	{
+	
 		PlayerJump();
 	}
 	else
@@ -796,20 +883,25 @@ void() PlayerPreThink =
 	}
 	else
 	{
-		if ((time > self.melee_jump_time) && (time > self.jumptime)) 
+		if ((time > self.melee_jump_time) && (time > self.jumptime) && (self.flags & FL_ONGROUND) ) 
 		{
 			self.velocity_x = self.velocity_x *self.realmaxspeed;
 			self.velocity_y = self.velocity_y *self.realmaxspeed;
 		}
 	}
 
-	if ((!(self.button4)) && (self.crouch))
+
+	if (((!(self.button4)) && (self.crouch))   && (self.crushingtime <= time) )
 	{
+	if (self.rmenu == 1)
+		return;
 		Crouch_Off();
 	}
 
-	if ((self.button4) && (!self.crouch))
+	if (((self.button4) && (!self.crouch)) || ((self.crushingtime > time)&& (!self.crouch)))
 	{
+	if (self.rmenu == 1)
+		return;
 		Crouch_On();
 	}
 
@@ -875,6 +967,13 @@ void() PlayerPreThink =
 		}
 	}
 
+	if ((self.cursor_trace_ent.classname == "monster_buffer") && (self.cursor_trace_ent.walktime < time))
+	{
+		self.cursor_trace_ent.strafetime = time + random(0.25,0.75);
+		self.cursor_trace_ent.walktime =  time + random(0.75,1);
+		self.strafetime = 0;
+	}
+
 	if ((self.cursor_trace_ent.flags &FL_MONSTER) && (self.cursor_trace_ent.health > 0) && ((vlen(self.cursor_trace_endpos - self.cursor_trace_start)) < 4096))
 	{
 		if (!(self.crosshairflag &2))
@@ -908,6 +1007,25 @@ void() PlayerPreThink =
 		self.maxspeedtime =  time + 1/sliding_fps;
 	}
 
+	if(self.shake_camera_time > time)
+	{
+		if(self.shake_camera_delay > time)
+		return;
+		if(self.shaked == 1)
+		{
+		self.punchangle_x =random(self.shake_camera_ammounty * -1, self.shake_camera_ammountx * -0.5);
+		self.punchangle_y =random(self.shake_camera_ammountx * -1, self.shake_camera_ammountx * -0.5);
+		self.shaked = 2;
+		}
+		else
+		{
+		self.punchangle_x =random(self.shake_camera_ammounty * 0.5, self.shake_camera_ammounty);
+		self.punchangle_y =random(self.shake_camera_ammountx * 0.5,self.shake_camera_ammountx);
+		self.shaked = 1;
+		}
+		self.shake_camera_delay = time + self.shake_camera_refresh_rate;
+	}
+
 
 //self.realmaxspeed  = self.maxspeed;
 
@@ -930,7 +1048,9 @@ self.fwatershifttime = 0;
 self.fwatershift = 0;
 }
 
-void() check_weapons = { self.checkweaponflag = 1;
+void() check_weapons = 
+{
+	self.checkweaponflag = 1;
 };
 
 .float tether_model_client;
@@ -940,7 +1060,9 @@ void() check_weapons = { self.checkweaponflag = 1;
 .float v_nextthink;
 .entity artifact_client2;
 
-void() artifact_client_remove2 = { if (self.owner.shrine_model_client == 1)
+void() artifact_client_remove2 = 
+{
+	if (self.owner.shrine_model_client == 1)
 	{
 		self.alpha -= 0.1;
 		self.frame++;
@@ -959,7 +1081,9 @@ void() artifact_client_remove2 = { if (self.owner.shrine_model_client == 1)
 	self.nextthink = time + 0.05;
 }
 
-void() artifact_client_remove3 = { if (self.owner.tether_model_client == 1)
+void() artifact_client_remove3 = 
+{
+	if (self.owner.tether_model_client == 1)
 	{
 		self.alpha -= 0.1;
 		self.frame++;
@@ -977,7 +1101,9 @@ void() artifact_client_remove3 = { if (self.owner.tether_model_client == 1)
 		self.think = SUB_Remove;
 	self.nextthink = time + 0.05;
 }
-void() artifact_client_remove = { if ((self.owner.radial_time > time) && (self.owner.artifact_model_client == 2))
+void() artifact_client_remove = 
+{
+	if ((self.owner.radial_time > time) && (self.owner.artifact_model_client == 2))
 	{
 		if (self.owner.healthpulsetime > time)
 			self.alpha += 0.2;
@@ -1009,7 +1135,9 @@ void() artifact_client_remove = { if ((self.owner.radial_time > time) && (self.o
 	self.nextthink = time + 0.05;
 }
 
-void() artifact_client_think = { self.alpha += 0.1;
+void() artifact_client_think = 
+{
+	self.alpha += 0.1;
 
 	local float maxalpha;
 	maxalpha = 1;
@@ -1144,7 +1272,9 @@ void() ArtifactClientModel =	//ArtifactClientModel
 .float fakewatertype;
 .float check_centered;
 .float lungefree;
-void() PlayerPostThink = { 
+void() PlayerPostThink = 
+{
+	
 if (self.deadflag)
 		return;
 	if (self.playerdeadtime > time)
@@ -1319,13 +1449,13 @@ if (self.deadflag)
 
 	//////////////////////	
 	//////////////////////	
-	if (self.rarmorpulsetime < time)
+	if (self.rcannonpulsetime < time)
 	{
-		if (self.pulseicons &2048)
+		if (self.pulseicons & 2048)
 			self.pulseicons -= 2048;
 	}
 
-	if (self.armorpulsetime > time)
+	if (self.cannonpulsetime > time)
 	{
 		if (!(self.pulseicons &1024))
 			self.pulseicons += 1024;
@@ -1336,14 +1466,16 @@ if (self.deadflag)
 			self.pulseicons -= 1024;
 	}
 
+
 	//////////////////////	
-	if (self.rdarmorpulsetime < time)
+	//////////////////////	
+	if (self.rlancepulsetime < time)
 	{
-		if (self.pulseicons &8192)
+		if (self.pulseicons & 8192)
 			self.pulseicons -= 8192;
 	}
 
-	if (self.darmorpulsetime > time)
+	if (self.lancepulsetime > time)
 	{
 		if (!(self.pulseicons &4096))
 			self.pulseicons += 4096;
@@ -1352,6 +1484,43 @@ if (self.deadflag)
 	{
 		if (self.pulseicons &4096)
 			self.pulseicons -= 4096;
+	}
+
+
+	//////////////////////		//////////////////////		//////////////////////		//////////////////////	
+	if (self.rarmorpulsetime < time)
+	{
+		if (self.pulseicons &32768)
+			self.pulseicons -= 32768;
+	}
+
+	if (self.armorpulsetime > time)
+	{
+		if (!(self.pulseicons &16384))
+			self.pulseicons += 16384;
+	}
+	else
+	{
+		if (self.pulseicons &16384)
+			self.pulseicons -= 16384;
+	}
+
+	//////////////////////	
+	if (self.rdarmorpulsetime < time)
+	{
+		if (self.pulseicons &131072)
+			self.pulseicons -= 131072;
+	}
+
+	if (self.darmorpulsetime > time)
+	{
+		if (!(self.pulseicons &65536))
+			self.pulseicons += 65536;
+	}
+	else
+	{
+		if (self.pulseicons &65536)
+			self.pulseicons -= 65536;
 	}
 
 	//////////////////////	
@@ -1366,6 +1535,7 @@ if (self.deadflag)
 		checking_enemies();
 	ArtifactClientModel();
 	WeaponFrames();	// do weapon stuff
+	if (self.maxspeed >= 0.75)
 	PlayerFootstep();
 	// check to see if player landed and play landing sound	
 
@@ -1409,7 +1579,7 @@ if (self.deadflag)
 
 	//	local string viewxanglesfactor;
 	//float speed_f = vlen(self.velocity);
-	//string viewxanglesfactor = strcat ((ftos (speed_f)), (" movement\n"));
+	//string viewxanglesfactor = strcat ((ftos (self.v_angle_x)), (" movement\n"));
 	//bprint (viewxanglesfactor);
 
 	//local string lmessage;
@@ -1419,10 +1589,12 @@ if (self.deadflag)
 void() Check_FrikFile;
 
 string nextmap;
-void() monster_relocator = { local entity monster;
+void() monster_relocator = 
+{
+	local entity monster;
 
 	monster = findradius(self.origin, 1000000);
-	while (monster)	//Loops through everything put in the missile entity
+	while (monster)
 	{
 		if ((monster.flags &FL_MONSTER) && (monster.health >= 0))
 		{
@@ -1433,50 +1605,58 @@ void() monster_relocator = { local entity monster;
 			monster.enemy = 0;
 		}
 
-		monster = monster.chain;	//links every monstergram found so they all go BOOM!
+		monster = monster.chain;	
 	}
 };
-void(entity ownr) client_garbage_collector = { local entity garbage;
+void(entity ownr) client_garbage_collector = 
+{
+	local entity garbage;
 	garbage = findradius(self.origin, 1000000);
-	while (garbage)	//Loops through everything put in the missile entit
+	while (garbage)	
 	{
 		if ((garbage.wrathflags &FL_GARBAGE) && (garbage.owner == ownr))
 		{
 			remove(garbage);
 		}
 
-		garbage = garbage.chain;	//links every garbagegram found so they all go BOOM!
+		garbage = garbage.chain;	
 	}
-	//spawn_dead_model(ownr.origin, ownr.angles);
+	//spawn_dead_model(ownr.origin, ownr.angles); // player models
 };
 
-void() garbage_collector = { local entity garbage;
+void() garbage_collector = 
+{
+	local entity garbage;
 	garbage = findradius(self.origin, 1000000);
-	while (garbage)	//Loops through everything put in the missile entit
+	while (garbage)	
 	{
 		if (garbage.wrathflags &FL_GARBAGE)
 		{
 			remove(garbage);
 		}
 
-		garbage = garbage.chain;	//links every garbagegram found so they all go BOOM!
+		garbage = garbage.chain;	
 	}
 };
-void() message_garbage_collector = { local entity garbage;
+void() message_garbage_collector = 
+{
+	local entity garbage;
 	garbage = findradius(self.origin, 1000000);
-	while (garbage)	//Loops through everything put in the missile entit
+	while (garbage)	
 	{
 		if (garbage.wrathflags &FL_MESSAGE)
 		{
 			remove(garbage);
 		}
-		garbage = garbage.chain;	//links every garbagegram found so they all go BOOM!
+		garbage = garbage.chain;	
 	}
 };
 
-void() respawn_entities = { local entity respawneable;
+void() respawn_entities = 
+{
+	local entity respawneable;
 	respawneable = findradius(self.origin, 1000000);
-	while (respawneable)	//Loops through everything put in the missile entit
+	while (respawneable)	
 	{
 		if (respawneable.wrathflags &FL_RESPAWN)
 		{
@@ -1484,11 +1664,13 @@ void() respawn_entities = { local entity respawneable;
 			respawneable.nextthink = time;
 		}
 
-		respawneable = respawneable.chain;	//links every garbagegram found so they all go BOOM!
+		respawneable = respawneable.chain;	
 	}
 };
 void() SetChangeParms;
-void() loadlevel = { stuffcmd(self, "slowmo 1\n");stuffcmd(self, "r_glsl_saturation 1\n");
+void() loadlevel = 
+{
+	stuffcmd(self, "slowmo 1\n");stuffcmd(self, "r_glsl_saturation 1\n");
 	read_currentprofileslot();
 	stuffcmd(self, "set cvar_restoregame 1\n");
 	string cname;
@@ -1496,19 +1678,27 @@ void() loadlevel = { stuffcmd(self, "slowmo 1\n");stuffcmd(self, "r_glsl_saturat
 	stuffcmd(self, cname);
 };
 
-void() changemap = { changelevel(nextmap);
+void() changemap = 
+{
+	changelevel(nextmap);
 }
 
-void(entity e) changelevel_wait = { e.changing_level = 1;
+void(entity e) changelevel_wait = 
+{
+	e.changing_level = 1;
 	e.nextthink = time + 1.5;
 	e.think = changemap;
 };
 void() ParmstoFrik;
-void(entity e) loadlevel_wait = { e.changing_level = 1;
+void(entity e) loadlevel_wait = 
+{
+	e.changing_level = 1;
 	e.nextthink = time + 1.5;
 	e.think = loadlevel;
 };
-void(entity e) changeparms2 = { parm1 = e.items;
+void(entity e) changeparms2 = 
+{
+	parm1 = e.items;
 	parm2 = e.health;
 	parm3 = e.coachgunclip;
 	parm4 = e.ammo_shotgun;
@@ -1536,15 +1726,15 @@ void(entity e) changeparms2 = { parm1 = e.items;
 	parm26 = e.foundedrelics;
 	parm27 = e.centerprint_messages;
 	parm28 = e.Attar;
+	parm29 = e.savedlist;
 
 };
-void(entity e) GotoNextMap = { stuffcmd(e, "bf 0 0 0 2 0\n");
+void(entity e) GotoNextMap = 
+{
+	stuffcmd(e, "bf 0 0 0 2 0\n");
 	local float loadingmap;
 	if ((e.explored_maps &LE_HUB1) && (nextmap == "hub1"))
-	{
 		loadingmap = 1;
-	}
-
 	if ((e.explored_maps &LE_E1M1) && (nextmap == "e1m1"))
 		loadingmap = 1;
 	if ((e.explored_maps &LE_E1M2) && (nextmap == "e1m2"))
@@ -1554,6 +1744,30 @@ void(entity e) GotoNextMap = { stuffcmd(e, "bf 0 0 0 2 0\n");
 	if ((e.explored_maps &LE_E1M4) && (nextmap == "e1m4"))
 		loadingmap = 1;
 	if ((e.explored_maps &LE_E1M5) && (nextmap == "e1m5"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_HUB2) && (nextmap == "hub2"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E2M1) && (nextmap == "e2m1"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E2M2) && (nextmap == "e2m2"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E2M3) && (nextmap == "e2m3"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E2M4) && (nextmap == "e2m4"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E2M5) && (nextmap == "e2m5"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_HUB3) && (nextmap == "hub3"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E3M1) && (nextmap == "e3m1"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E3M2) && (nextmap == "e3m2"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E3M3) && (nextmap == "e3m3"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E3M4) && (nextmap == "e3m4"))
+		loadingmap = 1;
+	if ((e.explored_maps &LE_E3M5) && (nextmap == "e3m5"))
 		loadingmap = 1;
 	//changeparms2(e);
 
@@ -1617,7 +1831,78 @@ void(entity e) write_exploredmap = {read_currentprofileslot();
 		else
 			hasrelic = "0";
 	}
+	if (world.model == "maps/e2m1.bsp")
+	{
+		if (e.foundedrelics &RL_E1M1)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
 
+	if (world.model == "maps/e2m2.bsp")
+	{
+		if (e.foundedrelics &RL_E1M2)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+	if (world.model == "maps/e2m3.bsp")
+	{
+		if (e.foundedrelics &RL_E1M3)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+	if (world.model == "maps/e2m4.bsp")
+	{
+		if (e.foundedrelics &RL_E1M4)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+	if (world.model == "maps/e2m5.bsp")
+	{
+		if (e.foundedrelics &RL_E1M5)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+	if (world.model == "maps/e3m1.bsp")
+	{
+		if (e.foundedrelics &RL_E1M1)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+
+	if (world.model == "maps/e3m2.bsp")
+	{
+		if (e.foundedrelics &RL_E1M2)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+	if (world.model == "maps/e3m3.bsp")
+	{
+		if (e.foundedrelics &RL_E1M3)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+	if (world.model == "maps/e3m4.bsp")
+	{
+		if (e.foundedrelics &RL_E1M4)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
+	if (world.model == "maps/e3m5.bsp")
+	{
+		if (e.foundedrelics &RL_E1M5)
+			hasrelic = "1";
+		else
+			hasrelic = "0";
+	}
 	writethis = strcat(hasrelic, "/1");
 	fputs(save_stats, writethis);fputs(save_stats, "\n");
 	local string strTime;
@@ -1633,7 +1918,9 @@ void(entity e) write_exploredmap = {read_currentprofileslot();
 	///////
 };
 .float totallungetime;
-void() changelevel_touch = { if (self.wait > time)
+void() changelevel_touch = 
+{
+	if (self.wait > time)
 		return;
 	if (other.classname != "player")
 		return;
@@ -1717,7 +2004,88 @@ void() changelevel_touch = { if (self.wait > time)
 			other.explored_maps += LE_E1M5;
 		loadingmap = 1;
 	}
+	if (world.model == "maps/hub2.bsp")
+	{
+		if (!(other.explored_maps &LE_HUB2))
+			other.explored_maps += LE_HUB2;
+		loadingmap = 1;
+	}
 
+	if (world.model == "maps/e2m1.bsp")
+	{
+		if (!(other.explored_maps &LE_E2M1))
+			other.explored_maps += LE_E2M1;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e2m2.bsp")
+	{
+		if (!(other.explored_maps &LE_E2M2))
+			other.explored_maps += LE_E2M2;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e2m3.bsp")
+	{
+		if (!(other.explored_maps &LE_E2M3))
+			other.explored_maps += LE_E2M3;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e2m4.bsp")
+	{
+		if (!(other.explored_maps &LE_E2M4))
+			other.explored_maps += LE_E2M4;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e2m5.bsp")
+	{
+		if (!(other.explored_maps &LE_E2M5))
+			other.explored_maps += LE_E2M5;
+		loadingmap = 1;
+	}
+	if (world.model == "maps/hub3.bsp")
+	{
+		if (!(other.explored_maps &LE_HUB3))
+			other.explored_maps += LE_HUB3;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e3m1.bsp")
+	{
+		if (!(other.explored_maps &LE_E3M1))
+			other.explored_maps += LE_E3M1;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e3m2.bsp")
+	{
+		if (!(other.explored_maps &LE_E3M2))
+			other.explored_maps += LE_E3M2;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e3m3.bsp")
+	{
+		if (!(other.explored_maps &LE_E3M3))
+			other.explored_maps += LE_E3M3;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e3m4.bsp")
+	{
+		if (!(other.explored_maps &LE_E3M4))
+			other.explored_maps += LE_E3M4;
+		loadingmap = 1;
+	}
+
+	if (world.model == "maps/e3m5.bsp")
+	{
+		if (!(other.explored_maps &LE_E3M5))
+			other.explored_maps += LE_E3M5;
+		loadingmap = 1;
+	}
 	other.solid = 0;
 	other.movetype = 0;
 	other.speed = 0;
@@ -1732,23 +2100,31 @@ void() changelevel_touch = { if (self.wait > time)
 
 };
 
-void() trigger_changelevel = { if (!self.map)
+void() trigger_changelevel = 
+{
+	if (!self.map)
 		objerror("changelevel trigger doesn't have map");
 	InitTrigger();
 	self.wait = 0;
 	self.touch = changelevel_touch;
 };
 
-void() portal_level_active = { self.touch = changelevel_touch;
+void() portal_level_active = 
+{
+	self.touch = changelevel_touch;
 };
 
-void() portal_level_to_hub_active = { self.frame = 1;
+void() portal_level_to_hub_active = 
+{
+	self.frame = 1;
 	self.effects = 0;
 	self.think = portal_level_active;
 	self.nextthink = time + 1;
 };
 
-void() portal_level_to_hub_active_wait = { self.think = portal_level_to_hub_active;
+void() portal_level_to_hub_active_wait = 
+{
+	self.think = portal_level_to_hub_active;
 	self.nextthink = time + self.wait;
 };
 
@@ -1764,7 +2140,9 @@ KEYS:
 BEHAVIOR:
 portal is inactive (frame 0) until triggered by Relic pickup, then plays a 1 sec animation (framegroup, 20fps, frame 0-19) then is active (frame 19) for the rest of the game
 */
-void() portal_level_to_hub = { precache_model("models/portals/portal_level_to_hub.md3");
+void() portal_level_to_hub = 
+{
+	precache_model("models/portals/portal_level_to_hub.md3");
 	setmodel(self, "models/portals/portal_level_to_hub.md3");
 	self.solid = SOLID_TRIGGER;
 	self.effects = EF_NODRAW;
@@ -1780,8 +2158,10 @@ void() portal_level_to_hub = { precache_model("models/portals/portal_level_to_hu
 		self.nextthink = time;
 	}
 };
-
-entity() SelectSpawnPoint = { local entity spot;
+.float angle2;
+entity() SelectSpawnPoint = 
+{
+	local entity spot;
 
 	// testinfo_player_start is only found in regioned levels
 	spot = find(world, classname, "testplayerstart");
@@ -1855,7 +2235,9 @@ entity() SelectSpawnPoint = { local entity spot;
 	return spot;
 };
 void() DecodeLevelParms;
-void() FriktoParms = { local float readparms;
+void() FriktoParms = 
+{
+	local float readparms;
 	local string readtext, saveloc;
 	DecodeLevelParms();
 	read_currentprofileslot();
@@ -1889,6 +2271,7 @@ void() FriktoParms = { local float readparms;
 	readtext = fgets(readparms);parm26 = stof(readtext);
 	readtext = fgets(readparms);parm27 = stof(readtext);
 	readtext = fgets(readparms);parm28 = stof(readtext);
+	readtext = fgets(readparms);parm29 = stof(readtext);
 
 	fclose(readparms);
 	/*
@@ -1913,7 +2296,9 @@ void() FriktoParms = { local float readparms;
 	self.explored_maps =	parm19;
 	*/
 };
-void() ParmstoFrik = { local float writeparms;
+void() ParmstoFrik = 
+{
+	local float writeparms;
 	local string writethis, saveloc;
 	read_currentprofileslot();
 	self.slot_keys = 0;
@@ -1948,10 +2333,13 @@ void() ParmstoFrik = { local float writeparms;
 	writethis = ftos(parm26);fputs(writeparms, writethis);fputs(writeparms, "\n");
 	writethis = ftos(parm27);fputs(writeparms, writethis);fputs(writeparms, "\n");
 	writethis = ftos(parm28);fputs(writeparms, writethis);fputs(writeparms, "\n");
+	writethis = ftos(parm29);fputs(writeparms, writethis);fputs(writeparms, "\n");
 	fclose(writeparms);
 };
 
-void() SetChangeParms = { if (self.health <= 0)
+void() SetChangeParms = 
+{
+	if (self.health <= 0)
 	{
 		self.items = self.items - (self.items &(IT_KEY1 | IT_KEY2 | IT_KEY3 | IT_COFFERKEY1 | IT_COFFERKEY2| IT_COFFERKEY3));
 		self.slot_keys = 0;
@@ -1995,9 +2383,12 @@ void() SetChangeParms = { if (self.health <= 0)
 	parm26 = self.foundedrelics;
 	parm27 = self.centerprint_messages;
 	parm28 = self.Attar;
+	parm29 = self.savedlist;
 };
 
-void() SetNewParms = { if (!self.nomelee)
+void() SetNewParms = 
+{
+	if (!self.nomelee)
 	{
 		parm1 = IT_MELEE + IT_VIEWMODEL;	//items
 		parm8 = IT_MELEE;	// weapon
@@ -2034,11 +2425,13 @@ void() SetNewParms = { if (!self.nomelee)
 	parm26 = 0;
 	parm27 = 0;
 	parm28 = 0;	//self.Attar = 0;
-
+	parm29 = 0;
 
 };
 
-void() DecodeLevelParms = { self.items = parm1;
+void() DecodeLevelParms = 
+{
+	self.items = parm1;
 	self.health = parm2;
 	self.coachgunclip = parm3;
 	self.ammo_shotgun = parm4;
@@ -2066,6 +2459,7 @@ void() DecodeLevelParms = { self.items = parm1;
 	self.foundedrelics = parm26;
 	self.centerprint_messages = parm27;
 	self.Attar = parm28;
+	self.savedlist = parm29;
 
 };
 
@@ -2077,6 +2471,20 @@ void() RestoreGame = {
 	localcmd("v_cshift\n");
 	stuffcmd(self, "slowmo 1\n");
 	stuffcmd(self, "r_glsl_saturation 1\n");
+
+
+
+	local entity garbage;
+	garbage = findradius(self.origin, 1000000);
+	while (garbage)
+	{
+		if (garbage.classname == "coffer_trap")
+		{
+			remove(garbage);
+		}
+
+		garbage = garbage.chain;
+	}
 
 	if (cvar("cvar_restoregame") == 2)
 	{
@@ -2144,7 +2552,7 @@ void() RestoreGame = {
 	setmodel(self, "models/misc/null.md3");	// Set my player to the player model
 	//setmodel(self, "models/enemies/fallen/fallen1.md3");
 	setsize(self, '-16 -16 -32', '16 16 32');
-	self.view_ofs = '0 0 22';	// Center my view
+	self.view_ofs_z = player_zviewofs;	// Center my view
 	self.velocity = '0 0 0';	// Stop any old movement
 	self.coachgunclip = 0;
 	//	self.ammo_coachgun = 0;
@@ -2203,6 +2611,7 @@ void() RestoreGame = {
 	if (cvar_string("cvar_restoregame") == "")
 		localcmd("set cvar_restoregame 0\n");
 	self.location = 0;
+	self.viewzoom = 1;
 	self.oldrelics_start = self.oldrelics;
 	self.autosavetime = time + 0.5;
 	self.autosaved = 0;
@@ -2212,7 +2621,10 @@ void() RestoreGame = {
 	refresh_custom_cvars();
 };
 
-void() check_spotted_maps = { if (world.model == "maps/hub1.bsp")
+void() check_spotted_maps = 
+{
+	
+	if (world.model == "maps/hub1.bsp")
 	{
 		if (!(self.spotted_maps &LE_HUB1))
 			self.spotted_maps += LE_HUB1;
@@ -2247,15 +2659,89 @@ void() check_spotted_maps = { if (world.model == "maps/hub1.bsp")
 		if (!(self.spotted_maps &LE_E1M5))
 			self.spotted_maps += LE_E1M5;
 	}
-};
+	if (world.model == "maps/hub2.bsp")
+	{
+		if (!(self.spotted_maps &LE_HUB2))
+			self.spotted_maps += LE_HUB2;
+	}
 
-void() PutClientInServer = { local entity spawn_spot;	// This holds where we want to spawn
+	if (world.model == "maps/e2m1.bsp")
+	{
+		if (!(self.spotted_maps &LE_E2M1))
+			self.spotted_maps += LE_E2M1;
+	}
+
+	if (world.model == "maps/e2m2.bsp")
+	{
+		if (!(self.spotted_maps &LE_E2M2))
+			self.spotted_maps += LE_E2M2;
+	}
+
+	if (world.model == "maps/e2m3.bsp")
+	{
+		if (!(self.spotted_maps &LE_E2M3))
+			self.spotted_maps += LE_E2M3;
+	}
+
+	if (world.model == "maps/e2m4.bsp")
+	{
+		if (!(self.spotted_maps &LE_E2M4))
+			self.spotted_maps += LE_E2M4;
+	}
+
+	if (world.model == "maps/e2m5.bsp")
+	{
+		if (!(self.spotted_maps &LE_E2M5))
+			self.spotted_maps += LE_E2M5;
+	}
+	if (world.model == "maps/hub3.bsp")
+	{
+		if (!(self.spotted_maps &LE_HUB3))
+			self.spotted_maps += LE_HUB3;
+	}
+
+	if (world.model == "maps/e3m1.bsp")
+	{
+		if (!(self.spotted_maps &LE_E3M1))
+			self.spotted_maps += LE_E3M1;
+	}
+
+	if (world.model == "maps/e3m2.bsp")
+	{
+		if (!(self.spotted_maps &LE_E3M2))
+			self.spotted_maps += LE_E3M2;
+	}
+
+	if (world.model == "maps/e3m3.bsp")
+	{
+		if (!(self.spotted_maps &LE_E3M3))
+			self.spotted_maps += LE_E3M3;
+	}
+
+	if (world.model == "maps/e3m4.bsp")
+	{
+		if (!(self.spotted_maps &LE_E3M4))
+			self.spotted_maps += LE_E3M4;
+	}
+
+	if (world.model == "maps/e3m5.bsp")
+	{
+		if (!(self.spotted_maps &LE_E3M5))
+			self.spotted_maps += LE_E3M5;
+	}
+};
+void() object_fakecoffer;
+void() PutClientInServer = 
+{
+	local entity spawn_spot;	// This holds where we want to spawn
 	spawn_spot = SelectSpawnPoint();
 	self.nomelee = spawn_spot.nomelee;
 
 
-	if (deathmatch == 1)
+	if (deathmatch)
 	{
+
+
 	self.health =  100;	
 	SetNewParms();
 	}
@@ -2274,11 +2760,16 @@ void() PutClientInServer = { local entity spawn_spot;	// This holds where we wan
 	self.flags = FL_CLIENT;	// Yes, I'm a client.
 	self.origin = spawn_spot.origin;	// + '0 0 10';	// Move to the spawnspot location
 	self.angles = spawn_spot.angles;	// Face the angle the spawnspot indicates
+	if(spawn_spot.angle2)
+	{
+		float r = random();
+		if (r > 0.5)
+			self.angles_y = spawn_spot.angle2;
+	}
 	self.fixangle = TRUE;	// Turn this way immediately
 	setmodel(self, "models/misc/null.md3");	// Set my player to the player model
 	//setmodel(self, "models/enemies/fallen/fallen1.md3");
-	setsize(self, '-16 -16 -32', '16 16 32');
-	self.view_ofs = '0 0 22';	// Center my view
+	self.view_ofs_z = player_zviewofs;	// Center my view
 	self.velocity = '0 0 0';	// Stop any old movement
 	self.air_finished = time + 12;
 	self.attack_finished = time;
@@ -2353,12 +2844,49 @@ void() PutClientInServer = { local entity spawn_spot;	// This holds where we wan
 	self.slot_keys = 0;
 	if (deathmatch == 1)
 	self.health =  100;	
-	//spawn_player_model(self);
+	self.viewzoom = 1;
+	//spawn_player_model(self); // player_model
+	setsize(self, '-16 -16 -32', '16 16 32');
 	check_custom_cvars();
 	localcmd("set cvar_nodegraph 0\n");
+
+	float forcedencounter = cvar("cl_forcedencounter");	
+	float noqcprecaches = cvar("cl_noqcprecache");	
+
+	if(forcedencounter >= 1)
+	{
+
+	if(noqcprecaches >= 1)
+	string noprecaches= "playing a noqcprecached game";
+
+	self.oldrelics = forcedencounter - 1;
+	centerprint(self, strcat("Using forced encounter ", ftos (forcedencounter)," \n",noprecaches," \n"));
+	}
+	else
+	{
+	if(noqcprecaches >= 1)
+	centerprint(self, ("playing a noqcprecached game\n"));
+	}	
+	/*
+	r = random();
+	if(r <= 0.01)
+	{
+		makevectors (self.angles);
+		entity fake_coffer = spawn();
+		fake_coffer.angles = self.angles;
+		fake_coffer.angles_y += 180;
+		fake_coffer.origin = self.origin + v_forward * 128;
+		fake_coffer.think = object_fakecoffer;
+		fake_coffer.nextthink = time; 
+	}
+	*/
+    self.clipgroup = 1;    
+
 };
 
-void(entity targ, entity attacker) ClientObituary = { bprint(" died\n");
+void(entity targ, entity attacker) ClientObituary = 
+{
+	bprint(" died\n");
 };
 
 ///////////////////////////////

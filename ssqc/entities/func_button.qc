@@ -1,7 +1,9 @@
 void() button_wait;
 void() button_return;
 
-void() button_wait = { self.state = STATE_TOP;
+void() button_wait = 
+{
+ self.state = STATE_TOP;
 	self.nextthink = self.ltime + self.wait;
 	self.think = button_return;
 	activator = self.enemy;
@@ -11,20 +13,24 @@ void() button_wait = { self.state = STATE_TOP;
 	self.usable = 0;
 };
 
-void() button_done = { self.state = STATE_BOTTOM;
+void() button_done = 
+{
+ self.state = STATE_BOTTOM;
 	self.glowmod = '1 1 1';
 	self.usable = 1;
 };
 
-void() button_return = { self.state = STATE_DOWN;
+void() button_return = 
+{
+ self.state = STATE_DOWN;
 	SUB_CalcMove(self.pos1, self.speed, button_done);
 	self.frame = 0;	// use normal textures
 	self.usable = 0;
-	if (self.health)
-		self.takedamage = DAMAGE_YES;	// can be shot again
 };
 
-void() button_fire = { if (self.state == STATE_UP || self.state == STATE_TOP)
+void() button_fire = 
+{
+ if (self.state == STATE_UP || self.state == STATE_TOP)
 	{
 		button_return();
 		return;
@@ -36,16 +42,22 @@ void() button_fire = { if (self.state == STATE_UP || self.state == STATE_TOP)
 	SUB_CalcMove(self.pos2, self.speed, button_wait);
 };
 
-void() button_use = { self.enemy = activator;
+void() button_use = 
+{
+ self.enemy = activator;
 	button_fire();
 };
 
-void() buttonbbox_use = { self.owner.enemy = activator;
+void() buttonbbox_use = 
+{
+ self.owner.enemy = activator;
 	self.owner.think = button_fire;
 	self.owner.nextthink = self.ltime;
 }
 
-void() bboxbutton_think = { self.usable = self.owner.usable;
+void() bboxbutton_think = 
+{
+ self.usable = self.owner.usable;
 	self.think = bboxbutton_think;
 	self.nextthink = trace_ent.ltime + 0.01;
 
@@ -59,7 +71,9 @@ lip (lip in qu default 4)
 buttondecal (brush model is flat)
 */
 
-void() func_button = { precache_sound(self.noise);
+void() func_button = 
+{ 
+	precache_sound(self.noise);
 	if (!self.speed)
 		self.speed = 50;
 	self.glowmod = '1 1 1';

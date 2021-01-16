@@ -1,13 +1,17 @@
 void(vector org, float class) blood_decal;
 .vector corpse_angles;
 
-vector(vector rvel, entity ent) relvel = { local vector revel;
+vector(vector rvel, entity ent) relvel = 
+{
+	local vector revel;
 	makevectors(ent.angles + ent.corpse_angles);
 	revel = v_forward *rvel_x + v_right *rvel_y + v_up * rvel_z;
 	return revel;
 };
 
-vector(float svel) VelocityForDamage2 = { local float r;
+vector(float svel) VelocityForDamage2 = 
+{
+	local float r;
 	local vector v;
 	r = random();
 
@@ -24,7 +28,9 @@ vector(float svel) VelocityForDamage2 = { local float r;
 	v_z = svel *0.75* random();
 	return v;
 };
-vector(float dm) VelocityForDamage = { local vector v;
+vector(float dm) VelocityForDamage = 
+{
+	local vector v;
 	v_x = 100* crandom();
 	v_y = 100* crandom();
 	v_z = 200 + 100* random();
@@ -36,14 +42,18 @@ vector(float dm) VelocityForDamage = { local vector v;
 		v = v * 10;
 	return v;
 };
-void() galphafade2 = { if (self.wrathflags &FL_TOSS)
+void() galphafade2 = 
+{
+	if (self.wrathflags &FL_TOSS)
 		move_gibs();
 
 	self.think = SUB_Remove;
 	self.nextthink = time;
 };
 
-void() galphafade = { self.alpha = self.alpha - 0.1;
+void() galphafade = 
+{
+	self.alpha = self.alpha - 0.1;
 	if (self.wrathflags &FL_TOSS)
 		move_gibs();
 
@@ -53,7 +63,9 @@ void() galphafade = { self.alpha = self.alpha - 0.1;
 		self.think = galphafade;
 	self.nextthink = time + 0.1;
 };
-void() gibalphafade2 = { if (self.movetype != MOVETYPE_NOCLIP)
+void() gibalphafade2 = 
+{
+	if (self.movetype != MOVETYPE_NOCLIP)
 		self.movetype = MOVETYPE_NOCLIP;
 	if (self.wrathflags &FL_TOSS)
 		move_gibs();
@@ -63,7 +75,9 @@ void() gibalphafade2 = { if (self.movetype != MOVETYPE_NOCLIP)
 	self.think = SUB_Remove;
 };
 
-void() gibalphafade3 = { self.glowmod_x -= 0.075;
+void() gibalphafade3 = 
+{
+	self.glowmod_x -= 0.075;
 	self.glowmod_y -= 0.075;
 	self.glowmod_z -= 0.075;
 
@@ -85,7 +99,9 @@ void() gibalphafade3 = { self.glowmod_x -= 0.075;
 	self.nextthink = time + 0.05;
 };
 
-void() gibalphafade = { self.solid = SOLID_NOT;
+void() gibalphafade = 
+{
+	self.solid = SOLID_NOT;
 	self.traileffectnum = 0;
 	local float nparticles;
 	nparticles = particleeffectnum("wraith_gib2");
@@ -105,7 +121,9 @@ void() gibalphafade = { self.solid = SOLID_NOT;
 .float time_toalpha;
 .float aboveworld;
 .float glowmod_decrease;
-void() checking_ground = { 
+void() checking_ground = 
+{
+	
 
 if(!(self.wrathflags & FL_GIB))
 self.wrathflags += FL_GIB;
@@ -156,8 +174,10 @@ if (self.flags &FL_ONGROUND)
 };
 .float gib_jumping;
 .float oldtraileffectnum;
-
-void() gib_touch = { local vector v;
+.float liquidtouch_timing;
+void() gib_touch = 
+{
+	local vector v;
 	self.gravity = 1;
 
 	//	if (time > self.touchtime)
@@ -174,12 +194,30 @@ void() gib_touch = { local vector v;
 			//self.traileffectnum = self.oldtraileffectnum;
 			v_x = (other.velocity_x *1.75 + 30* random());
 			v_y = (other.velocity_y *1.75 + 30* random());
+
+			if(self.liquidtouch_timing < time)
 			v_z = 95 + 90* random() + (other.velocity_y + other.velocity_x) *0.30;
+			else
+			self.gravity = 0;
+
+
 			if(self.flags &FL_ONGROUND)
 			self.flags -= FL_ONGROUND;
+
 			self.angles_y = random() *360;
+			if(self.liquidtouch_timing < time)
 			self.avelocity_y = v_y * 2;
+			else
+			self.avelocity_y = v_y * random() * 0.25;
+
+			if(self.liquidtouch_timing < time)
 			self.velocity = v;
+			else
+			{
+				self.velocity_x = v_x * random() * 3;
+				self.velocity_x = v_x* random() * 3;
+			}
+
 			self.gib_jumping = 1;
 			local string gsound, r;
 			r = ftos(floor(random() *2) + 1);
@@ -187,6 +225,9 @@ void() gib_touch = { local vector v;
 			pointsound(self.origin, gsound, 1, ATTN_NORM);
 			self.touchtime = time + 0.5 + random();
 		}
+
+		
+		
 		return;
 	}
 	if (self.gibbing < 1)
@@ -195,10 +236,11 @@ void() gib_touch = { local vector v;
 		blood_decal(self.origin, 9);
 	}
 };
-float wretch_shg;	// spining head gravity
-vector wretch_shkv;	// kick velocity
+
 void()wrethc_explode_head;
-void() gib_touch2 = { 
+void() gib_touch2 = 
+{
+	
 
 local vector v;
 	self.gravity = wretch_shg;
@@ -231,12 +273,15 @@ local vector v;
 	}
 };
 
-void(string gibname, float dm, float gravitygib, float bstop, float scalegib) ThrowGib = { local entity new;
+void(string gibname, float dm, float gravitygib, float bstop, float scalegib) ThrowGib = 
+{
+	local entity new;
 	new = spawn();
 	new.origin = self.origin;
 	new.angles = self.angles;
 	setmodel(new, gibname);
 	setsize(new, '0 0 0', '0 0 0');
+	new.wrathflags += FL_GIB;
 
 	new.velocity = VelocityForDamage(dm);
 	if (bstop == 0)
@@ -259,7 +304,46 @@ void(string gibname, float dm, float gravitygib, float bstop, float scalegib) Th
 };
 .float lungetime;
 
-void(string gibname, float dm, float gravitygib, float bstop, float scalegib, vector orn, vector rvel, float xangonground, float kickable) ThrowGib2 = { local entity new;
+void() gib_water_touch =
+{
+	if(other.classname !=  "player")
+		return;
+	self.velocity_x = other.velocity_x * random(1,3); 
+	self.velocity_y = other.velocity_y * random(1,3); 
+};
+void() checking_water = 
+{
+	if(self.lifetime < time)
+		self.think = gibalphafade;
+	if(self.liquidtouch_timing > time)
+	{
+
+		self.velocity_x = self.velocity_x * 0.95;
+		self.velocity_y = self.velocity_y * 0.95;
+		self.velocity_z = self.velocity_z * 0.7;
+		
+		self.avelocity_x = self.avelocity_x * 0.95;
+		self.avelocity_y = self.avelocity_y * 0.95;
+		self.avelocity_z = self.avelocity_z * 0.95;
+		if(self.movetype != MOVETYPE_FLY)
+			self.movetype = MOVETYPE_FLY;
+		
+	}
+	else
+	{
+		if(self.movetype != MOVETYPE_TOSS)
+			self.movetype = MOVETYPE_TOSS;
+		self.velocity_z = -32;	
+	}
+	self.touch = gib_water_touch;
+
+	self.nextthink = time + 0.05;	
+	self.think = checking_water;
+};
+
+void(string gibname, float dm, float gravitygib, float bstop, float scalegib, vector orn, vector rvel, float xangonground, float kickable) ThrowGib2 = 
+{
+	local entity new;
 	new = spawn();
 	new.origin = orn;
 	new.angles = self.angles;
@@ -271,6 +355,7 @@ void(string gibname, float dm, float gravitygib, float bstop, float scalegib, ve
 	new.avelocity_y = random() *new.velocity_y *5 + new.velocity_y* crandom();
 	//new.avelocity_z = random() *new.velocity_z *2 + new.velocity_z* crandom();
 	new.wrathflags = new.wrathflags + FL_TOSS;
+	new.wrathflags += FL_GIB;
 
 	if ((self.classname == "monster_fallen") || (self.classname == "invader"))
 	{
@@ -320,8 +405,12 @@ void(string gibname, float dm, float gravitygib, float bstop, float scalegib, ve
 	if (new.count >= 3)
 		new.touchtime = time + 0.5 + random();
 	new.scale = scalegib;
+	if(gravitygib > 0.25)
 	new.think = checking_ground;
+	else
+	new.think = checking_water;
 	new.ltime = time;
+	new.lifetime = time + random(10, 30);
 	new.nextthink = time;
 	new.frame = 0;
 	new.flags = 0;
@@ -329,7 +418,9 @@ void(string gibname, float dm, float gravitygib, float bstop, float scalegib, ve
 };
 void()wretch_spining_head;
 float wretch_sht;
-void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float scalegib, vector orn, vector rvel, float xangonground, float kickable) ThrowGib3 = { local entity new;
+void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float scalegib, vector orn, vector rvel, float xangonground, float kickable) ThrowGib3 = 
+{
+	local entity new;
 	new = spawn();
 	new.origin = orn;
 	
@@ -367,13 +458,20 @@ void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float
 		new.solid = SOLID_CORPSE;
 
 	new.touch = gib_touch;
+	new.wrathflags += FL_GIB;
 
 	new.gravity = gravitygib;
 	if (kickable >= 1) new.count = 3;
 	if (new.count >= 3)
 		new.touchtime = time + 0.5 + random();
 	new.scale = scalegib;
+	if(gravitygib > 0.25)
 	new.think = checking_ground;
+	else
+	{
+	new.think = checking_water;
+	new.classname = "watergib";
+	}
 	new.ltime = time;
 	if ((ownr.classname == "monster_wretch") && (kickable ==4))
 	{
@@ -394,8 +492,10 @@ void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float
 };
 
 void() projectile_touch_str2;
-void()CheckCys;
-void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float scalegib, vector orn, vector rvel, float xangonground, float kickable) ThrowGib4 = { local entity new;
+void()CheckCysStricken;
+void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float scalegib, vector orn, vector rvel, float xangonground, float kickable) ThrowGib4 = 
+{
+	local entity new;
 	new = spawn();
 	new.origin = orn;
 	new.owner = ownr;
@@ -403,6 +503,7 @@ void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float
 	setmodel(new, gibname);
 	setsize(new, '0 0 0', '0 0 0');
 	new.wrathflags += FL_GARBAGE;
+	new.wrathflags += FL_GIB + FL_PROJECTILE;
 	new.avelocity = crandom() *'0 350 0';
 	new.wrathflags = new.wrathflags + FL_TOSS;
 
@@ -430,7 +531,8 @@ void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float
 	if (kickable >= 1) new.count = 3;
 	if (new.count >= 3)
 		new.touchtime = time + 0.5 + random();
-	new.think = CheckCys;
+	new.lifetime = time + 5;
+	new.think = CheckCysStricken;
 	new.ltime = time;
 	new.nextthink = time;
 	new.frame = 0;
@@ -438,7 +540,9 @@ void(entity ownr, string gibname, float dm, float gravitygib, float bstop, float
 	new.oldtraileffectnum = new.traileffectnum;
 };
 
-void(string gibname, float dm) ThrowHead = { setmodel(self, gibname);
+void(string gibname, float dm) ThrowHead = 
+{
+	setmodel(self, gibname);
 	self.frame = 0;
 	self.wrathflags = self.wrathflags + FL_TOSS;
 	self.nextthink = -1;
@@ -455,7 +559,9 @@ void(string gibname, float dm) ThrowHead = { setmodel(self, gibname);
 	self.avelocity = crandom() *'0 600 0';
 };
 
-void(entity monster) remove_monster = { monster.effects = EF_NODRAW;
+void(entity monster) remove_monster = 
+{
+	monster.effects = EF_NODRAW;
 	monster.solid = SOLID_NOT;
 	monster.velocity = 0;
 	monster.wrathflags += FL_GARBAGE;
@@ -464,7 +570,9 @@ void(entity monster) remove_monster = { monster.effects = EF_NODRAW;
 	monster.nextthink = time + 5;
 
 };
-void() bleedthink2 = { local entity e;
+void() bleedthink2 = 
+{
+	local entity e;
 	e = self.owner;
 	if (self.owner.health < 0)
 	{
@@ -487,7 +595,9 @@ void() bleedthink2 = { local entity e;
 	self.think = bleedthink2;
 }
 
-void(entity ownr, string nameffect, string tagname) bleeding_point = { local entity bleed;
+void(entity ownr, string nameffect, string tagname) bleeding_point = 
+{
+	local entity bleed;
 	bleed = spawn();
 	bleed.wrathflags += FL_GARBAGE;
 	bleed.owner = self;
@@ -500,28 +610,50 @@ void(entity ownr, string nameffect, string tagname) bleeding_point = { local ent
 	bleed.nextthink = time;
 };
 
-void() blood_explode10 = { self.skin += 1;self.think = SUB_Remove;self.nextthink = time + 0.05;
+void() blood_explode10 = 
+{
+	self.skin += 1;self.think = SUB_Remove;self.nextthink = time + 0.05;
 };
-void() blood_explode9 = { self.skin += 1;self.think = blood_explode10;self.nextthink = time + 0.05;
+void() blood_explode9 = 
+{
+	self.skin += 1;self.think = blood_explode10;self.nextthink = time + 0.05;
 };
-void() blood_explode8 = { self.skin += 1;self.think = blood_explode9;self.nextthink = time + 0.05;
+void() blood_explode8 = 
+{
+	self.skin += 1;self.think = blood_explode9;self.nextthink = time + 0.05;
 };
-void() blood_explode7 = { self.skin += 1;self.think = blood_explode8;self.nextthink = time + 0.05;
+void() blood_explode7 = 
+{
+	self.skin += 1;self.think = blood_explode8;self.nextthink = time + 0.05;
 };
-void() blood_explode6 = { self.skin += 1;self.think = blood_explode7;self.nextthink = time + 0.05;
+void() blood_explode6 = 
+{
+	self.skin += 1;self.think = blood_explode7;self.nextthink = time + 0.05;
 };
-void() blood_explode5 = { self.skin += 1;self.think = blood_explode6;self.nextthink = time + 0.05;
+void() blood_explode5 = 
+{
+	self.skin += 1;self.think = blood_explode6;self.nextthink = time + 0.05;
 };
-void() blood_explode4 = { self.skin += 1;self.think = blood_explode5;self.nextthink = time + 0.05;
+void() blood_explode4 = 
+{
+	self.skin += 1;self.think = blood_explode5;self.nextthink = time + 0.05;
 };
-void() blood_explode3 = { self.skin += 1;self.think = blood_explode4;self.nextthink = time + 0.05;
+void() blood_explode3 = 
+{
+	self.skin += 1;self.think = blood_explode4;self.nextthink = time + 0.05;
 };
-void() blood_explode2 = { self.skin += 1;self.think = blood_explode3;self.nextthink = time + 0.05;
+void() blood_explode2 = 
+{
+	self.skin += 1;self.think = blood_explode3;self.nextthink = time + 0.05;
 };
-void() blood_explode1 = { self.skin += 0;self.think = blood_explode2;self.nextthink = time + 0.05;
+void() blood_explode1 = 
+{
+	self.skin += 0;self.think = blood_explode2;self.nextthink = time + 0.05;
 };
 
-void() explo_model = { self.frame += 1;
+void() explo_model = 
+{
+	self.frame += 1;
 	self.alpha -= 0.1;
 
 	if (self.frame < 10)
@@ -531,7 +663,9 @@ void() explo_model = { self.frame += 1;
 
 	self.nextthink = time + 0.05;
 };
-void(float type, vector org) explo_blood = { local entity giblood;
+void(float type, vector org) explo_blood = 
+{
+	local entity giblood;
 	local float skinn;
 	giblood = spawn();
 	giblood.origin = org;
@@ -615,7 +749,9 @@ void(float type, vector org) explo_blood = { local entity giblood;
 	giblood.nextthink = time;
 }
 
-void(float type, vector org) explo_blood_sprite = { local entity giblood;
+void(float type, vector org) explo_blood_sprite = 
+{
+	local entity giblood;
 	local float skinn;
 	if (!type)
 		return;
@@ -644,7 +780,9 @@ void() decal_SUB_Remove
 	totaldecals--;
 	remove(self);
 }
-void() blood_decal_touch = { float max_totaldecals;
+void() blood_decal_touch = 
+{
+	float max_totaldecals;
 	max_totaldecals = stof(cvar_string("cl_decals_max"));
 	if (totaldecals > max_totaldecals)
 	{
@@ -770,7 +908,9 @@ void() blood_decal_touch = { float max_totaldecals;
 
 	self.nextthink = time + time_totaldecals;
 };
-void(vector org, float class) blood_decal = { local entity decal;
+void(vector org, float class) blood_decal = 
+{
+	local entity decal;
 	decal = spawn();
 	//decal.origin = org;
 	setorigin(decal, org);
@@ -790,7 +930,9 @@ void(vector org, float class) blood_decal = { local entity decal;
 	decal.nextthink = time;
 };
 
-void(vector org, vector enemyangles) decal_monster_pain = { makevectors(enemyangles);
+void(vector org, vector enemyangles) decal_monster_pain = 
+{
+	makevectors(enemyangles);
 	traceline(org, org + v_forward *192, TRUE, self);
 	local vector org2;
 	if (trace_fraction != 1)
@@ -800,7 +942,9 @@ void(vector org, vector enemyangles) decal_monster_pain = { makevectors(enemyang
 	}
 };
 
-void(vector org, vector enemyangles) decal_monster_pain2 = { makevectors(enemyangles);
+void(vector org, vector enemyangles) decal_monster_pain2 = 
+{
+	makevectors(enemyangles);
 	traceline(org, org + v_forward *256, TRUE, self);
 	local vector org2;
 	if (trace_fraction != 1)
@@ -820,7 +964,9 @@ void(vector org) decal_monster = {
 	}
 };
 
-void(vector org) decal_monster_gib = { decal_monster_pain2(rorigin(self), self.enemy.angles);
+void(vector org) decal_monster_gib = 
+{
+	decal_monster_pain2(rorigin(self), self.enemy.angles);
 	local vector org2;
 	traceline(org, org - '0 0 64', TRUE, self);
 	if (trace_fraction != 1)
@@ -830,7 +976,9 @@ void(vector org) decal_monster_gib = { decal_monster_pain2(rorigin(self), self.e
 	}
 };
 
-void(vector org) decal_monster2 = { local vector org2;
+void(vector org) decal_monster2 = 
+{
+	local vector org2;
 	traceline(org, org - '0 0 64', TRUE, self);
 	if (trace_fraction != 1)
 	{
@@ -839,7 +987,9 @@ void(vector org) decal_monster2 = { local vector org2;
 	}
 };
 
-vector(string tagname, entity e) tag_origin = { local float tagindex;local vector tagorg;
+vector(string tagname, entity e) tag_origin = 
+{
+	local float tagindex;local vector tagorg;
 	tagindex = gettagindex(e, tagname);
 	tagorg = gettaginfo(e, tagindex);
 	return tagorg;

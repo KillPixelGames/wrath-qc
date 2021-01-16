@@ -1,4 +1,4 @@
-quakec codebase for wrath - V 0.7
-Update 2
-may 29º 2020
+quakec codebase for wrath - V 0.7812
+
+jan 12º 2021
 

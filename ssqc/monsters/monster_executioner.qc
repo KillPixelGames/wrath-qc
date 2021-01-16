@@ -27,251 +27,12 @@ $frame exec_paine1 exec_paine2 exec_paine3 exec_paine4 exec_paine5 exec_paine6 e
 
 	.float charging;
 .float mutilated;
-void(float dist) ai_executioner_run;
 .float timezigzaging;
 .float zigzag_angle1;
 .float zigzag_angle2;
 .float zigzag_angle3;
+.float charge_time;
 
-void(float dist) ai_executioner_runwalk = { if (!self.enemy)
-	{
-		if (FindTarget())
-			return;
-
-		ai_executioner_run(dist);
-		return;
-	}
-	if ((self.friendly_monster == 1) && (self.enemy.classname == "player") && (self.player_temp_enemy < time)) 
-		next_enemy();
-	//self.ideal_yaw = vectoyaw(rorigin(self.enemy) - rorigin(self));
-
-	if (self.waypointed)
-	{
-		self.effects = 8192;
-		if (visible(self.enemy) && oldvisible(self.oldenemy))
-		{
-			self.lasttimespotted = 1;
-			self.vlasttimespotted = rorigin(self.enemy);
-		}
-
-		if ((!visible(self.enemy)) && (!oldvisible(self.oldenemy)) && (self.enemy.classname == "player"))
-		{
-			self.oldenemy = self.enemy;
-			local float dropablesame_z;
-
-			self.distoplayer = (max(self.enemy.origin_z, self.origin_z) - min(self.enemy.origin_z, self.origin_z));
-
-			if ((self.classname == "monster_widow") && (self.distoplayer > 12))
-				dropablesame_z = 1;
-
-			if (self.lasttimespotted == 1)
-			{
-				dropwaypoint(self.vlasttimespotted, self);
-				self.lasttimespotted = 0;
-			}
-			else
-				changegoalentity(self, self.enemy);
-		}
-
-		if ((!visible(self.enemy)) && (!oldvisible(self.oldenemy)) && (self.enemy.classname2 == "path_waypoint"))
-			changegoalentity2(self, self.enemy);
-
-		if (visible(self.oldenemy) && oldvisible(self.oldenemy))
-		{
-			if (self.enemy.classname == "path_waypoint")
-				self.enemy = self.oldenemy;
-		}
-	}
-		if(self.timeangles2 > time)
-		{
-			if(visible(self.enemy)) 
-			{
-				self.timeangles =  time + 0.1;
-				self.zigzaging = 0;
-				self.timeangles2 =  0;
-			}
-		}
-
-		if(self.timeangles < time)
-		{
-			if ((self.zigzaging >= 1) && (self.timezigzaging < time))
-			{
-				local float zzpo;				
-				if(self.zigzaging == 1)
-				zzpo = self.zigzag_angle1 = 20 * random() * 20 * crandom3();
-				if(self.zigzaging == 2)
-				zzpo = self.zigzag_angle2 = 20 * random() * 20 + self.zigzag_angle1;
-				if(self.zigzaging == 2)
-				zzpo = self.zigzag_angle3 = 20 * random() * 20 + self.zigzag_angle2;
-
-				self.ideal_yaw = vectoyaw((rorigin(self.enemy)) - rorigin(self)) + zzpo;
-				self.timezigzaging = time + 2.5;
-			}
-			else
-			{
-				if(self.zigzaging >= 1)
-				self.zigzaging = 0;
-				self.ideal_yaw = vectoyaw((rorigin(self.enemy)) - rorigin(self));
-			}
-
-			ChangeYaw();
-		}
-		
-		/*float speed = vlen (self.velocity)
-		if (speed < 20)
-		{
-			if(self.zigzaging == 1)
-				self.zigzaging = 2;
-			if(self.zigzaging == 2)
-				self.zigzaging = 3;
-			self.timezigzaging = time + 0.5;
-			self.zigzaging = 1;
-		}
-		*/
-		
-	if (!walkmove(self.angles_y, dist))
-	{
-		if(self.timeangles)
-		self.timeangles = 0;
-		//check_angles();	
-		movetogoal(dist);
-	}	
-};
-
-void(float dist) ai_executioner_run = { movedist = dist;
-	// see if the enemy is dead
-	if (self.enemy.health <= 0)
-	{
-		self.enemy = world;
-		// FIXME: look all around for other targets
-		if (self.oldenemy.health > 0)
-		{
-			self.enemy = self.oldenemy;
-			HuntTarget();
-		}
-		else
-		{
-			if (self.movetarget)
-				self.th_walk();
-			else
-				self.th_stand();
-			return;
-		}
-	}
-
-	self.show_hostile = time + 1;	// wake up other monsters
-	// check knowledge of enemy
-	enemy_vis = visible(self.enemy);
-	if (enemy_vis)
-		self.search_time = time + 5;
-	// look for other coop players
-	if (coop && self.search_time < time)
-	{
-		if (FindTarget())
-			return;
-	}
-
-	enemy_infront = infront(self.enemy);
-	enemy_range = range(self.enemy);
-	enemy_yaw = vectoyaw((rorigin(self.enemy)) - rorigin(self));
-	if (self.attack_state == AS_MISSILE)
-	{
-		ai_run_missile();
-		return;
-	}
-
-	if (self.attack_state == AS_MELEE)
-	{
-		ai_run_melee();
-		return;
-	}
-
-	if (CheckAnyAttack())
-		return;	// beginning an attack		
-	if (self.attack_state == AS_SLIDING)
-	{
-		ai_run_slide();
-		return;
-	}
-
-		if(self.timeangles2 > time)
-		{
-			if(visible(self.enemy)) 
-			{
-				self.timeangles =  time + 0.1;
-				self.zigzaging = 0;
-				self.timeangles2 =  0;
-			}
-		}
-		if(self.timeangles < time)
-		{
-			if ((self.zigzaging >= 1) && (self.timezigzaging < time))
-			{
-				local float zzpo;				
-				if(self.zigzaging == 1)
-				zzpo = self.zigzag_angle1 = 20 * random() * 20 * crandom3();
-				if(self.zigzaging == 2)
-				zzpo = self.zigzag_angle2 = 20 * random() * 20 + self.zigzag_angle1;
-				if(self.zigzaging == 2)
-				zzpo = self.zigzag_angle3 = 20 * random() * 20 + self.zigzag_angle2;
-
-				self.ideal_yaw = vectoyaw((rorigin(self.enemy)) - rorigin(self)) + zzpo;
-				self.timezigzaging = time + 2.5;
-			}
-			else
-			{
-				if(self.zigzaging >= 1)
-				self.zigzaging = 0;
-				self.ideal_yaw = vectoyaw((rorigin(self.enemy)) - rorigin(self));
-			}
-
-			ChangeYaw();
-		}
-		
-	/*	float speed = vlen (self.velocity)
-		if (speed < 20)
-		{
-			if(self.zigzaging == 1)
-				self.zigzaging = 2;
-			if(self.zigzaging == 2)
-				self.zigzaging = 3;
-			self.timezigzaging = time + 0.5;
-			self.zigzaging = 1;
-		}*/
-		//self.flags = self.flags | FL_PARTIALGROUND; 
-		//self.effects = EF_NODEPTHTEST;
-		if (self.heavymonster == 1)
-			self.velocity = '0 0 0';
-
-
-
-		vector oldorigin = self.origin;
-		//movetogoal(dist);
-
-		if (!walkmove(self.angles_y, dist))
-		{
-		if(self.timeangles)
-		self.timeangles = 0;
-		//ChangeYaw();
-		//check_angles();	
-		movetogoal(dist);
-		}
-		
-	/*	
-	if(self.flags &FL_WALKEDOFF)	
-	{
-		self.effects = 512;
-		self.origin_z = self.origin_z + 3;
-		self.velocity += v_forward *300 + '0 0 120';
-	self.flags -= FL_WALKEDOFF;
-	}
-
-	*/
-
-	// done in C code...
-	if (TrinketofRespite_time > time)
-		self.nextthink = time + 0.2;
-};
 
 void() executioner_chrgrandom;
 void() executioner_chrbg1;
@@ -284,7 +45,9 @@ void() executioner_chrg1;
 .float exec_idle_time;
 .float exec_sight_time;
 
-void() executioner_check = { if (self.exec_sight_time < time)
+void() executioner_check = 
+{
+	if (self.exec_sight_time < time)
 	{
 		chattersound("enemies/executioner/sight", 3, 1);
 		self.exec_sight_time = time + 5;
@@ -292,7 +55,7 @@ void() executioner_check = { if (self.exec_sight_time < time)
 
 	if ((self.goalentity) && (self.enemy))
 	{
-		if ((self.likecharge == 1) && (self.enemy.classname != "player"))
+		if ((self.likecharge == 1) && (self.enemy.classname != "player") && (self.charge_time < time))
 			self.think = executioner_chrgrandom;
 		else
 			self.think = executioner_run1;
@@ -353,7 +116,9 @@ void() executioner_stand9 =[$ex_idle9, executioner_stand10]
 	executioner_check();
 	ai_stand();
 };
-void() executioner_stand10 = { ai_stand();
+void() executioner_stand10 = 
+{
+	ai_stand();
 	executioner_check();
 
 	self.frame = $ex_idle10;
@@ -364,45 +129,45 @@ void() executioner_stand10 = { ai_stand();
 //===========================================================================
 void() executioner_walk1 =[$ex_walk1, executioner_walk2]
 {
-	ai_walk(exec_vwalk1);
+	ai_walk(10);
 };
 void() executioner_walk2 =[$ex_walk2, executioner_walk3]
 {
-	ai_walk(exec_vwalk2);
+	ai_walk(10);
 };
 void() executioner_walk3 =[$ex_walk3, executioner_walk4]
 {
-	ai_walk(exec_vwalk3);
+	ai_walk(10);
 };
 void() executioner_walk4 =[$ex_walk4, executioner_walk5]
 {
-	ai_walk(exec_vwalk4);
+	ai_walk(10);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_walk5 =[$ex_walk5, executioner_walk6]
 {
-	ai_walk(exec_vwalk5);
+	ai_walk(10);
 };
 void() executioner_walk6 =[$ex_walk6, executioner_walk7]
 {
-	ai_walk(exec_vwalk6);
+	ai_walk(10);
 };
 void() executioner_walk7 =[$ex_walk7, executioner_walk8]
 {
-	ai_walk(exec_vwalk7);
+	ai_walk(10);
 };
 void() executioner_walk8 =[$ex_walk8, executioner_walk9]
 {
-	ai_walk(exec_vwalk8);
+	ai_walk(10);
 };
 void() executioner_walk9 =[$ex_walk9, executioner_walk10]
 {
-	ai_walk(exec_vwalk9);
+	ai_walk(10);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_walk10 =[$ex_walk10, executioner_walk1]
 {
-	ai_walk(exec_vwalk10);
+	ai_walk(10);
 };
 //===========================================================================
 void() executioner_atkr;
@@ -412,80 +177,34 @@ void() executioner_atkr;
 //===========================================================================
 
 void() executioner_subattack;
-void() exec_jump = { if (self.exec_jtime > time)
-		return;
-	if (self.flags &FL_PARTIALGROUND)
-	{
-		local float dist;
-		//	self.effects = 512;
-		makevectors2(self.angles);
-		if (self.flags &FL_ONGROUND)
-			self.flags = self.flags - FL_ONGROUND;
-		dist = 300;
-		self.origin_z = self.origin_z + 120;
-		self.velocity += v_forward *dist + '0 0 120';
-		executioner_subattack();
-		self.exec_jtime = time + 2.5;
-	}
-};
 
-void() executioner_run1 =[$ex_walk1, executioner_run1b]
+void() executioner_run1 =[$ex_walk1, executioner_run2]
 {
-	ai_executioner_runwalk(exec_vwalk1);
-	exec_jump();
+	ai_test_monster_run(exec_vwalk1);	
 	self.charging = 0;
 	executioner_subattack();
-	self.nextthink = time + 0.05;
 };
-void() executioner_run1b =[$ex_walk1, executioner_run2]
+void() executioner_run2 =[$ex_walk2, executioner_run3]
 {
-	ai_executioner_runwalk(exec_vwalk1);
+	ai_test_monster_run(exec_vwalk1);	
 	executioner_subattack();
-	self.nextthink = time + 0.05;
 };
-void() executioner_run2 =[$ex_walk2, executioner_run2b]
+void() executioner_run3 =[$ex_walk3, executioner_run4]
 {
-	exec_jump();
-	ai_executioner_runwalk(exec_vwalk2);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
+	ai_test_monster_run(exec_vwalk1);	
 };
-void() executioner_run2b =[$ex_walk2, executioner_run3]
-{
-	ai_executioner_runwalk(exec_vwalk2);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
-};
-void() executioner_run3 =[$ex_walk3, executioner_run3b]
-{
-	ai_executioner_runwalk(exec_vwalk3);
-	self.nextthink = time + 0.05;
-};
-void() executioner_run3b =[$ex_walk3, executioner_run4]
-{
-	ai_executioner_runwalk(exec_vwalk3);
-	self.nextthink = time + 0.05;
-};
-void() executioner_run4 =[$ex_walk4, executioner_run4b]
+void() executioner_run4 =[$ex_walk4, executioner_run5]
 {
 	walksound("enemies/executioner/step", 3);
-	exec_jump();
+	
 	executioner_subattack();
-	ai_executioner_runwalk(exec_vwalk4);
-	self.nextthink = time + 0.05;
+	ai_test_monster_run(exec_vwalk1);	
 };
-void() executioner_run4b =[$ex_walk4, executioner_run5]
-{
-	ai_executioner_runwalk(exec_vwalk4);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
-};
-
-void() executioner_run5 =[$ex_walk5, executioner_run5b]
+void() executioner_run5 =[$ex_walk5, executioner_run6]
 {
 	self.exec_type = 1;
 	executioner_subattack();
-	ai_executioner_runwalk(exec_vwalk5);
+	ai_test_monster_run(exec_vwalk1);	
 	if (self.skin != 2)
 	{
 		self.oldframe = $ex_rtchb;
@@ -504,76 +223,35 @@ void() executioner_run5 =[$ex_walk5, executioner_run5b]
 		if ((visible2(self.enemy, 128, 0.3)))
 			self.think = executioner_atkr;
 	}
-
-	self.nextthink = time + 0.05;
 };
-void() executioner_run5b =[$ex_walk5, executioner_run6]
+void() executioner_run6 =[$ex_walk6, executioner_run7]
 {
-	ai_executioner_runwalk(exec_vwalk5);
+	ai_test_monster_run(exec_vwalk1);	
 	executioner_subattack();
-	self.nextthink = time + 0.05;
 };
-void() executioner_run6 =[$ex_walk6, executioner_run6b]
+void() executioner_run7 =[$ex_walk7, executioner_run8]
 {
-	ai_executioner_runwalk(exec_vwalk6);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
+	
+	ai_test_monster_run(exec_vwalk1);	
 };
-void() executioner_run6b =[$ex_walk6, executioner_run7]
+void() executioner_run8 =[$ex_walk8, executioner_run9]
 {
-	ai_executioner_runwalk(exec_vwalk6);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
-};
-void() executioner_run7 =[$ex_walk7, executioner_run7b]
-{
-	exec_jump();
-	ai_executioner_runwalk(exec_vwalk7);
-	self.nextthink = time + 0.05;
-};
-void() executioner_run7b =[$ex_walk7, executioner_run8]
-{
-	ai_executioner_runwalk(exec_vwalk7);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
-};
-void() executioner_run8 =[$ex_walk8, executioner_run8b]
-{
-	ai_executioner_runwalk(exec_vwalk8);
-	exec_jump();
+	ai_test_monster_run(exec_vwalk1);	
+	executioner_subattack();	
 	self.oldvelocity = self.velocity;
-	self.nextthink = time + 0.05;
 };
-void() executioner_run8b =[$ex_walk8, executioner_run9]
+void() executioner_run9 =[$ex_walk9, executioner_run10]
 {
-	ai_executioner_runwalk(exec_vwalk8);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
-};
-void() executioner_run9 =[$ex_walk9, executioner_run9b]
-{
-	ai_executioner_runwalk(exec_vwalk9);
+	ai_test_monster_run(exec_vwalk1);	
 	walksound("enemies/executioner/step", 3);
-	exec_jump();
-	self.nextthink = time + 0.05;
+	
 };
-void() executioner_run9b =[$ex_walk9, executioner_run10]
+void() executioner_run10 =[$ex_walk10, executioner_run1]
 {
-	ai_executioner_runwalk(exec_vwalk9);
-	self.nextthink = time + 0.05;
-};
-void() executioner_run10 =[$ex_walk10, executioner_run10b]
-{
-	ai_executioner_runwalk(exec_vwalk10);
-	executioner_subattack();
-	self.nextthink = time + 0.05;
-};
-void() executioner_run10b =[$ex_walk10, executioner_run1]
-{
-	exec_jump();
+	
 	self.exec_type = 2;
-	ai_executioner_runwalk(exec_vwalk10);
-
+	ai_test_monster_run(exec_vwalk1);	
+	executioner_subattack();
 	if (self.skin != 1)
 	{
 		self.oldframe = $ex_rtcha;
@@ -582,6 +260,8 @@ void() executioner_run10b =[$ex_walk10, executioner_run1]
 			local float r;
 			r = random();
 			if ((max(self.enemy.origin_z, self.origin_z) - min(self.enemy.origin_z, self.origin_z)) > 16)
+				return;
+			if(self.charge_time > time)
 				return;
 
 			if ((self.likecharge != 1) && (r < 0.25))
@@ -592,88 +272,10 @@ void() executioner_run10b =[$ex_walk10, executioner_run1]
 
 		if ((visible2(self.enemy, 128, 0.3)))
 			self.think = executioner_atkr;
-		self.nextthink = time + 0.05;
 	}
 };
 
-/*
-void()	executioner_run1	=[	$ex_walk1,	executioner_run1b	] {ai_executioner_run(exec_vwalk1);exec_jump();self.charging = 0;self.nextthink = time + 0.05;};
-void()	executioner_run1b	=[	$ex_walk1,	executioner_run2	] {ai_executioner_run(exec_vwalk1);self.nextthink = time + 0.05;};
-void()	executioner_run2	=[	$ex_walk2,	executioner_run2b	] {exec_jump();ai_executioner_run(exec_vwalk2);self.nextthink = time + 0.05;};
-void()	executioner_run2b	=[	$ex_walk2,	executioner_run3	] {ai_executioner_run(exec_vwalk2);self.nextthink = time + 0.05;};
-void()	executioner_run3	=[	$ex_walk3,	executioner_run3b	] {
-ai_executioner_run(exec_vwalk3);
-self.nextthink = time + 0.05;
-};
-void()	executioner_run3b	=[	$ex_walk3,	executioner_run4	] {ai_executioner_run(exec_vwalk3);self.nextthink = time + 0.05;};
-void()	executioner_run4	=[	$ex_walk4,	executioner_run4b	] {walksound("enemies/executioner/step",3);exec_jump();ai_executioner_run(exec_vwalk4);self.nextthink = time + 0.05;};
-void()	executioner_run4b	=[	$ex_walk4,	executioner_run5	] {ai_executioner_run(exec_vwalk4);self.nextthink = time + 0.05;};
 
-void()	executioner_run5	=[	$ex_walk5,	executioner_run5b	] {
-self.exec_type = 1;
-ai_executioner_run(exec_vwalk5);
-	if(self.skin != 2)
-	{
-	self.oldframe = $ex_rtchb;
-	if((visible2(self.enemy, 384,0.3)))
-	{
-	local float r;
-	r = random();
-	if((max(self.enemy.origin_z,self.origin_z) - min(self.enemy.origin_z,self.origin_)) > 16)
-	return;
-	if (r < 0.25)
-	return;
-	else
-	self.think = executioner_chrbg1;
-	}
-
-	if((visible2(self.enemy, 128,0.3)))
-	self.think = executioner_atkr;
-	}
-
-self.nextthink = time + 0.05;	
-};
-void()	executioner_run5b	=[	$ex_walk5,	executioner_run6	] {ai_executioner_run(exec_vwalk5);self.nextthink = time + 0.05;};
-void()	executioner_run6	=[	$ex_walk6,	executioner_run6b	] {
-ai_executioner_run(exec_vwalk6);
-self.nextthink = time + 0.05;
-};
-void()	executioner_run6b	=[	$ex_walk6,	executioner_run7	] {ai_executioner_run(exec_vwalk6);self.nextthink = time + 0.05;};
-void()	executioner_run7	=[	$ex_walk7,	executioner_run7b	] {exec_jump();ai_executioner_run(exec_vwalk7);self.nextthink = time + 0.05;};
-void()	executioner_run7b	=[	$ex_walk7,	executioner_run8	] {ai_executioner_run(exec_vwalk7);self.nextthink = time + 0.05;};
-void()	executioner_run8	=[	$ex_walk8,	executioner_run8b	] {ai_executioner_run(exec_vwalk8);exec_jump();self.oldvelocity = self.velocity;self.nextthink = time + 0.05;};
-void()	executioner_run8b	=[	$ex_walk8,	executioner_run9	] {ai_executioner_run(exec_vwalk8);self.nextthink = time + 0.05;};
-void()	executioner_run9	=[	$ex_walk9,	executioner_run9b	] {ai_executioner_run(exec_vwalk9);walksound("enemies/executioner/step",3);exec_jump();self.nextthink = time + 0.05;};
-void()	executioner_run9b	=[	$ex_walk9,	executioner_run10	] {ai_executioner_run(exec_vwalk9);self.nextthink = time + 0.05;};
-void()	executioner_run10	=[	$ex_walk10,	executioner_run10b	] {ai_executioner_run(exec_vwalk10);self.nextthink = time + 0.05;};
-void()	executioner_run10b	=[$ex_walk10, executioner_run1]
-{
-	exec_jump();
-	self.exec_type = 2;
-	ai_executioner_run(exec_vwalk10);
-
-	if(self.skin != 1)
-	{
-	self.oldframe = $ex_rtcha;
-	if((visible2(self.enemy, 384,0.3)))
-		{
-	local float r;
-	r = random();
-	if((max(self.enemy.origin_z,self.origin_z) - min(self.enemy.origin_z,self.origin_z)) > 16)
-	return;
-
-	if((self.likecharge != 1) && (r < 0.25))
-	return;
-	else
-	self.think = executioner_chrg1;
-	}
-
-	if((visible2(self.enemy, 128,0.3)))
-	self.think = executioner_atkr;
-	self.nextthink = time + 0.05;
-	}
-};
-*/
 //===========================================================================
 
 void() executioner_atkb1;
@@ -683,7 +285,9 @@ void() executioner_atkd1;
 .float exec_damagecharge;
 void(float r) executioner_attack;
 
-void() executioner_subattack = { local entity head;
+void() executioner_subattack = 
+{
+	local entity head;
 
 	head = findradius(rorigin(self), exec_radius);	//send lightning line to anything in 250 radius
 	while (head)	// while looking for head
@@ -700,11 +304,11 @@ void() executioner_subattack = { local entity head;
 		head = head.chain;	// go to next enemy
 	}
 };
-//void()executioner_chargesh1 =[$ex_chargesh1,executioner_chargesh2]{ai_face();ai_executioner_runwalk(exec_chsh1);executioner_subattack();};
+//void()executioner_chargesh1 =[$ex_chargesh1,executioner_chargesh2]{ai_face();ai_test_monster_run(exec_chsh1);executioner_subattack();};
 void() executioner_chargesh2 =[$ex_chargesh2, executioner_chargesh3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh2);
+	ai_test_monster_run(exec_chsh2);
 	self.exec_push = 16;
 	executioner_subattack();
 	executioner_attack(exec_chargedamage);
@@ -715,33 +319,33 @@ void() executioner_chargesh2 =[$ex_chargesh2, executioner_chargesh3]
 void() executioner_chargesh3 =[$ex_chargesh3, executioner_chargesh4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh3);
+	ai_test_monster_run(exec_chsh3);
 	executioner_subattack();
 };
 void() executioner_chargesh4 =[$ex_chargesh4, executioner_chargesh5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh4);
+	ai_test_monster_run(exec_chsh4);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_chargesh5 =[$ex_chargesh5, executioner_chargesh6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh5);
+	ai_test_monster_run(exec_chsh5);
 	executioner_subattack();
 };
 void() executioner_chargesh6 =[$ex_chargesh6, executioner_run1]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh6);
+	ai_test_monster_run(exec_chsh6);
 	executioner_subattack();
 };
 
-//void()executioner_chargebsh1 =[$ex_chargebsh1,executioner_chargebsh2]{ai_face();ai_executioner_runwalk(exec_chsh1);executioner_subattack();};
+//void()executioner_chargebsh1 =[$ex_chargebsh1,executioner_chargebsh2]{ai_face();ai_test_monster_run(exec_chsh1);executioner_subattack();};
 void() executioner_chargebsh2 =[$ex_chargebsh2, executioner_chargebsh3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh2);
+	ai_test_monster_run(exec_chsh2);
 	self.exec_push = 16;
 	executioner_subattack();
 	executioner_attack(exec_chargedamage);
@@ -752,31 +356,33 @@ void() executioner_chargebsh2 =[$ex_chargebsh2, executioner_chargebsh3]
 void() executioner_chargebsh3 =[$ex_chargebsh3, executioner_chargebsh4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh3);
+	ai_test_monster_run(exec_chsh3);
 	executioner_subattack();
 };
 void() executioner_chargebsh4 =[$ex_chargebsh4, executioner_chargebsh5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh4);
+	ai_test_monster_run(exec_chsh4);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_chargebsh5 =[$ex_chargebsh5, executioner_chargebsh6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh5);
+	ai_test_monster_run(exec_chsh5);
 	executioner_subattack();
 };
 void() executioner_chargebsh6 =[$ex_chargebsh6, executioner_run1]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_chsh6);
+	ai_test_monster_run(exec_chsh6);
 	executioner_subattack();
 };
 
 .float ty_charge;
 
-void(float attackfloat) executioner_attack = { local vector delta;
+void(float attackfloat) executioner_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -784,7 +390,7 @@ void(float attackfloat) executioner_attack = { local vector delta;
 	delta = (self.enemy.origin) - rorigin(self);	// + '0 0 32');
 	dist = vlen(delta);
 
-	if (attackfloat != 0)
+	if ((attackfloat != 0) || (self.charge_time > time))
 	{
 		if (dist < exec_rangeattack)
 		{
@@ -817,7 +423,7 @@ void(float attackfloat) executioner_attack = { local vector delta;
 				self.think = executioner_chargesh2;
 			else
 				self.think = executioner_chargebsh2;
-
+			self.charge_time  = time + random(4,7);
 			self.nextthink = time + 0.05;
 		}
 	}
@@ -826,31 +432,31 @@ void(float attackfloat) executioner_attack = { local vector delta;
 void() executioner_atk1 =[$ex_attack1, executioner_atk2]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta1);
+	ai_test_monster_run(exec_atta1);
 	self.charging = 1;
 	chattersound("enemies/executioner/chatter_combat", 3, 1);
 };
 void() executioner_atk2 =[$ex_attack2, executioner_atk3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta2);
+	ai_test_monster_run(exec_atta2);
 	executioner_subattack();
 };
 void() executioner_atk3 =[$ex_attack3, executioner_atk4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta3);
+	ai_test_monster_run(exec_atta3);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_atk4 =[$ex_attack4, executioner_atk5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta4);
+	ai_test_monster_run(exec_atta4);
 };
 void() executioner_atk5 =[$ex_attack5, executioner_atk6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta5);
+	ai_test_monster_run(exec_atta5);
 	self.exec_push = 24;
 	chattersound("enemies/executioner/blade_swing", 3, 1);
 };
@@ -859,30 +465,30 @@ void() executioner_atk6 =[$ex_attack6, executioner_atk7]
 	ai_face();
 	executioner_attack(exec_damage);
 	executioner_subattack();
-	ai_executioner_runwalk(exec_atta6);
+	ai_test_monster_run(exec_atta6);
 };
 void() executioner_atk7 =[$ex_attack7, executioner_atk8]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta7);
+	ai_test_monster_run(exec_atta7);
 };
 void() executioner_atk8 =[$ex_attack8, executioner_atk9]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta8);
+	ai_test_monster_run(exec_atta8);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_atk9 =[$ex_attack9, executioner_atk10]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_atta9);
+	ai_test_monster_run(exec_atta9);
 	executioner_subattack();
 };
 void() executioner_atk10 =[$ex_attack10, executioner_run1]
 {
 	ai_face();
 
-	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player"))
+	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player") && (self.charge_time < time))
 		self.think = executioner_chrgrandom;
 
 	if ((visible2(self.enemy, 128, 0.3)))
@@ -902,7 +508,7 @@ void() executioner_atk10 =[$ex_attack10, executioner_run1]
 void() executioner_atkb1 =[$ex_attacka1, executioner_atkb2]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb1);
+	ai_test_monster_run(exec_attb1);
 	executioner_subattack();
 	self.charging = 1;
 	chattersound("enemies/executioner/chatter_combat", 3, 1);
@@ -910,23 +516,23 @@ void() executioner_atkb1 =[$ex_attacka1, executioner_atkb2]
 void() executioner_atkb2 =[$ex_attacka2, executioner_atkb3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb2);
+	ai_test_monster_run(exec_attb2);
 };
 void() executioner_atkb3 =[$ex_attacka3, executioner_atkb4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb3);
+	ai_test_monster_run(exec_attb3);
 	executioner_subattack();
 };
 void() executioner_atkb4 =[$ex_attacka4, executioner_atkb5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb4);
+	ai_test_monster_run(exec_attb4);
 };
 void() executioner_atkb5 =[$ex_attacka5, executioner_atkb6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb5);
+	ai_test_monster_run(exec_attb5);
 	walksound("enemies/executioner/step", 3);
 	chattersound("enemies/executioner/blade_swing", 3, 1);
 };
@@ -935,30 +541,30 @@ void() executioner_atkb6 =[$ex_attacka6, executioner_atkb7]
 	ai_face();
 	executioner_attack(exec_damage);
 	executioner_subattack();
-	ai_executioner_runwalk(exec_attb6);
+	ai_test_monster_run(exec_attb6);
 };
 void() executioner_atkb7 =[$ex_attacka7, executioner_atkb8]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb7);
+	ai_test_monster_run(exec_attb7);
 };
 void() executioner_atkb8 =[$ex_attacka8, executioner_atkb9]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb8);
+	ai_test_monster_run(exec_attb8);
 	executioner_subattack();
 };
 void() executioner_atkb9 =[$ex_attacka9, executioner_atkb10]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb9);
+	ai_test_monster_run(exec_attb9);
 };
 void() executioner_atkb10 =[$ex_attacka10, executioner_run1]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attb10);
+	ai_test_monster_run(exec_attb10);
 	executioner_subattack();
-	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player"))
+	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player") && (self.charge_time < time))
 		self.think = executioner_chrgrandom;
 
 	if ((visible2(self.enemy, 128, 0.3)))
@@ -973,7 +579,7 @@ void() executioner_atkb10 =[$ex_attacka10, executioner_run1]
 void() executioner_atkc1 =[$ex_attackb1, executioner_atkc2]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc1);
+	ai_test_monster_run(exec_attc1);
 	executioner_subattack();
 	self.charging = 1;
 	chattersound("enemies/executioner/chatter_combat", 3, 1);
@@ -981,24 +587,24 @@ void() executioner_atkc1 =[$ex_attackb1, executioner_atkc2]
 void() executioner_atkc2 =[$ex_attackb2, executioner_atkc3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc2);
+	ai_test_monster_run(exec_attc2);
 };
 void() executioner_atkc3 =[$ex_attackb3, executioner_atkc4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc3);
+	ai_test_monster_run(exec_attc3);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_atkc4 =[$ex_attackb4, executioner_atkc5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc4);
+	ai_test_monster_run(exec_attc4);
 	executioner_subattack();
 };
 void() executioner_atkc5 =[$ex_attackb5, executioner_atkc6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc5);
+	ai_test_monster_run(exec_attc5);
 	chattersound("enemies/executioner/blade_swing", 3, 1);
 };
 void() executioner_atkc6 =[$ex_attackb6, executioner_atkc7]
@@ -1006,32 +612,32 @@ void() executioner_atkc6 =[$ex_attackb6, executioner_atkc7]
 	ai_face();
 	executioner_attack(exec_damage);
 	executioner_subattack();
-	ai_executioner_runwalk(exec_attc6);
+	ai_test_monster_run(exec_attc6);
 };
 void() executioner_atkc7 =[$ex_attackb7, executioner_atkc8]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc7);
+	ai_test_monster_run(exec_attc7);
 	executioner_subattack();
 };
 void() executioner_atkc8 =[$ex_attackb8, executioner_atkc9]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc8);
+	ai_test_monster_run(exec_attc8);
 	walksound("enemies/executioner/step", 3);
 };
 void() executioner_atkc9 =[$ex_attackb9, executioner_atkc10]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc9);
+	ai_test_monster_run(exec_attc9);
 	executioner_subattack();
 };
 void() executioner_atkc10 =[$ex_attackb10, executioner_run1]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attc10);
+	ai_test_monster_run(exec_attc10);
 
-	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player"))
+	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player") && (self.charge_time < time))
 		self.think = executioner_chrgrandom;
 
 	if ((visible2(self.enemy, 128, 0.3)))
@@ -1052,7 +658,7 @@ void() executioner_atkc10 =[$ex_attackb10, executioner_run1]
 void() executioner_atkd1 =[$ex_attackc1, executioner_atkd2]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd1);
+	ai_test_monster_run(exec_attd1);
 	executioner_subattack();
 	self.charging = 1;
 	chattersound("enemies/executioner/chatter_combat", 3, 1);
@@ -1060,23 +666,23 @@ void() executioner_atkd1 =[$ex_attackc1, executioner_atkd2]
 void() executioner_atkd2 =[$ex_attackc2, executioner_atkd3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd2);
+	ai_test_monster_run(exec_attd2);
 };
 void() executioner_atkd3 =[$ex_attackc3, executioner_atkd4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd3);
+	ai_test_monster_run(exec_attd3);
 	executioner_subattack();
 };
 void() executioner_atkd4 =[$ex_attackc4, executioner_atkd5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd4);
+	ai_test_monster_run(exec_attd4);
 };
 void() executioner_atkd5 =[$ex_attackc5, executioner_atkd6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd5);
+	ai_test_monster_run(exec_attd5);
 	chattersound("enemies/executioner/blade_swing", 3, 1);
 	walksound("enemies/executioner/step", 3);
 };
@@ -1085,31 +691,31 @@ void() executioner_atkd6 =[$ex_attackc6, executioner_atkd7]
 	ai_face();
 	executioner_attack(exec_damage);
 	executioner_subattack();
-	ai_executioner_runwalk(exec_attd6);
+	ai_test_monster_run(exec_attd6);
 };
 void() executioner_atkd7 =[$ex_attackc7, executioner_atkd8]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd7);
+	ai_test_monster_run(exec_attd7);
 	executioner_subattack();
 };
 void() executioner_atkd8 =[$ex_attackc8, executioner_atkd9]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd8);
+	ai_test_monster_run(exec_attd8);
 };
 void() executioner_atkd9 =[$ex_attackc9, executioner_atkd10]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_attd9);
+	ai_test_monster_run(exec_attd9);
 	executioner_subattack();
 };
 void() executioner_atkd10 =[$ex_attackc10, executioner_run1]
 {
-	ai_executioner_runwalk(exec_attd10);
+	ai_test_monster_run(exec_attd10);
 	ai_face();
 
-	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player"))
+	if ((visible2(self.enemy, 384, 0.3)) && (self.enemy.classname != "player") && (self.charge_time < time))
 		self.think = executioner_chrgrandom;
 
 	if ((visible2(self.enemy, 128, 0.3)))
@@ -1126,7 +732,9 @@ void() executioner_atkd10 =[$ex_attackc10, executioner_run1]
 	//self.think = executioner_atkd1;
 };
 
-void() executioner_chrgrandom = { if (self.skin == 1)
+void() executioner_chrgrandom = 
+{
+	if (self.skin == 1)
 		self.think = executioner_chrbg1;
 
 	if (self.skin == 2)
@@ -1147,48 +755,46 @@ void() executioner_chrgrandom = { if (self.skin == 1)
 		self.charging = 0;
 		self.think = executioner_run1;
 	}
-
+	self.charge_time  = time + random(2,7);
 	self.nextthink = time;
 };
-.float chargetime;
 
 void() executioner_chrg1b;
-void() executioner_chrg1 = { self.charging = 1;
-
-	self.chargetime = time + exec_chargetime;
-	exec_jump();
+void() executioner_chrg1 = 
+{
+	self.charging = 1;
 
 	executioner_subattack();
 	self.oldframe = $ex_rtcha;
 	self.frame = self.oldframe;
 	self.ty_charge = 1;
 	ai_face();
-	ai_executioner_runwalk(15);
+	ai_test_monster_run(15);
 	self.think = executioner_chrg1b;
 	self.nextthink = time + 0.1;
 };
 void() executioner_chrg1b =[$ex_charge1, executioner_chrg2]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge1);
+	ai_test_monster_run(exec_charge1);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 };
 void() executioner_chrg2 =[$ex_charge2, executioner_chrg3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge2);
+	ai_test_monster_run(exec_charge2);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 };
 void() executioner_chrg3 =[$ex_charge3, executioner_chrg4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge3);
+	ai_test_monster_run(exec_charge3);
 	executioner_attack(0);
-	exec_jump();
+	
 	walksound("enemies/executioner/step", 3);
 	executioner_subattack();
 	executioner_subattack();
@@ -1196,9 +802,9 @@ void() executioner_chrg3 =[$ex_charge3, executioner_chrg4]
 void() executioner_chrg4 =[$ex_charge4, executioner_chrg5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge4);
+	ai_test_monster_run(exec_charge4);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 	self.oldvelocity_x = self.velocity_x;
 	self.oldvelocity_y = self.velocity_y;
@@ -1206,18 +812,18 @@ void() executioner_chrg4 =[$ex_charge4, executioner_chrg5]
 void() executioner_chrg5 =[$ex_charge5, executioner_chrg6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge5);
+	ai_test_monster_run(exec_charge5);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 };
 void() executioner_chrg6 =[$ex_charge6, executioner_chrg1b]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge6);
+	ai_test_monster_run(exec_charge6);
 	executioner_attack(0);
 	executioner_subattack();
-	exec_jump();
+	
 	walksound("enemies/executioner/step", 3);
 	self.charging = 0;
 	if (!visible(self.enemy))
@@ -1230,7 +836,7 @@ void() executioner_chrg6 =[$ex_charge6, executioner_chrg1b]
 	executioner_subattack();
 
 
-		if(time > self.chargetime)
+		if (self.charge_time > time)
 		self.think = executioner_run1;
 
 
@@ -1238,13 +844,14 @@ void() executioner_chrg6 =[$ex_charge6, executioner_chrg1b]
 };
 
 void() executioner_chrbg1b;
-void() executioner_chrbg1 = { self.charging = 1;
+void() executioner_chrbg1 = 
+{
+	self.charging = 1;
 	self.oldframe = $ex_rtchb;
 	self.frame = self.oldframe;
-	self.chargetime = time + exec_chargetime;
 	self.ty_charge = 0;
 	ai_face();
-	ai_executioner_runwalk(15);
+	ai_test_monster_run(20);
 	executioner_subattack();
 	self.think = executioner_chrbg1b;
 	self.nextthink = time + 0.1;
@@ -1252,25 +859,25 @@ void() executioner_chrbg1 = { self.charging = 1;
 void() executioner_chrbg1b =[$ex_chargeb1, executioner_chrbg2]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge1);
+	ai_test_monster_run(exec_charge1);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 };
 void() executioner_chrbg2 =[$ex_chargeb2, executioner_chrbg3]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge2);
+	ai_test_monster_run(exec_charge2);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 };
 void() executioner_chrbg3 =[$ex_chargeb3, executioner_chrbg4]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge3);
+	ai_test_monster_run(exec_charge3);
 	executioner_attack(0);
-	exec_jump();
+	
 	walksound("enemies/executioner/step", 3);
 	executioner_subattack();
 	executioner_subattack();
@@ -1278,9 +885,9 @@ void() executioner_chrbg3 =[$ex_chargeb3, executioner_chrbg4]
 void() executioner_chrbg4 =[$ex_chargeb4, executioner_chrbg5]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge4);
+	ai_test_monster_run(exec_charge4);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 
 	self.oldvelocity_x = self.velocity_x;
@@ -1290,18 +897,18 @@ void() executioner_chrbg4 =[$ex_chargeb4, executioner_chrbg5]
 void() executioner_chrbg5 =[$ex_chargeb5, executioner_chrbg6]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge5);
+	ai_test_monster_run(exec_charge5);
 	executioner_attack(0);
-	exec_jump();
+	
 	executioner_subattack();
 };
 void() executioner_chrbg6 =[$ex_chargeb6, executioner_chrbg1b]
 {
 	ai_face();
-	ai_executioner_runwalk(exec_charge6);
+	ai_test_monster_run(exec_charge6);
 	executioner_attack(0);
 	executioner_subattack();
-	exec_jump();
+	
 	walksound("enemies/executioner/step", 3);
 	self.charging = 0;
 	if (!visible(self.enemy))
@@ -1311,7 +918,7 @@ void() executioner_chrbg6 =[$ex_chargeb6, executioner_chrbg1b]
 	if ((max(self.enemy.origin_z, self.origin_z) - min(self.enemy.origin_z, self.origin_z)) > 16)
 		self.think = executioner_run1;
 	executioner_subattack();
-		if(time > self.chargetime)
+		if(self.charge_time > time)
 		self.think = executioner_run1;
 
 	self.nextthink = time + 0.1;
@@ -1325,7 +932,9 @@ void() executioner_chrbg6 =[$ex_chargeb6, executioner_chrbg1b]
 //if((visible2(self.enemy, 128,0.3)))
 //self.think = executioner_atkr;
 
-void() executioner_atkr = { local float r;
+void() executioner_atkr = 
+{
+	local float r;
 	r = random();
 
 	if (self.exec_type == 1)
@@ -1356,7 +965,9 @@ void() executioner_atkr = { local float r;
 
 //void(float effectnum, vector org, vector vel, float howmany) pointparticles = #337;	// same as in CSQC
 .float armcount;
-void() bleedthink = { local entity e;
+void() bleedthink = 
+{
+	local entity e;
 	e = self.owner;
 	if (self.owner.cnt == 100)
 	{
@@ -1553,7 +1164,9 @@ void() executioner_paina10 =[$exec_paina10, executioner_run1]
 		self.think = executioner_chrgrandom;
 };
 
-void() executioner_postpain = { local float r;
+void() executioner_postpain = 
+{
+	local float r;
 	r = random();
 
 	if (r < 0.3)
@@ -1569,7 +1182,9 @@ void() executioner_postpain = { local float r;
 };
 .float mutilate;
 .float arm_weak;
-void() executioner_postpain2 = { if (self.arm_weak == 1)
+void() executioner_postpain2 = 
+{
+	if (self.arm_weak == 1)
 		self.think = executioner_painf1;
 	if (self.arm_weak == 2)
 		self.think = executioner_paine1;
@@ -1577,7 +1192,9 @@ void() executioner_postpain2 = { if (self.arm_weak == 1)
 	self.nextthink = time;
 }
 
-void(entity attacker, float damage) executioner_pain = { if (self.charging == 1)
+void(entity attacker, float damage) executioner_pain = 
+{
+	if (self.charging == 1)
 		return;
 	if (self.paintake < 100)
 		return;
@@ -1622,7 +1239,9 @@ void(entity attacker, float damage) executioner_pain = { if (self.charging == 1)
 	self.nextthink = time;
 };
 
-void() executioner_diea1 = { if (self.cnt < 14)
+void() executioner_diea1 = 
+{
+	if (self.cnt < 14)
 	{
 		self.frame += 1;
 		self.cnt += 1;
@@ -1635,7 +1254,9 @@ void() executioner_diea1 = { if (self.cnt < 14)
 	self.nextthink = time + 0.1;
 };
 
-void() executioner_death = { if (self.skin == 1)
+void() executioner_death = 
+{
+	if (self.skin == 1)
 	{
 		self.frame = $exec_deathb1;
 		self.cnt = 0;
@@ -1655,7 +1276,9 @@ void() executioner_death = { if (self.skin == 1)
 
 };
 
-void() precache_monster_executioner = { precache_sound("enemies/executioner/blade_swing1.ogg");
+void() precache_monster_executioner = 
+{
+	precache_sound("enemies/executioner/blade_swing1.ogg");
 	precache_sound("enemies/executioner/blade_swing2.ogg");
 	precache_sound("enemies/executioner/blade_swing3.ogg");
 	precache_sound("enemies/executioner/chatter_combat1.ogg");
@@ -1682,7 +1305,9 @@ void() precache_monster_executioner = { precache_sound("enemies/executioner/blad
 	precache_model("models/enemies/executioner/arm_left.md3");
 };
 
-void() monster_executioner = { precache_sound("enemies/executioner/blade_swing1.ogg");
+void() monster_executioner = 
+{
+	precache_sound("enemies/executioner/blade_swing1.ogg");
 	precache_sound("enemies/executioner/blade_swing2.ogg");
 	precache_sound("enemies/executioner/blade_swing3.ogg");
 	precache_sound("enemies/executioner/chatter_combat1.ogg");

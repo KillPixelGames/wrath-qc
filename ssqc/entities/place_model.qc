@@ -3,13 +3,17 @@ void() func_train_find;
 void() mercenary_test_think;
 void(entity e, vector r) setsizeitem;
 
-void() train_blocked = { if (time < self.attack_finished)
+void() train_blocked = 
+{
+	if (time < self.attack_finished)
 		return;
 	self.attack_finished = time + 0.5;
 	T_Damage(other, self, self, self.dmg);
 };
 
-void() train_use = { if ((self.think == train_next) && (self.wait == -1))
+void() train_use = 
+{
+	if ((self.think == train_next) && (self.wait == -1))
 	{
 		train_next();
 		return;
@@ -20,7 +24,9 @@ void() train_use = { if ((self.think == train_next) && (self.wait == -1))
 	train_next();
 };
 
-void() train_wait = { if (self.wait)
+void() train_wait = 
+{
+	if (self.wait)
 	{
 		self.nextthink = self.ltime + self.wait;
 		sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
@@ -30,7 +36,9 @@ void() train_wait = { if (self.wait)
 	self.think = train_next;
 };
 
-void() train_next = { local vector fang;
+void() train_next = 
+{
+	local vector fang;
 	local entity targ;
 	targ = find(world, targetname, self.target);
 	self.target = targ.target;
@@ -50,7 +58,9 @@ void() train_next = { local vector fang;
 	}
 };
 
-void() func_train_find = { local entity targ;
+void() func_train_find = 
+{
+	local entity targ;
 	targ = find(world, targetname, self.target);
 	self.target = targ.target;
 	setorigin(self, targ.origin - self.mins);
@@ -62,7 +72,9 @@ void() func_train_find = { local entity targ;
 	}
 };
 
-void() func_train = { if (!self.speed)
+void() func_train = 
+{
+	if (!self.speed)
 		self.speed = 100;
 	if (!self.target)
 		objerror("func_train without a target");
@@ -99,7 +111,9 @@ void() func_train = { if (!self.speed)
 	self.think = func_train_find;
 };
 
-void() misc_teleporttrain = { if (!self.speed)
+void() misc_teleporttrain = 
+{
+	if (!self.speed)
 		self.speed = 100;
 
 	if (!self.target)
@@ -130,7 +144,9 @@ void() misc_teleporttrain = { if (!self.speed)
 
 void() null = {};
 
-void() mercenaryanim = { self.frame += 1;
+void() mercenaryanim = 
+{
+	self.frame += 1;
 	if (self.frame >= 98)
 		self.frame = 1;
 	if (self.frame == 32)
@@ -148,7 +164,9 @@ void() mercenaryanim = { self.frame += 1;
 	self.nextthink = time + 0.1;
 };
 
-void() place_model = { precache_model(self.model);
+void() place_model = 
+{
+	precache_model(self.model);
 	setmodel(self, self.model);
 	if (self.model == "models/enemies/mercenary/mercenary.md3")
 		mercenaryanim();
@@ -176,7 +194,9 @@ void() place_model = { precache_model(self.model);
 	}
 };
 
-void() mercenary_test_think2 = { self.colormod = '0 0 3';
+void() mercenary_test_think2 = 
+{
+	self.colormod = '0 0 3';
 	local float acframe;
 	acframe = self.frame + 1;
 	if (acframe >= 155)
@@ -193,7 +213,9 @@ void() mercenary_test_think2 = { self.colormod = '0 0 3';
 	self.nextthink = time + 0.1;
 };
 
-void() mercenary_test_think = { self.colormod = '0 3 0';
+void() mercenary_test_think = 
+{
+	self.colormod = '0 3 0';
 	local float acframe;
 	acframe = self.frame + 1;
 	if (acframe >= 25)
@@ -210,7 +232,9 @@ void() mercenary_test_think = { self.colormod = '0 3 0';
 	self.nextthink = time + 0.1;
 };
 
-void() mercenary_test = { self.frame = 11;
+void() mercenary_test = 
+{
+	self.frame = 11;
 	precache_model("models/enemies/mercenary/mercenary.md3");
 	setmodel(self, "models/enemies/mercenary/mercenary.md3");
 	self.think = mercenary_test_think;
@@ -218,13 +242,17 @@ void() mercenary_test = { self.frame = 11;
 }
 
 string testmodel;
-void() test_model_frik = { local float readparms;
+void() test_model_frik = 
+{
+	local float readparms;
 	readparms = fopen("map/test_model.txt", FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
 	testmodel = strzone(fgets(readparms));
 	fclose(readparms);
 };
 
-void() test_model = { test_model_frik();
+void() test_model = 
+{
+	test_model_frik();
 	self.model = testmodel;
 	precache_model(testmodel);
 	setmodel(self, testmodel);
@@ -254,10 +282,18 @@ void() test_model = { test_model_frik();
 .entity cyst4;
 void() cys_explode1b;
 
-void() CyExplosionBody = { local entity newcyst;
-	local vector tagorg;
-	tagorg = gettaginfo(self.tag_entity, self.tag_index);
+void() CyExplosionBody = 
+{
+	local entity newcyst;
+
+
+	vector tagorg;
+	if(self.owner.flags & FL_MONSTER)
+		tagorg = gettaginfo(self.tag_entity, self.tag_index);
+	else
+		tagorg = self.origin;
 	remove(self);
+	
 	newcyst = spawn();
 	setorigin(newcyst, tagorg);
 	newcyst.scale = 0.25;
@@ -270,9 +306,14 @@ void() CyExplosionBody = { local entity newcyst;
 	local string snd;
 	snd = strcat("impact/projectiles/cyst_explo", ftos(floor(random() *5) + 1), ".ogg");
 	sound(newcyst, CHAN_AUTO, snd, 1, 0.25);
-	makevectors(self.owner.angles);
-	if (self.owner.health > 0)
-		pointparticles(particleeffectnum("cystbody"), tagorg, (v_forward *16), 1);
+
+
+	if(self.owner.flags & FL_MONSTER)
+	{
+		makevectors(self.owner.angles);
+		if (self.owner.health > 0)
+			pointparticles(particleeffectnum("cystbody"), tagorg, (v_forward *16), 1);
+	}
 	newcyst.think = cys_explode1b;
 	newcyst.nextthink = time + 0.1;
 };
@@ -281,7 +322,9 @@ void() CyExplosionBody = { local entity newcyst;
 .float cyst_rate_scale;
 .float cyst_rate_glowmod;
 
-void() cyst_think = { if (self.cyst_flag)
+void() cyst_think = 
+{
+	if (self.cyst_flag)
 	{
 		self.scale -= self.cyst_rate_glowmod / 2;
 		self.glowmod_x -= self.cyst_rate_glowmod;
@@ -338,7 +381,9 @@ void() cyst_think = { if (self.cyst_flag)
 	self.nextthink = time + 0.05;
 };
 
-void(entity e) spawn_cysts = { local entity cst1, cst2, cst3, cst4;
+void(entity e) spawn_cysts = 
+{
+	local entity cst1, cst2, cst3, cst4;
 
 	cst1 = spawn();
 	cst2 = spawn();
@@ -442,7 +487,9 @@ void(entity e) spawn_cysts = { local entity cst1, cst2, cst3, cst4;
 	cst4.nextthink = time + random();
 };
 
-void() test_afflicted = { precache_model("models/enemies/afflicted/afflicted_animtest.md3");
+void() test_afflicted = 
+{
+	precache_model("models/enemies/afflicted/afflicted_animtest.md3");
 	setmodel(self, "models/enemies/afflicted/afflicted_animtest.md3");
 	self.solid = SOLID_SLIDEBOX;
 	self.takedamage = DAMAGE_YES;
@@ -466,9 +513,13 @@ void() test_afflicted = { precache_model("models/enemies/afflicted/afflicted_ani
 		self.think = func_train_find;
 	}
 };
-void() TorchAmbient = { ambientsound(self.origin, self.noise, 1, 0.5);
+void() TorchAmbient = 
+{
+	ambientsound(self.origin, self.noise, 1, 0.5);
 };
-void() object_torch1 = { precache_model("models/objects/fixtures/torch1.md3");
+void() object_torch1 = 
+{
+	precache_model("models/objects/fixtures/torch1.md3");
 	precache_sound("fx/fire1.ogg");
 	precache_sound("fx/fire2.ogg");
 	setmodel(self, "models/objects/fixtures/torch1.md3");
@@ -481,7 +532,9 @@ void() object_torch1 = { precache_model("models/objects/fixtures/torch1.md3");
 
 }
 
-void() object_fire1 = { precache_model("models/objects/fixtures/fire1.md3");
+void() object_fire1 = 
+{
+	precache_model("models/objects/fixtures/fire1.md3");
 		precache_sound("fx/fire1.ogg");
 		precache_sound("fx/fire2.ogg");
 		setmodel(self, "models/objects/fixtures/fire1.md3");
@@ -502,7 +555,9 @@ void() object_fire1 = { precache_model("models/objects/fixtures/fire1.md3");
 .string gibmodel4;
 
 .vector tagorigin;
-void(string tagname, entity e) setoriginbytag = { local vector tagorg;
+void(string tagname, entity e) setoriginbytag = 
+{
+	local vector tagorg;
 	local float tagindex;
 	tagindex = gettagindex(e, tagname);
 	tagorg = gettaginfo(e, tagindex);
@@ -510,7 +565,9 @@ void(string tagname, entity e) setoriginbytag = { local vector tagorg;
 };
 vector(vector rvel, entity ent) relvel;
 
-void(string gibtagname, string gibmodel, entity ownr, vector gvel) spawngibs = { local entity gib;
+void(string gibtagname, string gibmodel, entity ownr, vector gvel) spawngibs = 
+{
+	local entity gib;
 	gib = spawn();
 	gib.owner = ownr;
 	setmodel(gib, gibmodel);
@@ -534,7 +591,9 @@ void(vector org, string class, float ammount, entity ownr) drop_item;
 .float urn_health;
 .float urn_ammo;
 .float urn_artifacts;
-void() urn_die = { local vector tagorg;
+void() urn_die = 
+{
+	local vector tagorg;
 	local float tagindex;
 	local string tagname;
 	tagname = ("tag_item");tagindex = gettagindex(self, tagname);tagorg = gettaginfo(self, tagindex);
@@ -603,7 +662,9 @@ void() urn_die = { local vector tagorg;
 	self.solid = SOLID_NOT;
 	setsize(self, '0 0 0', '0 0 0');
 };
-void() breakable_urn_small = { precache_model("models/destruct/urns/urn32.md3");
+void() breakable_urn_small = 
+{
+	precache_model("models/destruct/urns/urn32.md3");
 	precache_model("models/destruct/urns/urn32_destroyed.md3");
 	precache_sound("impact/destruct/urn_break1.ogg");
 	precache_sound("impact/destruct/urn_break2.ogg");
@@ -630,7 +691,9 @@ void() breakable_urn_small = { precache_model("models/destruct/urns/urn32.md3");
 	self.th_die = urn_die;
 	self.takedamage = DAMAGE_YES;
 };
-void() breakable_urn_medium = { self.gibmodel1 = ("models/destruct/urns/urn48_gibs/urn48_giba.md3");
+void() breakable_urn_medium = 
+{
+	self.gibmodel1 = ("models/destruct/urns/urn48_gibs/urn48_giba.md3");
 	self.gibmodel2 = ("models/destruct/urns/urn48_gibs/urn48_gibb.md3");
 	self.gibmodel3 = ("models/destruct/urns/urn48_gibs/urn48_gibc.md3");
 	self.gibmodel4 = ("models/destruct/urns/urn48_gibs/urn48_gibd.md3");
@@ -656,7 +719,9 @@ void() breakable_urn_medium = { self.gibmodel1 = ("models/destruct/urns/urn48_gi
 	self.th_die = urn_die;
 	self.takedamage = DAMAGE_YES;
 };
-void() breakable_urn_large = { self.gibmodel1 = ("models/destruct/urns/urn64_gibs/urn64_giba.md3");
+void() breakable_urn_large = 
+{
+	self.gibmodel1 = ("models/destruct/urns/urn64_gibs/urn64_giba.md3");
 	self.gibmodel2 = ("models/destruct/urns/urn64_gibs/urn64_gibb.md3");
 	self.gibmodel3 = ("models/destruct/urns/urn64_gibs/urn64_gibc.md3");
 	self.gibmodel4 = ("models/destruct/urns/urn64_gibs/urn64_gibd.md3");

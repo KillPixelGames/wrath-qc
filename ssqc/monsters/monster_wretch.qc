@@ -196,7 +196,9 @@ self.skip_attackb = 0;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////projectile attack
-void() proj_wretch_explo = { 
+void() proj_wretch_explo = 
+{
+	
 
 if(self.movetype != 0)
 {
@@ -218,9 +220,13 @@ self.alpha -= 0.1;
 		self.think = proj_wretch_explo;
 	self.nextthink = time + 0.05;
 }
-void() projectile_touch_wre = { local float damg;
+void() projectile_touch_wre = 
+{
+	local float damg;
 	if (other == self.owner)
 		return;
+	if(other.solid == SOLID_TRIGGER)
+	return;
 	self.solid = SOLID_NOT;
 	if (pointcontents(self.origin) == CONTENT_SKY)
 	{
@@ -275,7 +281,9 @@ void()proj_wretch_explo_think =
 };	
 
 
-void(vector org, vector dir, entity ownerproj) launch_projectile_wre = { local entity shotgun_proj;
+void(vector org, vector dir, entity ownerproj) launch_projectile_wre = 
+{
+	local entity shotgun_proj;
 	monstersound3("enemies/wretch/fire", 5, CHAN_AUTO);	
 	shotgun_proj = spawn();
 	
@@ -283,6 +291,7 @@ void(vector org, vector dir, entity ownerproj) launch_projectile_wre = { local e
 //	shotgun_proj.magnetized = 1;
 	shotgun_proj.owner = ownerproj;
 	shotgun_proj.movetype = MOVETYPE_FLYMISSILE;
+	shotgun_proj.wrathflags += FL_PROJECTILE;
 	shotgun_proj.solid = SOLID_TRIGGER;
 	shotgun_proj.scale = 1;
 	shotgun_proj.angles = vectoangles(dir);
@@ -293,7 +302,7 @@ void(vector org, vector dir, entity ownerproj) launch_projectile_wre = { local e
 	shotgun_proj.traileffectnum = particleeffectnum("proj_wretch_trail");
 	local entity oself;oself = self;self = shotgun_proj;
 	//void(entity e, float chan, string samp, float vol, float atten, float speed, float flags) sound7 = 
-	sound7(self, CHAN_WEAPON, "enemies/wretch/proj_loop.wav", 1, 0.25, 80 + random() *30, 0);
+	sound7(self, CHAN_WEAPON, "enemies/wraith/proj_loop", 1, 0.25, 80 + random() *30, 0);
 	self = oself;
 	setmodel(shotgun_proj, "models/projectiles/proj_wretch.md3");
 	setsize(shotgun_proj, '0 0 0', '0 0 0');
@@ -459,7 +468,9 @@ void() wretch_attackb11 =[$wre_attackb11, wretch_run1]{ai_face();ai_runwalk(wret
 
 };
 
-void() wretch_melee_attack = { local vector delta;
+void() wretch_melee_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -487,7 +498,7 @@ void() wretch_melee5=[$wre_meleea5, wretch_melee6]{ai_face();wretch_melee_attack
 void() wretch_melee6=[$wre_meleea6, wretch_melee7]{ai_face();};
 void() wretch_melee7=[$wre_meleea7, wretch_melee8]{ai_face();};
 void() wretch_melee8=[$wre_meleea8, wretch_run1]{ai_face();
-	if (visible(self.enemy)&& (self.enemy.health > 0) && (self.enemy != world))
+	if (visible(self.enemy)&& (self.enemy.health > 0)  && (self.enemy != world))
 	{
 		enemy_range = range(self.enemy);
 		if(enemy_range == RANGE_MELEE)
@@ -518,7 +529,9 @@ void() wretch_meleeb8=[$wre_meleeb8, wretch_run1]{ai_face();
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////melee attack
 /*
-void(float wdmg) wretch_melee_attack = { local vector delta;
+void(float wdmg) wretch_melee_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -534,7 +547,9 @@ void(float wdmg) wretch_melee_attack = { local vector delta;
 	}
 };
 
-void() wretch_sattack = { ai_face();
+void() wretch_sattack = 
+{
+	ai_face();
 	self.gravity = 1;
 	self.movetype = MOVETYPE_STEP;
 	self.frame = $wre_satk1;
@@ -593,10 +608,13 @@ void() wretch_postpain =
 /////////////////////////////////////////////////////////////////////////////////////////////
 void(entity enemy, float dmg) wretch_paina1 = 
 { 
+	if(enemy.weapon != IT_BOIL)
+	{
 	local float rp;
 	rp = random() *100;	
 	if (wretch_rtp <= rp)
 		return;
+	}
 	self.glowmod = '0.5 0.5 0.5';
 	self.painframe = 1;
 	float r = random();
@@ -649,8 +667,9 @@ void() wrethc_explode_head =
 	ThrowGib3(self, "models/gibs/gib_med.md3", 0, 0.75, 1, 2, tagorg, relvel(wre_gib13, self), 0, 3);	// relvel: forward, right, up
 	ThrowGib3(self, "models/gibs/gib_large.md3", 0, 0.75, 1, 2, tagorg, relvel(wre_gib14, self), 0, 3);	// relvel: forward, right, up
 	ThrowGib3(self, "models/gibs/gib_large.md3", 0, 0.75, 1, 2, tagorg, relvel(wre_gib15, self), 0, 3);	// relvel: forward, right, up
-	remove(self);
-}
+	self.think = SUB_Remove;
+	self.nextthink = time;
+};
 .float shotingtime;
 
 void()wretch_postspining_head =
@@ -798,7 +817,9 @@ void() wretch_postdie =
 	self.nextthink = time + 0.1;
 
 };	
-void() wretch_diea1 = { 
+void() wretch_diea1 = 
+{
+	
 
 	self.solid = SOLID_NOT;
 	self.solid = 0;
@@ -811,7 +832,6 @@ void() wretch_diea1 = {
 	self.th_missile = null;
 	self.th_melee = null;
 	self.th_pain = nullpain;
-	self.th_die = null;
 	//drop_item(self.origin + '0 0 0', "shells_inv", 4, self);
 	self.painframe = 1;
 	self.glowmod = '0.5 0.5 0.5';
@@ -848,7 +868,9 @@ void() wretch_diea1 = {
 
 /*WRATHED monster_wretch (1 0 0) (-16 -16 -24) (16 16 40) Ambush*/
 .vector bbvv;
-void() precache_monster_wretch = { 
+void() precache_monster_wretch = 
+{
+	
 	precache_model ("particles/explo/explo_wretch.md3");
 	precache_model ("particles/explo/explo_wretch_head.md3");
 	precache_model("models/enemies/wretch/wretch.md3");
@@ -901,7 +923,9 @@ void() precache_monster_wretch = {
 
 };
 
-void() monster_wretch = { precache_model("models/enemies/wretch/wretch.md3");
+void() monster_wretch = 
+{
+	precache_model("models/enemies/wretch/wretch.md3");
 	if (deathmatch)
 	{
 		remove(self);

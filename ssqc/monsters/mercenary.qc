@@ -247,7 +247,9 @@ void() mercenary_run9 =[$walk9, mercenary_run10]
 	self.deathnumber = 1;
 	self.nextthink = time + 0.1;
 };
-void() mercenary_run10 = { self.frame = $walk10;
+void() mercenary_run10 = 
+{
+	self.frame = $walk10;
 	self.paintype = 1;self.deathnumber = 1;
 	ai_runwalk(wvel10);
 	if (visible(self.enemy))
@@ -263,7 +265,9 @@ void() mercenary_run10 = { self.frame = $walk10;
 MERCENARY ATTACK
 ==============================================================================
 */
-void() mercenary_fire = { local vector dir;
+void() mercenary_fire = 
+{
+	local vector dir;
 	local entity en;
 	ai_face();
 	// fire somewhat behind the player, so a dodging player is harder to hit
@@ -686,7 +690,9 @@ void() mercenary_attackb26 =[$attackb26, mercenary_attackb27]
 {
 	self.nextthink = time + 0.1;
 };
-void() mercenary_attackb27 = { self.frame = $attackb27;
+void() mercenary_attackb27 = 
+{
+	self.frame = $attackb27;
 	self.ammo_coachgun = 3;
 	if (self.health < 30)
 		self.think = mercenary_reloadtoattack;
@@ -703,14 +709,18 @@ void() mercenary_attackb27 = { self.frame = $attackb27;
 	self.nextthink = time + 0.1;
 };
 
-void() mercenary_prefire = { if (self.ammo_coachgun >= 2)
+void() mercenary_prefire = 
+{
+	if (self.ammo_coachgun >= 2)
 		self.think = mercenary_attack1;
 	else
 		self.think = mercenary_attackb;
 	self.nextthink = time;
 };
 
-void() mercenary_attack = { if (self.enemy.health <= 0)
+void() mercenary_attack = 
+{
+	if (self.enemy.health <= 0)
 	{
 		self.think = mercenary_idle1;
 		self.nextthink = time;
@@ -728,7 +738,9 @@ void() mercenary_attack = { if (self.enemy.health <= 0)
 	self.nextthink = time;
 };
 
-void() mercenary_painthink = { if (visible(self.enemy))
+void() mercenary_painthink = 
+{
+	if (visible(self.enemy))
 	{
 		if (self.ammo_coachgun >= 2)
 			self.think = mercenary_attack1;
@@ -868,7 +880,9 @@ void() mercenary_painc8 =[$painc8, mercenary_painthink]
 	self.nextthink = time + 0.1;
 };
 
-void() mercenary_poststun = { self.effects = 0;
+void() mercenary_poststun = 
+{
+	self.effects = 0;
 	self.colormod = '1 1 1';
 	self.think = mercenary_run1;
 	self.solid = SOLID_SLIDEBOX;
@@ -876,7 +890,9 @@ void() mercenary_poststun = { self.effects = 0;
 	self.nextthink = time;
 }
 
-void() mercenary_stun = { self.frame = $painc1,
+void() mercenary_stun = 
+{
+	self.frame = $painc1,
 	self.effects = 512;
 	self.colormod = '1 0.2 0.2';
 	self.think = mercenary_poststun;
@@ -885,7 +901,9 @@ void() mercenary_stun = { self.frame = $painc1,
 	self.health = 1;
 }
 
-void() mercenary_pain_think = { /*
+void() mercenary_pain_think = 
+{
+	/*
 		if((!self.stunned) && (self.health < merchealth)) 
 		{
 		self.think  = mercenary_stun;
@@ -914,7 +932,9 @@ void() mercenary_pain_think = { /*
 	self.nextthink = time;
 };
 
-void(entity attacker, float damage) mercenary_pain = { /*
+void(entity attacker, float damage) mercenary_pain = 
+{
+	/*
 		if (self.pain_finished > time)
 			return;
 		local float pp, rp;
@@ -1001,7 +1021,9 @@ void() mercenary_deathe8 =[$deathe8, mercenary_deathe8] {};
 void() mercenary_deathe9 =[$deathe9, mercenary_deathe9] {};
 void() mercenary_deathe10 =[$deathe10, mercenary_deathe10] {};
 
-void() mercenary_die = { drop_item(self.origin + '0 0 40', "shell", 3, self);
+void() mercenary_die = 
+{
+	drop_item(self.origin + '0 0 40', "shell", 3, self);
 	// check for gib	
 	if ((self.health < mercod) && (self.gibbable))
 	{
@@ -1026,7 +1048,9 @@ void() mercenary_die = { drop_item(self.origin + '0 0 40', "shell", 3, self);
 		mercenary_deathe1();
 };
 
-void() monster_mercenary = { precache_sound("enemies/mercenary/attack1.ogg");
+void() monster_mercenary = 
+{
+	precache_sound("enemies/mercenary/attack1.ogg");
 	precache_sound("enemies/mercenary/attack2.ogg");
 	precache_sound("enemies/mercenary/attack3.ogg");
 	precache_sound("enemies/mercenary/die1.ogg");

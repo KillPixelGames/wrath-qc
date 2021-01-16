@@ -5,46 +5,102 @@ float EASEUNDERCURRENT = 16;
 .float water_movflag;
 void() CheckFuncWaterDeath = {};
 
-void() func_water_use = { if (self.water_movflag == 1)
+.float height_water1;
+.float height_water2;
+.float height_water3;
+
+.vector pos3;
+.vector pos4;
+.vector pos5;
+.float height_water;
+
+void() func_water_use = 
+{ 
+
+	if(self.height_water1)
 	{
-		SUB_CalcMove(self.pos1, self.speed, SUB_Null);
-		self.water_movflag = 0;
+		if((self.height_water3)&& (self.height_water == 2))
+		{
+			SUB_CalcMove(self.pos5, self.speed, SUB_Null);
+			self.height_water = 3;
+		}
+		if((self.height_water2)&& (self.height_water == 1))
+		{
+			SUB_CalcMove(self.pos4, self.speed, SUB_Null);
+			self.height_water = 2;
+		}
+		if((!self.height_water))
+		{
+			SUB_CalcMove(self.pos3, self.speed, SUB_Null);
+			self.height_water = 1;
+		}
 	}
 	else
-	{
-		SUB_CalcMove(self.pos2, self.speed, SUB_Null);
-		self.water_movflag = 1;
+	{	
+		if (self.water_movflag == 1)
+		{
+			SUB_CalcMove(self.pos1, self.speed, SUB_Null);
+			self.water_movflag = 0;
+		}
+		else
+		{
+			SUB_CalcMove(self.pos2, self.speed, SUB_Null);
+			self.water_movflag = 1;
+		}
 	}
 };
 
 //============================================================================
 .float deep;
-.float liquidtouch_timing;
+
 .float lavatime;
-void() liquid_touch = { local float test;
+.float funcwaterlevel;
+void() liquid_touch = 
+{
+	local float test;
 	local float c;
+	if((other.flags & FL_MONSTER) || (self.classentity == "corpse"))
+	{
+		test = other.origin_z - other.maxs_z;
+		if(test <= self.absmax_z)
+		other.funcwaterlevel = 1;
+
+		test = other.origin_z + other.maxs_z;
+		if(test <= self.absmax_z)
+		other.funcwaterlevel = 2;
+
+		test = other.origin_z + other.maxs_z + 8;	
+		if(test <= self.absmax_z)
+		other.funcwaterlevel = 3;
+
+		other.liquidtouch_timing = time + 0.5;
+		return;
+	}
 	if((other.classname != "player"))
 	{
+		if((other.wrathflags & FL_GIB))
+		{
+		    other.time_toalpha = 0;
+		    if((other.velocity_z != -5)&&(other.classname != "watergib"))
+		    {
+		        other.velocity_z = 0;
+		        other.velocity_y = other.velocity_y * 0.25;
+		        other.velocity_x = other.velocity_x * 0.25;
+		    }
+		    other.liquidtouch_timing = time + 0.1;
+		    other.glowmod = '0 0 0';
+		    return;
+		}
 
 		if(time < other.liquidtouch_timing )	
 		return;
 		if (other.classname == "decal")
 			remove(other);
-		if((other.wrathflags & FL_GIB))
-		{
-		other.time_toalpha = 0;
-		if(other.velocity_z != -5)
-		{
-		other.velocity_z = 0;
-		other.velocity_y = other.velocity_y * 0.25;
-		other.velocity_x = other.velocity_x * 0.25;
-		}
-		other.liquidtouch_timing = time + 100;
-		other.glowmod = '0 0 0';
-		return;
-		}
+
 		if (other.health <= 0)
 			return;
+
+
 
 		if ((self.flags & FL_MONSTER) && (self.fakewatertype == CONTENT_LAVA))
 		{
@@ -167,6 +223,7 @@ void() func_water =
 		
 	if(!self.watertype)	
 	self.watertype = -3;
+	self.clipgroup = 2;
 	self.solid = SOLID_TRIGGER;
 	self.movetype = MOVETYPE_NOCLIP;
 	setmodel(self, self.model);
@@ -220,6 +277,12 @@ void() func_water =
 		self.water_movflag = 1;
 	}
 
+	if(self.height_water1)
+	self.pos3 = self.pos1 + self.movedir *(self.height_water1);
+	if(self.height_water2)
+	self.pos4 = self.pos1 + self.movedir *(self.height_water2);
+	if(self.height_water3)
+	self.pos5 = self.pos1 + self.movedir *(self.height_water3);
 	self.use = func_water_use;
 
 	// Cap drag force

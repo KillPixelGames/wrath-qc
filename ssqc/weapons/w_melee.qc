@@ -1,6 +1,8 @@
 .float oldrandomattack;
 .float pick_melee;
-void() v_melee_idle = { if (self.playerdeadtime > time)
+void() v_melee_idle = 
+{
+	if (self.playerdeadtime > time)
 	{
 		self.think = PlayerDeathThink;
 		self.nextthink = time;
@@ -23,7 +25,9 @@ void() v_melee_idle = { if (self.playerdeadtime > time)
 
 };
 
-void(float x_ang, float y_ang) melee_angles = { x_ang = x_ang *0.25;
+void(float x_ang, float y_ang) melee_angles = 
+{
+	x_ang = x_ang *0.25;
 	y_ang = y_ang *0.25;
 
 	msg_entity = self;
@@ -32,7 +36,9 @@ void(float x_ang, float y_ang) melee_angles = { x_ang = x_ang *0.25;
 	WriteAngle(MSG_ONE, self.v_angle_y + y_ang);
 	WriteAngle(MSG_ONE, self.v_angle_z);
 };
-void() melee_angles_center = { msg_entity = self;
+void() melee_angles_center = 
+{
+	msg_entity = self;
 	WriteByte(MSG_ONE, SVC_SETVIEWANGLES);
 	WriteAngle(MSG_ONE, 0);
 	WriteAngle(MSG_ONE, self.v_angle_y);
@@ -44,7 +50,9 @@ void() melee_angles_center = { msg_entity = self;
 
 .vector neworg;
 
-void() w_melee_release_damage = { self.lungetime = time + 0.1;
+void() w_melee_release_damage = 
+{
+	self.lungetime = time + 0.1;
 	local vector source;
 	local vector org;
 	if (self.execution == 2)
@@ -77,6 +85,10 @@ void() w_melee_release_damage = { self.lungetime = time + 0.1;
 		}
 		local float lunge_damage;
 		lunge_damage = (self.melee_ammount *30);
+
+		float real_health = trace_ent.health;
+		if(trace_ent.shieldtime > time)
+			real_health = trace_ent.health * 0.05;
 
 		if (lunge_damage < trace_ent.health)
 		{
@@ -120,7 +132,9 @@ void() w_melee_release_damage = { self.lungetime = time + 0.1;
 
 
 
-void() w_melee_release = { if (!self.melee_kill_uber)
+void() w_melee_release = 
+{
+	if (!self.melee_kill_uber)
 	{
 		self.vweaponglowmod_x -= 0.05;
 		self.vweaponglowmod_y -= 0.05;
@@ -377,7 +391,9 @@ void() w_melee_charge =
 
 .float melee_dmg_ammount;
 void(vector org, string locsound, float rnd, float vol) randompointsound;
-void(float dmg, float dir, float dirv) w_slash = { local vector source, org, orn, ornv;
+void(float dmg, float dir, float dirv) w_slash = 
+{
+	local vector source, org, orn, ornv;
 
 	if (dir == 1)
 		orn = v_right *-48;
@@ -449,7 +465,9 @@ void(float dmg, float dir, float dirv) w_slash = { local vector source, org, orn
 };
 
 .float fakeframe;
-void() w_melee_slash2 = { self.fakeframe += 1;
+void() w_melee_slash2 = 
+{
+	self.fakeframe += 1;
 
 	if (self.fakeframe == 4)
 		playersound("weapons/melee/attack", 8);
@@ -504,7 +522,9 @@ void() w_melee_slash2 = { self.fakeframe += 1;
 	self.nextthink = time + 0.05;
 };
 
-void() w_melee_slash1 = { self.oldrandomattack = self.randomattack;
+void() w_melee_slash1 = 
+{
+	self.oldrandomattack = self.randomattack;
 
 	if (self.randomattack == 1)
 		self.vweaponframe = 1;
@@ -523,7 +543,9 @@ void() w_melee_slash1 = { self.oldrandomattack = self.randomattack;
 
 };
 
-void() w_melee_slash = { local float r;
+void() w_melee_slash = 
+{
+	local float r;
 
 	r = random();
 
@@ -554,7 +576,9 @@ void() w_melee_slash = { local float r;
 .entity vmelee2;
 .entity vmelee3;
 
-void() lower_melee2 = { self.vweaponframe += 1;
+void() lower_melee2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe == 54)
 	{
 		remove(self.vmelee);
@@ -568,7 +592,9 @@ void() lower_melee2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.025;
 };
 
-void() lower_melee = { self.vweaponframe = 51;
+void() lower_melee = 
+{
+	self.vweaponframe = 51;
 	self.melee_ammount = 0;
 	self.attack_finished = time + 0.25;
 	self.think = lower_melee2;
@@ -577,7 +603,9 @@ void() lower_melee = { self.vweaponframe = 51;
 	self.nextthink = time + 0.025;
 };
 void() v_blood_think;
-void() v_blood_think_fading = { self.glowmod = self.owner.vweaponglowmod;
+void() v_blood_think_fading = 
+{
+	self.glowmod = self.owner.vweaponglowmod;
 	self.alpha -= 0.0125;
 	self.owner.melee_skin = 0;
 	if (self.alpha <= 0)
@@ -597,7 +625,9 @@ void() v_blood_think_fading = { self.glowmod = self.owner.vweaponglowmod;
 	self.nextthink = time + 0.025;
 }
 
-void() v_blood_think = { if ((self.owner.melee_skin == 1) && (self.alpha == -1))
+void() v_blood_think = 
+{
+	if ((self.owner.melee_skin == 1) && (self.alpha == -1))
 	{
 		self.alpha = 1;
 		self.effects = 0;
@@ -621,7 +651,9 @@ void() v_blood_think = { if ((self.owner.melee_skin == 1) && (self.alpha == -1))
 
 };
 
-void() v_blade_think = { self.skin = self.owner.melee_skin;
+void() v_blade_think = 
+{
+	self.skin = self.owner.melee_skin;
 	self.glowmod = self.owner.vweaponglowmod;
 	self.alpha = 1;
 	if(self.owner.weapon != IT_MELEE)
@@ -632,7 +664,9 @@ void() v_blade_think = { self.skin = self.owner.melee_skin;
 
 };
 
-void() v_blade_think2 = { self.cnt += 1;
+void() v_blade_think2 = 
+{
+	self.cnt += 1;
 
 	if (self.cnt < 60)
 	{
@@ -658,7 +692,9 @@ void() v_blade_think2 = { self.cnt += 1;
 	self.nextthink = time + 0.05;
 
 };
-void() v_blade_think3 = { self.skin = self.owner.melee_skin;
+void() v_blade_think3 = 
+{
+	self.skin = self.owner.melee_skin;
 	self.glowmod = self.owner.vweaponglowmod;
 	self.cnt += 1;
 	if (self.cnt >= 60)
@@ -671,7 +707,9 @@ void() v_blade_think3 = { self.skin = self.owner.melee_skin;
 
 };
 
-void(entity e, entity vweapn) spawn_v_blade2 = { e.vmelee = spawn();
+void(entity e, entity vweapn) spawn_v_blade2 = 
+{
+	e.vmelee = spawn();
 	e.vmelee.wrathflags += FL_GARBAGE;
 	e.vmelee.owner = e;
 	setmodel(e.vmelee, "models/weapons/melee/v_blade.md3");
@@ -708,7 +746,9 @@ void(entity e, entity vweapn) spawn_v_blade2 = { e.vmelee = spawn();
 
 };
 
-void(entity e, entity vweapn) spawn_v_blade = { e.vmelee = spawn();
+void(entity e, entity vweapn) spawn_v_blade = 
+{
+	e.vmelee = spawn();
 	e.vmelee.wrathflags += FL_GARBAGE;
 	e.vmelee.owner = e;
 	setmodel(e.vmelee, "models/weapons/melee/v_blade.md3");
@@ -717,7 +757,9 @@ void(entity e, entity vweapn) spawn_v_blade = { e.vmelee = spawn();
 	e.vmelee.nextthink = time;
 };
 
-void(entity e, entity vweapn) spawn_v_blood = { e.vblood = spawn();
+void(entity e, entity vweapn) spawn_v_blood = 
+{
+	e.vblood = spawn();
 	e.vblood.wrathflags += FL_GARBAGE;
 	e.vblood.owner = e;
 	setmodel(e.vblood, "models/weapons/melee/v_blade_blood.md3");
@@ -725,7 +767,9 @@ void(entity e, entity vweapn) spawn_v_blood = { e.vblood = spawn();
 	e.vblood.think = v_blood_think;
 	e.vblood.nextthink = time;
 };
-void() raise_melee2 = { if (self.vweaponframe == 47)
+void() raise_melee2 = 
+{
+	if (self.vweaponframe == 47)
 		W_SetWeapon();
 	self.vweaponframe += 1;
 	if (self.vweaponframe >= 50)
@@ -743,8 +787,11 @@ void() raise_melee2 = { if (self.vweaponframe == 47)
 	self.nextthink = time + 0.025;
 };
 
-void() raise_melee = { self.weapon = IT_MELEE;
+void() raise_melee = 
+{
+	self.weapon = IT_MELEE;
 	W_SetWeapon();
+	self.hasmelee = 1;
 	self.vweaponskin = 0;
 	if (!self.bfg)
 		self.vweaponglowmod = '0.01 0.01 0.01';
@@ -765,8 +812,11 @@ void() raise_melee = { self.weapon = IT_MELEE;
 	self.nextthink = time + 0.025;
 };
 
-void() pick_up_melee = { self.weapon = IT_MELEE;
+void() pick_up_melee = 
+{
+	self.weapon = IT_MELEE;
 	W_SetWeapon();
+	self.hasmelee = 1;
 	self.vweaponskin = 0;
 	self.vweaponglowmod = '0.01 0.01 0.01';
 	sound(self, CHAN_WEAPON, "weapons/melee/inspect.ogg", 1, ATTN_NORM);
@@ -782,17 +832,20 @@ void() pick_up_melee = { self.weapon = IT_MELEE;
 	self.nextthink = time + 4.05;
 }
 
-void() TMelee_touch = { if (other.classname != "player")
+void() TMelee_touch = 
+{
+	if (other.classname != "player")
 		return;
 	if (other.items &IT_MELEE)
 		return;
-	other.items += IT_MELEE;
-	other.timefrik = time + 0.75;
+	other.time_pickupweapon = time + 0.75;
 
-	stuffcmd(other, "impulse 1\n");
+	stuffcmd(other, "impulse 101\n");
 	remove(self);
 };
-void() trigger_melee = { self.solid = SOLID_TRIGGER;
+void() trigger_melee = 
+{
+	self.solid = SOLID_TRIGGER;
 	self.alpha = -1;
 	setmodel(self, self.model);
 	self.touch = TMelee_touch;

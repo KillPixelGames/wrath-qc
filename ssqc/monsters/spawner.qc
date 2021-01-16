@@ -54,14 +54,14 @@ float() monster_counter =
 	local entity monster;
 	local float monster_counter;
 	monster = findradius(self.origin, 1000000);
-	while (monster)	//Loops through everything put in the missile entity
+	while (monster)
 	{
 		if ((monster.flags &FL_MONSTER) && (monster.health >= 0))
 		{
 		monster_counter ++; 
 		}
 
-		monster = monster.chain;	//links every monstergram found so they all go BOOM!
+		monster = monster.chain;	
 	}
 	return monster_counter;
 };
@@ -112,7 +112,9 @@ void() recount_monsters =
 };
 
 
-void() check_relics = { self.local_classmonster = self.classmonster1;
+void() check_relics = 
+{
+	self.local_classmonster = self.classmonster1;
 	local entity pl;
 	pl = find(world, classname, "player");
 	if (!pl.oldrelics)
@@ -127,7 +129,9 @@ void() check_relics = { self.local_classmonster = self.classmonster1;
 		self.local_classmonster = self.classmonster5;
 };
 
-void() enemy_spawner_use = { if (self.warped != 1)
+void() enemy_spawner_use = 
+{
+	if (self.warped != 1)
 	{
 		check_relics();
 		if (self.local_classmonster <= 0)
@@ -152,10 +156,12 @@ void() enemy_spawner_use = { if (self.warped != 1)
 		enemy.turret = self.turret;
 		enemy.likecharge = self.likecharge;
 		enemy.target = self.target;
+		enemy.death_target = self.death_target;
 		enemy.targetname = self.targetname;
 		enemy.spawned = 1;
 		enemy.spawnflags = self.spawnflags;
 		enemy.nodroptofloor = self.nodroptofloor;
+		enemy.oldorigin = self.origin;
 		if (self.local_classmonster == 1)
 		{
 			if (self.type == 1)
@@ -167,8 +173,8 @@ void() enemy_spawner_use = { if (self.warped != 1)
 			enemy.think = monster_invader;
 		if (self.local_classmonster == 3)
 			enemy.think = monster_wretch;
-		//if (self.local_classmonster == 4)
-		//	enemy.think = monster_incisor;
+		if (self.local_classmonster == 4)
+			enemy.think = monster_incisor;
 		if (self.local_classmonster == 5)
 			enemy.think = monster_widow;
 		if (self.local_classmonster == 6)
@@ -176,7 +182,7 @@ void() enemy_spawner_use = { if (self.warped != 1)
 		if (self.local_classmonster == 7)
 			enemy.think = monster_heretic;
 		if (self.local_classmonster == 8)
-			enemy.think = monster_fallen;
+			enemy.think = monster_lurker;
 		if (self.local_classmonster == 9)
 		{
 			enemy.think = monster_oppressor;
@@ -189,6 +195,7 @@ void() enemy_spawner_use = { if (self.warped != 1)
 			enemy.think = monster_afflicted;
 		if (self.warped)
 		{
+
 			if (self.type == 1)
 				enemy.grosstime = time + 1.5;
 			enemy.warped_time = time + 3;	
@@ -265,7 +272,9 @@ void() enemy_spawner_use = { if (self.warped != 1)
 	}
 };
 
-void() enemy_spawner_use_wait = { self.think = enemy_spawner_use;
+void() enemy_spawner_use_wait = 
+{
+	self.think = enemy_spawner_use;
 	self.nextthink = time + self.wait;
 };
 
@@ -302,7 +311,9 @@ void() enemy_spawner =
 };
 
 .float fastwarp;
-void() enemy_spawner_warp_use = { check_relics();
+void() enemy_spawner_warp_use = 
+{
+	check_relics();
 	if (self.local_classmonster <= 0)
 	{
 		remove(self);
@@ -343,7 +354,9 @@ void() enemy_spawner_warp_use = { check_relics();
 	self.nextthink = time + 0.05;
 };
 
-void() enemy_spawner_warp_use_wait = { self.think = enemy_spawner_warp_use;
+void() enemy_spawner_warp_use_wait = 
+{
+	self.think = enemy_spawner_warp_use;
 	self.nextthink = time + self.wait;
 };
 void() enemy_spawner_warp = 
@@ -381,8 +394,14 @@ void() enemy_spawner_warp =
 	}
 };
 
-void() trigger_aggro_touch = { if (other.classname != "player")
+void() trigger_aggro_touch = 
+{
+	if (other.classname != "player")
 		return;
+	if(single_player.flags &FL_NOTARGET)
+		return;
+
+
 	local entity e;
 	if (self.target)
 	{
@@ -396,7 +415,9 @@ void() trigger_aggro_touch = { if (other.classname != "player")
 	}
 };
 
-void() trigger_aggro = { self.touch = trigger_aggro_touch;
+void() trigger_aggro = 
+{
+	self.touch = trigger_aggro_touch;
 	self.solid = SOLID_TRIGGER;
 	setmodel(self, self.model);
 	self.modelindex = 0;

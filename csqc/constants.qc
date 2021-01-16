@@ -183,4 +183,7 @@ const float DRAWFLAG_MIPMAP = 0x100; // only for R_BeginPolygon
 
 
 #define CLIENTCOMMAND_GET_FOG							"get_fog"
+#define CLIENTCOMMAND_DELETE_QNG					"delete_qng"
+#define CLIENTCOMMAND_DUMP_SPAWNERS			"dump_spawners"
+#define CLIENTCOMMAND_NOATTACK							"noattack"
 ////////////////end of qc file

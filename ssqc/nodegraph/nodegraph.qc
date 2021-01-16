@@ -10,19 +10,6 @@ float nodegraph_queue_initialize_has_already_been_called;
 // ============================================================================
 
 
-float TE_LIGHTNING4NEH = 17;
-void(string mdl, entity owner, vector start, vector end) te_custombeam  = {
-  WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
-  WriteByte(MSG_BROADCAST, TE_LIGHTNING4NEH);
-  WriteString(MSG_BROADCAST, mdl);
-  WriteEntity(MSG_BROADCAST, owner);
-  WriteCoord(MSG_BROADCAST, start_x);
-  WriteCoord(MSG_BROADCAST, start_y);
-  WriteCoord(MSG_BROADCAST, start_z);
-  WriteCoord(MSG_BROADCAST, end_x);
-  WriteCoord(MSG_BROADCAST, end_y);
-  WriteCoord(MSG_BROADCAST, end_z);
-}
 
 
 void() nodegraph_graphset_post_initialize = 
@@ -246,10 +233,13 @@ void() info_node =
 	}
 };
 // ============================================================================
+
+.float alreadyconnected_node;
+.float count;
+
 void() info_node_link_connect_nodes =
 {
 	local entity nodeentity;
-
 	local float nodeidfrom;
 	local float nodeidto;
 
@@ -260,14 +250,27 @@ void() info_node_link_connect_nodes =
 	nodeidto = nodegraph_graph_find_nearest_nodeid(self.link_field_graphid, nodeentity.origin);
 
 	nodegraph_graph_add_link(self.link_field_graphid, nodeidfrom, nodeidto);
-
 	remove(self);
 };
+
 
 // ============================================================================
 void() info_node_link =
 {
 	nodegraph_queue_initialize();
+	float dev = cvar("developer");
+	if (dev == 1)
+	{
+		local entity node_model;
+		node_model = spawn();
+		node_model.classname = "info_node_link";
+		node_model.colormod = '0 5 0.5';
+		node_model.origin = self.origin;
+		node_model.effects = EF_NODRAW;
+		setmodel(node_model,"models/dev/node.md3");
+		node_model.think = node_model_think;
+		node_model.nextthink = time + 0.5;
+	}
 
 	if (nodegraph_graphset_has_been_loaded)
 	{

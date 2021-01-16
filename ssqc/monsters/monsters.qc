@@ -1,4 +1,6 @@
-void() monster_use = { if (self.enemy)
+void() monster_use = 
+{
+	if (self.enemy)
 		return;
 	if (self.health <= 0)
 		return;
@@ -11,18 +13,37 @@ void() monster_use = { if (self.enemy)
 	self.think = FoundTarget;
 };
 
-void() monster_death_use = { if (self.flags &FL_FLY)
+void() monster_death_use = 
+{
+	if (self.flags &FL_FLY)
 		self.flags = self.flags - FL_FLY;
 	if (self.flags &FL_SWIM)
 		self.flags = self.flags - FL_SWIM;
-	if (!self.target)
+/*	if (!self.target)
 		return;
 	activator = self.enemy;
-	SUB_UseTargets();
+	SUB_UseTargets();*/
+
+	if ((!self.target) && (!self.death_target))
+			return;
+	if(self.target)
+	{
+		activator = self.enemy;
+		SUB_UseTargets();
+	}
+	if(self.death_target)
+	{
+		self.target = self.death_target;
+		activator = self.enemy;
+		SUB_UseTargets();
+	}
+
 };
 .float nodroptofloor;
 .float spawned;
-void() walkmonster_start_go = { self.origin_z = self.origin_z + 1;	// raise off floor a bit
+void() walkmonster_start_go = 
+{
+	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 	if (self.nodroptofloor != 1)
 		droptofloor();
 	self.oldorigin = self.origin;
@@ -63,7 +84,7 @@ void() walkmonster_start_go = { self.origin_z = self.origin_z + 1;	// raise off 
 	}
 	else
 	{
-		if (self.grosstime > time)
+		if ((self.grosstime > time) && (!(single_player.flags &FL_NOTARGET)))
 		{
 			FoundTarget();
 			local entity pl;
@@ -105,7 +126,9 @@ void() walkmonster_start_go = { self.origin_z = self.origin_z + 1;	// raise off 
 		self.nextthink = self.nextthink + random() *0.5;
 };
 
-void() ind_update = { if (devscreen == TRUE)
+void() ind_update = 
+{
+	if (devscreen == TRUE)
 	{
 		self.health = (self.owner.frame);
 		setorigin(self, self.owner.origin + '0 0 64');
@@ -116,7 +139,9 @@ void() ind_update = { if (devscreen == TRUE)
 	self.think = ind_update;
 };
 
-float() Send_Indicator = { WriteByte(MSG_ENTITY, ENT_HMMSG);
+float() Send_Indicator = 
+{
+	WriteByte(MSG_ENTITY, ENT_HMMSG);
 	WriteCoord(MSG_ENTITY, self.origin_x);
 	WriteCoord(MSG_ENTITY, self.origin_y);
 	WriteCoord(MSG_ENTITY, self.origin_z);
@@ -124,7 +149,9 @@ float() Send_Indicator = { WriteByte(MSG_ENTITY, ENT_HMMSG);
 	return TRUE;
 };
 
-void(entity selff) indicator = { local entity indicator;
+void(entity selff) indicator = 
+{
+	local entity indicator;
 	return;//
 	indicator = spawn();
 	indicator.owner = selff;
@@ -141,7 +168,6 @@ void(entity selff) indicator = { local entity indicator;
 };
 .float warpframe;
 .float lastframewarp;
-
 
 void()color_controller_think = 
 {
@@ -167,7 +193,9 @@ void()color_controller_think =
 	self.owner.colormod = self.colormod;
 	self.nextthink = time + 0.1;
 }
-void() warped_go = { self.flags = self.flags | FL_MONSTER;
+void() warped_go = 
+{
+	self.flags = self.flags | FL_MONSTER;
 	self.frame += 1;
 
 
@@ -188,7 +216,7 @@ void() warped_go = { self.flags = self.flags | FL_MONSTER;
 	else	
 		self.takedamage = DAMAGE_AIM;
 
-
+	self.warpedtime = time + 0.1;
 	if (self.frame < self.lastframewarp)
 	{
 		self.think = warped_go;
@@ -196,7 +224,6 @@ void() warped_go = { self.flags = self.flags | FL_MONSTER;
 	}
 	else
 	{
-		self.warped = 0;
 		self.grosstime = time + 0.2;
 		self.ideal_yaw = self.angles *'0 1 0';
 		if (!self.yaw_speed)
@@ -206,7 +233,8 @@ void() warped_go = { self.flags = self.flags | FL_MONSTER;
 		self.alpha = 1;
 		self.colormod = '1 1 1';
 		//self.glowmod = '1 1 1';
-		if (self.grosstime > time)
+		if ((self.grosstime > time) && (!(single_player.flags &FL_NOTARGET)))
+
 		{
 			FoundTarget();
 			local entity pl;
@@ -244,12 +272,14 @@ void() warped_go = { self.flags = self.flags | FL_MONSTER;
 		}
 
 		self.nextthink = time + 0.1;
+		self.warped = 0;
 	}
 };
 void(entity e) spawn_emitters;
 void() walkmonster_start = {	// delay drop to floor to make sure all doors have been spawned
 	// spread think times so they don't all happen at same time
 	self.classentity = "monsters";
+	self.oldstepheight_delta = self.stepheight_delta;
 
 	self.flags = self.flags | FL_MONSTER;
 	if(self.classname != "monster_oppressor")
@@ -268,7 +298,9 @@ void() walkmonster_start = {	// delay drop to floor to make sure all doors have 
 
 };
 
-void() flymonster_start_go = { self.takedamage = DAMAGE_AIM;
+void() flymonster_start_go = 
+{
+	self.takedamage = DAMAGE_AIM;
 	self.ideal_yaw = self.angles *'0 1 0';
 	if (!self.yaw_speed)
 		self.yaw_speed = 20;
@@ -307,44 +339,11 @@ void() flymonster_start_go = { self.takedamage = DAMAGE_AIM;
 	}
 };
 
-void() warpedfly_go = { self.flags = self.flags | FL_MONSTER;
+void() warpedfly_go = 
+{
+	self.flags = self.flags | FL_MONSTER;
 	self.frame += 1;
 
-	/*float mglowfactorx;
-	float mglowfactoryz;
-	if (self.classname == "monster_heretic")
-	{
-		mglowfactorx = 5 - (0.1 / 9);
-		mglowfactoryz = 2 - (0.1 / 9);
-		if (self.glowmod_x > 0.1)
-			self.glowmod_x -= mglowfactorx;
-		if (self.glowmod_y > 0.1)
-			self.glowmod_y -= mglowfactoryz;
-		if (self.glowmod_z > 0.1)
-			self.glowmod_z -= mglowfactoryz;
-	}
-
-	if (self.classname == "monster_wraith")
-	{
-		mglowfactorx = 5 - (0.5 / 9);
-		mglowfactoryz = 2 - (0.5 / 9);
-		if (self.glowmod_x > 0.1)
-			self.glowmod_x -= mglowfactorx;
-		if (self.glowmod_y > 0.1)
-			self.glowmod_y -= mglowfactoryz;
-		if (self.glowmod_z > 0.1)
-			self.glowmod_z -= mglowfactoryz;
-	}*/
-
-	/*if (self.colormod_x > 1)
-		self.colormod_x -= 0.45;
-	else
-		self.colormod_x -= 1;
-	if (self.colormod_y < 1)
-		self.colormod_y += 0.1;
-	if (self.colormod_z < 1)
-		self.colormod_z += 0.1;
-	*/
 	if(!self.warpframe)
 	{
 		entity color_controller = spawn();
@@ -355,7 +354,7 @@ void() warpedfly_go = { self.flags = self.flags | FL_MONSTER;
 		color_controller.think = color_controller_think;
 		color_controller.nextthink = time;
 	}
-
+	self.warpedtime = time + 0.1;
 	self.warpframe += 1;
 	if(self.warpframe < 3)
 		self.takedamage = 0;
@@ -370,8 +369,6 @@ void() warpedfly_go = { self.flags = self.flags | FL_MONSTER;
 	}
 	else
 	{
-		self.warped = 0;
-		self.flags = self.flags | FL_FLY;
 		self.ideal_yaw = self.angles *'0 1 0';
 		if (!self.yaw_speed)
 			self.yaw_speed = 20;
@@ -382,10 +379,7 @@ void() warpedfly_go = { self.flags = self.flags | FL_MONSTER;
 		self.glowmod = '1 1 1';
 		if (self.classname == "monster_heretic")
 			self.glowmod = '-1 -1 -1';
-		//if (self.classname == "monster_wraith")
-		//	self.glowmod = '0.5 0.5 0.5';
-
-		if (self.grosstime > time)
+		if ((self.grosstime > time) && (!(single_player.flags &FL_NOTARGET)))
 		{
 			FoundTarget();
 			local entity pl;
@@ -398,9 +392,10 @@ void() warpedfly_go = { self.flags = self.flags | FL_MONSTER;
 			self.pausetime = 99999999;
 			self.think = self.th_stand;
 		}
-
 		self.nextthink = time + 0.1;
+		self.warped = 0;
 	}
+	self.sustained_damage = 0;
 };
 
 void() flymonster_start = {	// spread think times so they don't all happen at same time
@@ -408,6 +403,7 @@ void() flymonster_start = {	// spread think times so they don't all happen at sa
 		self.nextthink = time + 0.1;
 	else
 		self.nextthink = self.nextthink + random() *1;
+	self.flags = self.flags | FL_FLY;
 	self.classentity = "monsters";
 	if (self.warped)
 		self.think = warpedfly_go;
@@ -416,7 +412,9 @@ void() flymonster_start = {	// spread think times so they don't all happen at sa
 	//indicator(self);
 };
 
-void() swimmonster_start_go = { if (deathmatch)
+void() swimmonster_start_go = 
+{
+	if (deathmatch)
 	{
 		remove(self);
 		return;
@@ -425,11 +423,12 @@ void() swimmonster_start_go = { if (deathmatch)
 	self.takedamage = DAMAGE_AIM;
 	self.ideal_yaw = self.angles *'0 1 0';
 	if (!self.yaw_speed)
-		self.yaw_speed = 20;
+		self.yaw_speed = 50;
 	self.view_ofs = '0 0 10';
 	self.use = monster_use;
-	self.flags = self.flags | FL_SWIM;
 	self.flags = self.flags | FL_MONSTER;
+	self.flags = self.flags | FL_FLY;
+
 	if (self.target != string_null)
 	{
 		self.goalentity = self.movetarget = find(world, targetname, self.target);

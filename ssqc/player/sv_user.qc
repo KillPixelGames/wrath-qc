@@ -12,7 +12,9 @@ float sv_edgefriction, cl_rollangle, cl_divspeed;
 // note also, this code uses some builtin functions from dpextensions.qc
 // (included with darkplaces engine releases)
 
-void() SV_PlayerPhysics = { local vector wishvel, wishdir, v;
+void() SV_PlayerPhysics = 
+{
+	local vector wishvel, wishdir, v;
 	local float wishspeed, f;
 
 	if (self.movetype == MOVETYPE_NONE)

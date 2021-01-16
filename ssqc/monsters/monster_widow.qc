@@ -112,7 +112,9 @@ void() widow_atkb1;
 void() widow_run3;
 void() widow_run5;
 
-void() widow_jump = { if ((vlen(self.velocity) < 30) && (self.flags &FL_ONGROUND) && (self.enemy.health > 0))
+void() widow_jump = 
+{
+	if ((vlen(self.velocity) < 30) && (self.flags &FL_ONGROUND) && (self.enemy.health > 0))
 	{
 		self.effects = 128;
 		makevectors(self.angles);
@@ -124,63 +126,70 @@ void() widow_jump = { if ((vlen(self.velocity) < 30) && (self.flags &FL_ONGROUND
 };
 
 .float runwidowtime;
-void() widow_atk = { local float r;
+void() widow_atk = 
+{
+	local float r;
 	r = random();
 	if (r < 0.5)
 		self.think = widow_atk1;
 	else
 		self.think = widow_atkb1;
+	self.movetype = MOVETYPE_STEP;
 	self.nextthink = time;
 };
 
 .float widowscreaming;
-void() loop_widow_sound = { if ((self.widowscreaming != 1) && (self.widowscreamingtime < time))
+void() loop_widow_sound = 
+{
+	if ((self.widowscreaming != 1) && (self.widowscreamingtime < time))
 	{
 		msound(self, CHAN_VOICE, "enemies/widow/run.ogg", 0.5, 0.25);
 		self.widowscreaming = 1;
 	}
 };
 
-void() loop_widow_soundoff = { msound(self, CHAN_VOICE, "enemies/widow/run.ogg", 0, 0);
+void() loop_widow_soundoff = 
+{
+	msound(self, CHAN_VOICE, "enemies/widow/run.ogg", 0, 0);
 	self.widowscreaming = 0;
 };
 
 void() widow_run1 =[$run1, widow_run2]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 	loop_widow_sound();
 };
 void() widow_run2 =[$run1, widow_run3]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 };
 void() widow_run3 =[$run2, widow_run4]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 };
 void() widow_run4 =[$run2, widow_run5]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 };
 void() widow_run5 =[$run3, widow_run6]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 	walksound("enemies/widow/step", 3);
 };
 void() widow_run6 =[$run3, widow_run7]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 };
 void() widow_run7 =[$run4, widow_run8]
 {
-	ai_runwalk(16);
-	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint"))
+	ai_test_monster_run(16);
+	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint") && (self.enemy.noattack != 1))
 	{
 		ai_face();
 		self.think = widow_atk;
@@ -189,30 +198,30 @@ void() widow_run7 =[$run4, widow_run8]
 };
 void() widow_run8 =[$run4, widow_run9]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 };
 void() widow_run9 =[$run5, widow_run10]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 };
 void() widow_run10 =[$run5, widow_run11]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 	loop_widow_sound();
 };
 void() widow_run11 =[$run6, widow_run12]
 {
-	ai_runwalk(16);
+	ai_test_monster_run(16);
 	self.nextthink = time + 0.05;
 	walksound("enemies/widow/step", 3);
 };
 void() widow_run12 =[$run6, widow_run1]
 {
-	ai_runwalk(16);
-	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint"))
+	ai_test_monster_run(16);
+	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint") && (self.enemy.noattack != 1))
 	{
 		ai_face();
 		self.think = widow_atk;
@@ -222,7 +231,9 @@ void() widow_run12 =[$run6, widow_run1]
 };
 /////////////////////////////////////////////////////////////////////////////////////////////
 void() widow_atkb1;
-void(float wdmg) widow_attack = { local vector delta;
+void(float wdmg) widow_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -264,7 +275,9 @@ void() widow_atk3 =[$atkl3, widow_atk4]
 	widow_attack(15);
 	ai_charge(10);
 };
-void() widow_atk4 = { ai_charge(10);
+void() widow_atk4 = 
+{
+	ai_charge(10);
 	ai_face();
 	self.frame = $atkl4;
 	if ((visible2(self.enemy, 64, 0.3)))
@@ -292,7 +305,9 @@ void() widow_atkb3 =[$atkr3, widow_atkb4]
 	ai_charge(10);
 }
 
-void() widow_atkb4 = { ai_face();
+void() widow_atkb4 = 
+{
+	ai_face();
 	self.frame = $atkr4;
 	if ((visible2(self.enemy, 64, 0.3)))
 		self.think = widow_atk1;
@@ -395,7 +410,9 @@ void() widow_painc10 =[$painc10, widow_run1]
 	ai_pain(0);
 };
 
-void() widow_painr = { loop_widow_soundoff();
+void() widow_painr = 
+{
+	loop_widow_soundoff();
 	local float r;
 	r = random();
 	chattersound("enemies/widow/pain", 3, 1);
@@ -410,10 +427,13 @@ void() widow_painr = { loop_widow_soundoff();
 		widow_painc1();
 };
 
-void(entity attacker, float damage) widow_pain = { if (self.pain_finished > time)
+void(entity attacker, float damage) widow_pain = 
+{
+	if (self.pain_finished > time)
 		return;
 	msound(self, CHAN_VOICE, "enemies/widow/run.ogg", 0, 0);
 	self.sustained_damage = 0;
+	self.movetype = MOVETYPE_STEP;
 
 	local float pp, rp;
 	if (damage >= widph)
@@ -430,10 +450,12 @@ void(entity attacker, float damage) widow_pain = { if (self.pain_finished > time
 	{
 		pp = lpdmg;
 	}
-
+	if(self.enemy.weapon != IT_BOIL)
+	{
 	rp = random();
 	if (rp > pp)
 		return;
+	}
 	widow_painr();
 }
 
@@ -501,11 +523,15 @@ void() widow_diec5 =[$deathc5, widow_diec5]
 	self.glowmod = '-1 -1 -1';
 };
 
-void() widow_die = { loop_widow_soundoff();
+void() widow_die = 
+{
+	loop_widow_soundoff();
 	msound(self, CHAN_ITEM, "enemies/widow/run.ogg", 0, 0);
 
 	drop_item(self.origin - '0 0 12', "fangs", 10, self);
 	self.solid = 0;
+    self.velocity = '0 0 0';
+	self.movetype = MOVETYPE_TOSS;
 	if ((self.health < widod) || (self.gibbable))
 	{
 		local vector tagorg;
@@ -574,7 +600,9 @@ void() widow_die = { loop_widow_soundoff();
 
 /*WRATHED monster_widow (1 0 0) (-16 -16 -24) (16 16 40) Ambush*/
 .vector bbvv;
-void() precache_monster_widow = { precache_sound("enemies/widow/attack1.ogg");
+void() precache_monster_widow = 
+{
+	precache_sound("enemies/widow/attack1.ogg");
 	precache_sound("enemies/widow/attack2.ogg");
 	precache_sound("enemies/widow/attack3.ogg");
 	precache_sound("enemies/widow/die1.ogg");
@@ -609,7 +637,9 @@ void() precache_monster_widow = { precache_sound("enemies/widow/attack1.ogg");
 	precache_model("models/enemies/widow/gibs/gib_leg_l_a.md3");
 	precache_model("models/enemies/widow/gibs/gib_leg_l_b.md3");
 };
-void() monster_widow = { precache_sound("enemies/widow/attack1.ogg");
+void() monster_widow = 
+{
+	precache_sound("enemies/widow/attack1.ogg");
 	precache_sound("enemies/widow/attack2.ogg");
 	precache_sound("enemies/widow/attack3.ogg");
 	precache_sound("enemies/widow/die1.ogg");
@@ -669,6 +699,7 @@ void() monster_widow = { precache_sound("enemies/widow/attack1.ogg");
 	self.classname = "monster_widow";
 	self.max_health = widowhealth;
 	self.view_ofs_z = 60;
+	self.stepheight_delta = 8;
 	self.th_stand = widow_stand1;
 	self.th_walk = widow_walk1;
 	self.th_run = widow_run1;

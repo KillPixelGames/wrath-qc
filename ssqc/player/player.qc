@@ -4,7 +4,7 @@
 .float jsscnt;	//not repeat sounds
 
 .float crouchlooptime;
-
+.float surfacing_sound_time;
 //gwalk, gravel, mud, snow, soft, stone, water and wood
 enum
 {
@@ -23,7 +23,9 @@ enum
 	MAT_WOOD
 };
 
-void(string friktxt) check_volume = { local float readparms;
+void(string friktxt) check_volume = 
+{
+	local float readparms;
 	local string readtext;
 	readparms = fopen(friktxt, FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
 	readtext = fgets(readparms);	//read the text
@@ -34,7 +36,9 @@ void(string friktxt) check_volume = { local float readparms;
 };
 .string nearestsurface;
 
-void(vector org) spawnfootstep = { local entity fs;
+void(vector org) spawnfootstep = 
+{
+	local entity fs;
 	fs = spawn();
 	setmodel(fs, "models/player/footstep.md3");
 	fs.scale = 3;
@@ -44,7 +48,9 @@ void(vector org) spawnfootstep = { local entity fs;
 	fs.effects = EF_ADDITIVE;
 	fs.angles_y = self.angles_y;
 };
-float(entity e) GetFootMaterial = { local float surfnum;
+float(entity e) GetFootMaterial = 
+{
+	local float surfnum;
 	local string s;
 	makevectors(e.v_angle);
 
@@ -311,7 +317,9 @@ float(entity e) GetFootMaterial = { local float surfnum;
 		return MAT_GENERIC;
 };
 
-void() checking_enemies = { if ((self.cursor_trace_ent.takedamage) && (self.cursor_trace_ent.flags &FL_MONSTER))
+void() checking_enemies = 
+{
+	if ((self.cursor_trace_ent.takedamage) && (self.cursor_trace_ent.flags &FL_MONSTER))
 	{
 		self.enhealth = self.cursor_trace_ent.health;
 		self.enframe = self.cursor_trace_ent.frame;
@@ -329,7 +337,9 @@ void() checking_enemies = { if ((self.cursor_trace_ent.takedamage) && (self.curs
 };
 
 .float landsoundtime;
-void(float isheavy) playerlandsound = { if (self.landsoundtime > time)
+void(float isheavy) playerlandsound = 
+{
+	if (self.landsoundtime > time)
 		return;
 	local string r;
 	local string landingsound;
@@ -407,7 +417,9 @@ void(float isheavy) playerlandsound = { if (self.landsoundtime > time)
 };
 .float water_splash_origin;
 
-void() playerfootstepsound = { local string r;
+void() playerfootstepsound = 
+{
+	local string r;
 	local float mat, material, pvol;
 	mat = floor(random() *4 + 1);
 	if (mat == self.fscnt)
@@ -531,15 +543,26 @@ void() playerfootstepsound = { local string r;
 		//pointparticles(particleeffectnum("water_splash"), wsorg, 0, 1);
 	}
 };
-void() playerjumpsound = { local string jumpsound, r;
+void() playerjumpsound = 
+{
+	local string jumpsound, r;
 	local float ft;
 	ft = floor(random() *4 + 1);
 	r = ftos(floor(ft));
 	jumpsound = strcat("player/jumps/jump", r, ".ogg");
 	sound7(self, CHAN_AUTO, jumpsound, 1, ATTN_NORM, 80 + random() *30, 0);
 };
-void() PlayerFootstep = { if (!(self.flags &FL_ONGROUND))
+void() PlayerFootstep = 
+{ 
+	if (self.movetype != MOVETYPE_WALK)
+		return;
+	if (!(self.flags &FL_ONGROUND))
 	{
+		if((self.surfacing_sound_time < time) && (self.waterlevel == 2) &&  (self.velocity_x || self.velocity_y))
+		{
+			randompointsound(self.origin,"player/water_surfacing", 3, random(0.75,1));	
+			self.surfacing_sound_time = time + random(0.5,1);
+		}
 		if (self.crouchlooptime > 0)
 		{
 			//sound (self, CHAN_FOOT, "player/crawl.ogg", 0, ATTN_NORM);

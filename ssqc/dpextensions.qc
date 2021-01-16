@@ -1901,7 +1901,7 @@ void(entity e, vector torque) physics_addtorque = #542; // deprecated, add relat
 //byte count (0 to 255, how much blood)
 //description:
 //creates a blood effect.
-
+*/
 //DP_TE_BLOODSHOWER
 //idea: LordHavoc
 //darkplaces implementation: LordHavoc
@@ -1916,7 +1916,7 @@ void(vector mincorner, vector maxcorner, float explosionspeed, float howmany) te
 //short count (number of blood particles)
 //description:
 //creates an exploding shower of blood, for making gibbings more convincing.
-*/
+
 
 
 
@@ -1970,12 +1970,12 @@ void(vector org, vector color) te_explosionrgb = #407;
 //byte count (0 to 255, how many flame particles)
 //description:
 //creates a single puff of flame particles.  (not very useful really)
-
+*/
 //DP_TE_PARTICLECUBE
 //idea: LordHavoc
 //darkplaces implementation: LordHavoc
 //builtin definitions:
-//void(vector mincorner, vector maxcorner, vector vel, float howmany, float color, float gravityflag, float randomveljitter) te_particlecube = #408;
+void(vector mincorner, vector maxcorner, vector vel, float howmany, float color, float gravityflag, float randomveljitter) te_particlecube = #408;
 //temp entity definitions:
 //float TE_PARTICLECUBE = 54;
 //protocol:
@@ -1988,7 +1988,7 @@ void(vector org, vector color) te_explosionrgb = #407;
 //coord randomvel (how much to jitter the velocity)
 //description:
 //creates a cloud of particles, useful for forcefields but quite customizable.
-*/
+
 
 
 
@@ -2130,7 +2130,8 @@ float DPCONTENTS_SOLID = 1; // hit a bmodel, not a bounding box
 float DPCONTENTS_WATER = 2;
 float DPCONTENTS_SLIME = 4;
 float DPCONTENTS_LAVA = 8;
-float DPCONTENTS_SKY = 16;
+float DPCONTENTS
+ = 16;
 float DPCONTENTS_BODY = 32; // hit a bounding box, not a bmodel
 float DPCONTENTS_CORPSE = 64; // hit a SOLID_CORPSE entity
 float DPCONTENTS_NODROP = 128; // an area where backpacks should not spawn
@@ -2416,6 +2417,9 @@ string(float n) argv = #442;
 
 void(string str) SV_ParseClientCommand =
 {
+
+	// add give command support
+
     float numargs = tokenize(str);
     if (argv(0) == "save")
 	{
@@ -2423,7 +2427,7 @@ void(string str) SV_ParseClientCommand =
 		if (autorizedsave == 1)
 			clientcommand(self, str);
 	}
-    else
+
         clientcommand(self, str);
 };
 
@@ -2714,4 +2718,41 @@ float(string fname) fremove = #652;
 float(string filename) fexists = #653;
 float(string path) rmtree = #654;
 float (float yaw, float dist) walkmovedist = #655
+
+
+
+//DP_RM_CLIPGROUP
+//idea: Akari
+//darkplaces implementation: Akari
+//field definitions:
+.float clipgroup;
+
+float CLIPGROUP_A = 1;
+float CLIPGROUP_B = 2;
+float CLIPGROUP_C = 4;
+float CLIPGROUP_D = 8;
+float CLIPGROUP_E = 16;
+float CLIPGROUP_F = 32;
+float CLIPGROUP_G = 64;
+float CLIPGROUP_H = 128;
+float CLIPGROUP_I = 256;
+float CLIPGROUP_J = 512;
+float CLIPGROUP_K = 1024;
+float CLIPGROUP_L = 2048;
+float CLIPGROUP_M = 4096;
+float CLIPGROUP_N = 8192;
+float CLIPGROUP_O = 16384;
+float CLIPGROUP_P = 32768;
+float CLIPGROUP_Q = 65536;
+float CLIPGROUP_R = 131072;
+float CLIPGROUP_S = 262144;
+float CLIPGROUP_T = 1048576;
+float CLIPGROUP_U = 2097152;
+float CLIPGROUP_V = 4194304;
+float CLIPGROUP_W = 8388608;
+
+//description:
+//If two entities have this field set to the same non-zero integer value, they won't collide with each other.
+
+
 ///////////////end qc file

@@ -22,8 +22,13 @@ void CSQC_Init(void)
 	Hud_Init();
 	check_frikfile();
 	msgtime = gettime(GETTIME_UPTIME);
+	float noqcprecaches = cvar("cl_noqcprecache");	
+	if(noqcprecaches != 1)
 	csqc_precaches();
 	registercommand(CLIENTCOMMAND_GET_FOG);
+	registercommand(CLIENTCOMMAND_DELETE_QNG);
+	registercommand(CLIENTCOMMAND_DUMP_SPAWNERS);
+	registercommand(CLIENTCOMMAND_NOATTACK);
 	registercvar ("_fog_d",ftos(getproperty(VF_FOG_DENSITY)));
 	registercvar("_fog_color",vtos(getpropertyvec(VF_FOG_COLOR)));
 	//registercvar ("_fog_r",ftos(getproperty(VF_FOG_COLOR_R)));
@@ -35,6 +40,10 @@ void CSQC_Init(void)
 	registercvar ("_fog_h",ftos(getproperty(VF_FOG_HEIGHT)));
 	registercvar ("_fog_f",ftos(getproperty(VF_FOG_FADEDEPTH)));
 
+	float scale_crosshair = cvar ("saved8");
+	if(scale_crosshair < 1)
+	strCmd = ("saved8 1\n");
+	localcmd(strCmd);
 };
 
 // CSQC_Shutdown : Called every time the CSQC code is shutdown (changing maps, quitting, etc)
@@ -68,6 +77,23 @@ void()get_fog_values =
 	cvar_set ("_fog_h",ftos(getproperty(VF_FOG_HEIGHT)));
 	cvar_set ("_fog_f",ftos(getproperty(VF_FOG_FADEDEPTH)));
 }
+void() dump_spawner =
+{
+	string strCmd = ("impulse 196\n");
+	localcmd(strCmd);
+};
+
+void() delete_qng = 
+{
+	string strCmd = ("impulse 198\n");
+	localcmd(strCmd);
+};
+
+void() noattack =
+{
+	string strCmd = ("impulse 195\n");
+	localcmd(strCmd);
+};
 
 // CSQC_ConsoleCommand : Used to parse commands in the console that have been registered with the "registercmd" function
 // Return value should be 1 if CSQC handled the command, otherwise return 0 to have the engine handle it.
@@ -94,6 +120,14 @@ float CSQC_ConsoleCommand(string strMessage)
 			case CLIENTCOMMAND_NOGLSL_SATURATION:
 			get_fog_values();
 			*/
+			case CLIENTCOMMAND_DELETE_QNG:
+			delete_qng();
+			break;
+			case CLIENTCOMMAND_NOATTACK:
+			noattack();
+			break;
+			case CLIENTCOMMAND_DUMP_SPAWNERS:
+			dump_spawner();
 			break;
 		default:
 			nReturn = false;
@@ -327,7 +361,21 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 				if (selected_journal_page_bestiary > 0)
 					journal_page_bestiary = selected_journal_page_bestiary;
 			}		
-			
+			if (journal_page_bestiary == 11)
+			{
+				if (jitems_bestiary & JB_A) selected_journal_page_bestiary = 1;
+				if (jitems_bestiary & JB_B) selected_journal_page_bestiary = 2;
+				if (jitems_bestiary & JB_C) selected_journal_page_bestiary = 3;
+				if (jitems_bestiary & JB_D) selected_journal_page_bestiary = 4;
+				if (jitems_bestiary & JB_E) selected_journal_page_bestiary = 5;
+				if (jitems_bestiary & JB_F) selected_journal_page_bestiary = 6;
+				if (jitems_bestiary & JB_G) selected_journal_page_bestiary = 7;
+				if (jitems_bestiary & JB_H) selected_journal_page_bestiary = 8;
+				if (jitems_bestiary & JB_I) selected_journal_page_bestiary = 9;
+				if (jitems_bestiary & JB_J) selected_journal_page_bestiary = 10;
+				if (selected_journal_page_bestiary > 0)
+					journal_page_bestiary = selected_journal_page_bestiary;
+			}	
 			}
 
 		if ((bKeyReleased == 0) && (nKey == 516))
@@ -335,8 +383,8 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 			selected_journal_page_bestiary = 0;
 			if (journal_page_bestiary == 1)
 			{
-				if (jitems_bestiary & JB_A) selected_journal_page_bestiary = 1;
-
+				if (jitems_bestiary & JB_A) 
+				selected_journal_page_bestiary = 1;
 				if (jitems_bestiary & JB_B)
 					selected_journal_page_bestiary = 2;
 				if ((!(jitems_bestiary & JB_B)) && (jitems_bestiary & JB_C))
@@ -355,6 +403,8 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;
 				if ((!(jitems_bestiary & JB_B)) && (!(jitems_bestiary & JB_C)) && (!(jitems_bestiary & JB_D)) && (!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;
+				if ((!(jitems_bestiary & JB_B)) && (!(jitems_bestiary & JB_C)) && (!(jitems_bestiary & JB_D)) && (!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;
 			}
 
 			if (journal_page_bestiary == 2)
@@ -375,6 +425,8 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;
 				if ((!(jitems_bestiary & JB_C)) && (!(jitems_bestiary & JB_D)) && (!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H))&& (!(jitems_bestiary & JB_I))&& (jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;
+				if ((!(jitems_bestiary & JB_C)) && (!(jitems_bestiary & JB_D)) && (!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;
 			}
 
 			if (journal_page_bestiary == 3)
@@ -393,7 +445,9 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;			
 				if ((!(jitems_bestiary & JB_D)) && (!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) && (!(jitems_bestiary & JB_I)) && (jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;			
-			}
+				if ((!(jitems_bestiary & JB_D)) && (!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;			
+				}
 
 			if (journal_page_bestiary == 4)
 			{
@@ -409,6 +463,8 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;			
 				if ((!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&  (!(jitems_bestiary & JB_I)) &&(jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;			
+				if ((!(jitems_bestiary & JB_E)) && (!!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;			
 			}
 
 			if (journal_page_bestiary == 5)
@@ -423,6 +479,8 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;			
 				if ((!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H))  && (!(jitems_bestiary & JB_I)) && (jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;			
+				if ((!(jitems_bestiary & JB_F)) && (!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;		
 			}
 
 			if (journal_page_bestiary == 6)
@@ -435,6 +493,8 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;
 				if ((!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H))&&(!(jitems_bestiary & JB_I))&&  (jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;
+				if ((!(jitems_bestiary & JB_G)) && (!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;		
 			}
 
 			if (journal_page_bestiary == 7)
@@ -445,6 +505,8 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;
 				if ((!(jitems_bestiary & JB_H)) && (!(jitems_bestiary & JB_I)) &&(jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;
+				if ((!(jitems_bestiary & JB_H)) &&(!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;				
 			}
 			if (journal_page_bestiary == 8)
 			{
@@ -452,11 +514,20 @@ float CSQC_InputEvent(float bKeyReleased, float nKey, float n)
 					selected_journal_page_bestiary = 9;
 				if ((!(jitems_bestiary & JB_I)) && (jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;
+				if ((!(jitems_bestiary & JB_I)) && (!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;				
 			}
 			if (journal_page_bestiary == 9)
 			{
 				if ((jitems_bestiary & JB_J))
 					selected_journal_page_bestiary = 10;
+				if ((!(jitems_bestiary & JB_J)) && (jitems_bestiary & JB_K))
+					selected_journal_page_bestiary = 11;				
+			}
+			if (journal_page_bestiary == 10)
+			{
+				if (jitems_bestiary & JB_K)
+					selected_journal_page_bestiary = 11;				
 			}
 			if (selected_journal_page_bestiary > 0)
 				journal_page_bestiary = selected_journal_page_bestiary;

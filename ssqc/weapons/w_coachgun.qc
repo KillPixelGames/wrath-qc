@@ -5,7 +5,9 @@
 void() check_coachgun;
 void() idle_coachgun;
 
-void() idle_coachgun = { if (self.playerdeadtime > time)
+void() idle_coachgun = 
+{
+	if (self.playerdeadtime > time)
 	{
 		self.think = PlayerDeathThink;
 		self.nextthink = time;
@@ -34,6 +36,8 @@ void() wsfire_coachgun1 =
 		makevectors (self.v_angle);
 		snd = strcat ("weapons/coachgun/fire2_", ftos (floor(random() * 2) + 1),".ogg");
 		sound (self, CHAN_WEAPON, snd, 1, ATTN_NORM);
+		float active_punchangle = cvar ("cl_punch");
+		if(active_punchangle == 1)
 		self.punchangle_x = -2;
 		dir = aim (self, 100000);
 		vector tagorg;
@@ -86,7 +90,9 @@ void() wsfire_coachgun1 =
 	self.think = wsfire_coachgun1;		
 	self.nextthink = time +  0.05;	
 };
-/*void() wsfire_coachgun1bac = { self.vweaponframe += 1;
+/*void() wsfire_coachgun1bac = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe == 18)
 	{
 		self.vweaponglowmod = '1 1 1';
@@ -95,6 +101,8 @@ void() wsfire_coachgun1 =
 		makevectors(self.v_angle);
 		snd = strcat("weapons/coachgun/fire2_", ftos(floor(random() *2) + 1), ".ogg");
 		sound(self, CHAN_WEAPON, snd, 1, ATTN_NORM);
+		float active_punchangle = cvar ("cl_punch");
+		if(active_punchangle == 1)
 		self.punchangle_x = -2;
 		dir = aim(self, 100000);
 		if (self.ammo_coachgun == 2)
@@ -137,14 +145,18 @@ void() wsfire_coachgun1 =
 	self.nextthink = time + 0.05;
 };
 */
-void() wsfire_coachgun = { self.vweaponglowmod = '0.5 0.5 0.5';
+void() wsfire_coachgun = 
+{
+	self.vweaponglowmod = '0.5 0.5 0.5';
 	self.vweaponframe = 17;
 	self.think = wsfire_coachgun1;
 	self.nextthink = time + 0.05;
 	self.attack_finished = time + 0.9;
 };
 
-void() wfire_coachgun1 = { self.vweaponframe += 1;
+void() wfire_coachgun1 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe == 3)
 	{
 		self.vweaponglowmod = '1 1 1';
@@ -153,6 +165,8 @@ void() wfire_coachgun1 = { self.vweaponframe += 1;
 		makevectors(self.v_angle);
 		snd = strcat("weapons/coachgun/fire1_", ftos(floor(random() *3) + 1), ".ogg");
 		sound(self, CHAN_WEAPON, snd, 1, ATTN_NORM);
+		float active_punchangle = cvar ("cl_punch");
+		if(active_punchangle == 1)
 		self.punchangle_x = -2;
 		dir = aim(self, 100000);
 		FireBullets(1, dir, '0.01 0.02 0', self.coachgun_damage1, self.coachgun_spread1);
@@ -186,19 +200,25 @@ void() wfire_coachgun1 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_coachgun = { self.vweaponglowmod = '0.5 0.5 0.5';
+void() wfire_coachgun = 
+{
+	self.vweaponglowmod = '0.5 0.5 0.5';
 	self.vweaponframe = 2;
 	self.think = wfire_coachgun1;
 	self.nextthink = time + 0.05;
 };
 
-void() pick_up_coachgun2 = { self.think = idle_coachgun;
+void() pick_up_coachgun2 = 
+{
+	self.think = idle_coachgun;
 	self.pick_up_time = time + 0.5;
 	self.vweaponstate = 1;
 	self.nextthink = time + 0.05;
 };
 
-void() pick_up_coachgun = { self.lastweapon = IT_COACHGUN;
+void() pick_up_coachgun = 
+{
+	self.lastweapon = IT_COACHGUN;
 	self.weapon = IT_COACHGUN;
 	sound(self, CHAN_WEAPON, "weapons/coachgun/inspect.ogg", 1, ATTN_NORM);
 	W_SetWeapon();
@@ -214,7 +234,9 @@ void() pick_up_coachgun = { self.lastweapon = IT_COACHGUN;
 	self.nextthink = time + 5.95;
 }
 
-void() raise_coachgun2 = { self.vweaponframe += 1;
+void() raise_coachgun2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe == 45)
 		W_SetWeapon();
 
@@ -227,7 +249,9 @@ void() raise_coachgun2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.025;
 };
 
-void() raise_coachgun = { self.weapon = IT_COACHGUN;
+void() raise_coachgun = 
+{
+	self.weapon = IT_COACHGUN;
 	W_SetWeapon();
 	sound(self, CHAN_AUTO, "weapons/coachgun/raise.ogg", 1, ATTN_NORM);
 	self.vweaponglowmod = '-0.1 -0.1 -0.1';
@@ -240,7 +264,9 @@ void() raise_coachgun = { self.weapon = IT_COACHGUN;
 	self.nextthink = time;
 };
 
-void() lower_coachgun2 = { self.vweaponframe += 1;
+void() lower_coachgun2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe >= 51)
 		self.think = raise_weapon;
 	else
@@ -248,7 +274,9 @@ void() lower_coachgun2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.025;
 };
 
-void() lower_coachgun = { sound(self, CHAN_AUTO, "weapons/coachgun/lower.ogg", 1, ATTN_NORM);
+void() lower_coachgun = 
+{
+	sound(self, CHAN_AUTO, "weapons/coachgun/lower.ogg", 1, ATTN_NORM);
 	self.vweaponframe = 48;
 	self.attack_finished = time + 0.125;
 	self.think = lower_coachgun2;

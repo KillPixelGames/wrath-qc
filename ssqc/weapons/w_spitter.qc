@@ -4,7 +4,9 @@
 .vector vvv1;
 //void(float damage, float type) spawn_touchblood2;
 
-void() idle_spitter = { if (self.playerdeadtime > time)
+void() idle_spitter = 
+{
+	if (self.playerdeadtime > time)
 	{
 		self.think = PlayerDeathThink;
 		self.nextthink = time;
@@ -23,7 +25,9 @@ void() idle_spitter = { if (self.playerdeadtime > time)
 
 };
 
-void() prelease_spitter2 = { self.vweaponframe += 1;
+void() prelease_spitter2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe >= 30)
 		self.think = idle_spitter;
 	else
@@ -31,13 +35,17 @@ void() prelease_spitter2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.05;
 };
 
-void() prelease_spitter = { self.vweaponframe = 21;
+void() prelease_spitter = 
+{
+	self.vweaponframe = 21;
 	self.attack_finished = 0;
 	self.think = prelease_spitter2;
 	self.nextthink = time + 0.05;
 };
 
-void() srelease_spitter2 = { self.vweaponframe += 1;
+void() srelease_spitter2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe >= 40)
 		self.think = idle_spitter;
 	else
@@ -45,7 +53,9 @@ void() srelease_spitter2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.05;
 };
 
-void() srelease_spitter = { sound(self, CHAN_WEAPON, "weapons/spitter/fire2_release.wav", 1, ATTN_NORM);
+void() srelease_spitter = 
+{
+	sound(self, CHAN_WEAPON, "weapons/spitter/fire2_release.wav", 1, ATTN_NORM);
 	self.vweaponframe = 36;
 	self.think = srelease_spitter2;
 	self.nextthink = time + 0.05;
@@ -53,7 +63,9 @@ void() srelease_spitter = { sound(self, CHAN_WEAPON, "weapons/spitter/fire2_rele
 
 .float frags;
 .float spteeth;
-void() spiral_teeth = { local vector ang;
+void() spiral_teeth = 
+{
+	local vector ang;
 	local float avfloat;
 	avfloat = random() *1.5 + 1.33;
 
@@ -138,7 +150,9 @@ void() spiral_teeth = { local vector ang;
 	self.velocity = ((self.velocity + ((v_right *121.000) *crandom())) + ((v_up *121.000) *crandom()));
 }
 
-vector() wall_velocity = { local vector vel;
+vector() wall_velocity = 
+{
+	local vector vel;
 	vel = normalize(self.velocity);
 	vel = normalize(vel + v_up *(random() - 0.5) + v_right *(random() - 0.5));
 	vel = vel + 2 * trace_plane_normal;
@@ -146,11 +160,15 @@ vector() wall_velocity = { local vector vel;
 	return vel;
 };
 
-void(float damage, float type) spawn_touchblood2 = { local vector vel;
+void(float damage, float type) spawn_touchblood2 = 
+{
+	local vector vel;
 	vel = wall_velocity() *0.2;
 	SpawnBlood(self.origin + vel *0.01, vel, damage, type, 0);
 };
-void() spit_touch = { local vector org;
+void() spit_touch = 
+{
+	local vector org;
 	org = self.origin;
 	local float tdmg;
 	if (other == self.owner)
@@ -224,7 +242,9 @@ void() spit_touch = { local vector org;
 	remove(self);
 };
 
-void(float type, float forg) W_FireSpitter = { local vector tagorg;
+void(float type, float forg) W_FireSpitter = 
+{
+	local vector tagorg;
 	local float sv, tagindex;
 	newmis = spawn();
 	newmis.owner = self;
@@ -277,11 +297,15 @@ void(float type, float forg) W_FireSpitter = { local vector tagorg;
 	newmis.touch = spit_touch;
 	newmis.modelflags = 0;
 	newmis.effects = EF_NOSHADOW;
+	float active_punchangle = cvar ("cl_punch");
+	if(active_punchangle == 1)
 	self.punchangle_x = -2;
 	setsize(newmis, '0 0 0', '0 0 0');
 };
 
-void() wfire_spitter_loop = { if (self.ammo_spitter <= 0)
+void() wfire_spitter_loop = 
+{
+	if (self.ammo_spitter <= 0)
 	{
 		self.ammo_spitter = 0;
 		self.think = prelease_spitter;
@@ -324,7 +348,9 @@ void() wfire_spitter_loop = { if (self.ammo_spitter <= 0)
 	self.attack_finished = time + 0.05;
 };
 
-void() wfire_spitter = { local string snd;
+void() wfire_spitter = 
+{
+	local string snd;
 
 	if (self.ammo_spitter <= 0)
 	{
@@ -346,7 +372,9 @@ void() wfire_spitter = { local string snd;
 
 };
 
-void() wsfire_spitter1 = { if (self.vweaponframe >= 35)
+void() wsfire_spitter1 = 
+{
+	if (self.vweaponframe >= 35)
 	{
 		if (!self.button0)
 			self.think = srelease_spitter;
@@ -362,7 +390,9 @@ void() wsfire_spitter1 = { if (self.vweaponframe >= 35)
 	self.nextthink = time + 0.05;
 };
 
-void() wsfire_spitter = { local string snd;
+void() wsfire_spitter = 
+{
+	local string snd;
 	self.vweaponframe = 31;
 	self.spittertag = 1;
 	snd = strcat("weapons/spitter/fire2_", ftos(floor(random() *spitter_svsf) + 1), ".wav");
@@ -373,7 +403,9 @@ void() wsfire_spitter = { local string snd;
 	self.nextthink = time + 0.05;
 };
 
-void() vgear_think = { self.frame = self.owner.vgearframe;
+void() vgear_think = 
+{
+	self.frame = self.owner.vgearframe;
 	if (self.owner.ammo_spitter >= 8)
 		self.skin = 8;
 	else
@@ -415,7 +447,9 @@ void(entity e, entity vweapn) spawn_vbullet =
 };
 
 */
-void(entity e, entity vweapn) spawn_vgear = { e.vgear = spawn();
+void(entity e, entity vweapn) spawn_vgear = 
+{
+	e.vgear = spawn();
 	e.vgear.owner = e;
 	e.vgear.wrathflags += FL_GARBAGE;
 	setmodel(e.vgear, "models/weapons/spitter/v_fangs.md3");
@@ -434,13 +468,17 @@ void(entity e, entity vweapn) spawn_vgear = { e.vgear = spawn();
 	e.vgear.think = vgear_think;
 };
 
-void() pre_idle_spitter = { self.nextthink = time;
+void() pre_idle_spitter = 
+{
+	self.nextthink = time;
 	self.pick_up_time = time + 0.5;
 	self.think = idle_spitter;
 	self.vweaponstate = 1;
 }
 
-void() pick_up_spitter = { self.weapon = IT_SPITTER;
+void() pick_up_spitter = 
+{
+	self.weapon = IT_SPITTER;
 	self.lastweapon = IT_SPITTER;
 	sound(self, CHAN_AUTO, "weapons/spitter/inspect.ogg", 1, ATTN_NORM);
 	W_SetWeapon();
@@ -457,7 +495,9 @@ void() pick_up_spitter = { self.weapon = IT_SPITTER;
 	self.think = pre_idle_spitter;
 };
 
-void() raise_spitter2 = { if (self.vweaponframe == 42)
+void() raise_spitter2 = 
+{
+	if (self.vweaponframe == 42)
 		W_SetWeapon();
 
 	self.vweaponframe += 1;
@@ -468,7 +508,9 @@ void() raise_spitter2 = { if (self.vweaponframe == 42)
 	self.nextthink = time + 0.015;
 };
 
-void() raise_spitter = { self.weapon = IT_SPITTER;
+void() raise_spitter = 
+{
+	self.weapon = IT_SPITTER;
 	W_SetWeapon();
 	self.pickup_spitter = 0;
 	self.vgearinspect = 0;
@@ -483,7 +525,9 @@ void() raise_spitter = { self.weapon = IT_SPITTER;
 	self.nextthink = time + 0.025;
 };
 
-void() lower_spitter2 = { self.vweaponframe += 1;
+void() lower_spitter2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe == 49)
 		remove(self.vgear);
 	//**	remove (self.vbullet);
@@ -495,7 +539,9 @@ void() lower_spitter2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.025;
 };
 
-void() lower_spitter = { sound(self, CHAN_AUTO, "weapons/spitter/lower.ogg", 1, ATTN_NORM);
+void() lower_spitter = 
+{
+	sound(self, CHAN_AUTO, "weapons/spitter/lower.ogg", 1, ATTN_NORM);
 	self.vweaponframe = 46;
 	self.attack_finished = time + 0.125;
 	self.think = lower_spitter2;

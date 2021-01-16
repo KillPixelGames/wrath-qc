@@ -3,7 +3,9 @@
 .float minpitch;
 .float pitch;
 void() soundbox_think;
-void() soundbox_stop = { if (self.count)
+void() soundbox_stop = 
+{
+	if (self.count)
 		sound7(self, CHAN_VOICE, "misc/null.wav", 1, 1, 100, 0);
 	else
 	{
@@ -14,7 +16,9 @@ void() soundbox_stop = { if (self.count)
 	self.use = soundbox_think;
 };
 
-void() soundbox_think = { local float spitch;
+void() soundbox_think = 
+{
+	local float spitch;
 	self.cnt = soundlength(self.noise);
 	if ((self.pitch) || (self.minpitch && self.maxpitch))
 	{
@@ -40,7 +44,9 @@ void() soundbox_think = { local float spitch;
 		remove(self);
 };
 
-void() soundbox = { if (self.noise)
+void() soundbox = 
+{
+	if (self.noise)
 		precache_sound(self.noise);
 
 	if (!self.delay)
@@ -73,7 +79,20 @@ void() soundbox = { if (self.noise)
 			self.nextthink = time + self.wait;
 		}
 		else
+			{
+			float dev = cvar("showsoundspheres");
+			if (dev == 1)
+			{
+			local entity visible_sound = spawn();
+			visible_sound.origin = self.origin;
+			visible_sound.alpha = 0.25;
+			visible_sound.effects = 512 + EF_ADDITIVE +  EF_DOUBLESIDED;
+			setmodel(visible_sound,"models/dev/sphere.md3");
+			visible_sound.colormod = '0 0.3 2';
+			visible_sound.scale = self.rad_sound  / 128;
+			}		
 			ambientsound(self.origin, self.noise, self.volume, attn);
+			}
 	}
 };
 
@@ -89,14 +108,8 @@ void() soundbox = { if (self.noise)
 .float msound_cnt6;
 void(entity e, float chan, string samp, float vol, float attenn) msound =
 {
-	if ((TrinketofRespite_time < time))
-	{
-		sound(e, chan, samp, vol, attenn);
-	}
-	else
-	{
-		sound7(e, chan, samp, vol, attenn, STAT_RADIALACTIVE, FALSE);
-	}
+	sound(e, chan, samp, vol, attenn);
+	//sound7(e, chan, samp, vol, attenn, STAT_RADIALACTIVE, FALSE);
 };
 
 void(string locsound) painsound =

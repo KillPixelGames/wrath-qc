@@ -1,11 +1,15 @@
 float START_OFF = 1;
 
-void() info_null = { remove(self);
+void() info_null = 
+{
+	remove(self);
 };
 
 void() info_notnull = {};
 
-void() light_use = { if (self.spawnflags &START_OFF)
+void() light_use = 
+{
+	if (self.spawnflags &START_OFF)
 	{
 		lightstyle(self.style, "m");
 		self.spawnflags = self.spawnflags - START_OFF;
@@ -17,7 +21,9 @@ void() light_use = { if (self.spawnflags &START_OFF)
 	}
 };
 
-void() fade_light = { /*
+void() fade_light = 
+{
+	/*
 	if(self.count == 12)
 	{
 	lightstyle(self.style, "l");
@@ -90,7 +96,9 @@ void() fade_light = { /*
 };
 
 .string targetfade;
-void() light = { if (!self.time_fade)
+void() light = 
+{
+	if (!self.time_fade)
 		self.time_fade = 0.5;
 	if (self.style == 16)
 	{
@@ -118,7 +126,9 @@ void() light = { if (!self.time_fade)
 	}
 };
 
-void() light_fluoro = { if (self.style >= 32)
+void() light_fluoro = 
+{
+	if (self.style >= 32)
 	{
 		self.use = light_use;
 
@@ -133,39 +143,53 @@ void() light_fluoro = { if (self.style >= 32)
 	ambientsound(self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
 };
 
-void() light_fluorospark = { if (!self.style)
+void() light_fluorospark = 
+{
+	if (!self.style)
 		self.style = 10;
 	precache_sound("ambience/buzz1.wav");
 	ambientsound(self.origin, "ambience/buzz1.wav", 0.5, ATTN_STATIC);
 };
 
-void() light_globe = { precache_model("progs/s_light.spr");
+void() light_globe = 
+{
+	precache_model("progs/s_light.spr");
 	setmodel(self, "progs/s_light.spr");
 	makestatic(self);
 };
 
-void() FireAmbient = { precache_sound("ambience/fire1.wav");
+void() FireAmbient = 
+{
+	precache_sound("ambience/fire1.wav");
 	ambientsound(self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
 };
 
-void() light_torch_small_walltorch = { precache_model("progs/flame.mdl");
+void() light_torch_small_walltorch = 
+{
+	precache_model("progs/flame.mdl");
 	setmodel(self, "progs/flame.mdl");
 	FireAmbient();
 	makestatic(self);
 };
 
-void() light_flame_large_yellow = { precache_model("progs/flame2.mdl");
+void() light_flame_large_yellow = 
+{
+	precache_model("progs/flame2.mdl");
 	setmodel(self, "");
 	self.frame = 1;
 	FireAmbient();
 };
 
-void() light_flame_small_yellow = { precache_model("progs/flame2.mdl");
+void() light_flame_small_yellow = 
+{
+	precache_model("progs/flame2.mdl");
 	setmodel(self, "");
 	FireAmbient();
 };
 
-void() light_flame_small_white = { precache_model("progs/flame2.mdl");
+void() light_flame_small_white = 
+{
+	precache_model("progs/flame2.mdl");
 	setmodel(self, "");
 	FireAmbient();
 };

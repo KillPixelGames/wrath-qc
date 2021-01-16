@@ -3,7 +3,9 @@ float PUSH_SILENT = 2;
 .vector oldvelocity;
 .float pushltime;
 .float monsterjump;
-void() trigger_jumpad_touch = { local float flighttime, dist, grav;
+void() trigger_jumpad_touch = 
+{
+	local float flighttime, dist, grav;
 	local vector org;
 	if (other.nojump == 1)
 		return;
@@ -17,10 +19,10 @@ void() trigger_jumpad_touch = { local float flighttime, dist, grav;
 	if(!(other.flags & FL_IGNOREINPUT))
 	other.flags += FL_IGNOREINPUT;
 
-	stuffcmd(other, "cl_forwardspeed 0\n");
+/*	stuffcmd(other, "cl_forwardspeed 0\n");
 	stuffcmd(other, "cl_backspeed 0\n");
 	stuffcmd(other, "cl_sidespeed 0\n");
-		
+*/		
 	if (self.using != 1)
 		return;
 
@@ -85,7 +87,9 @@ void() trigger_jumpad_touch = { local float flighttime, dist, grav;
 	}
 };
 
-void() trigger_jumpad_findtarget = {	// find the target
+void() trigger_jumpad_findtarget = 
+{	
+	// find the target
 	self.enemy = find(world, targetname, self.target);
 	if (!self.enemy)
 	{
@@ -94,7 +98,9 @@ void() trigger_jumpad_findtarget = {	// find the target
 	}
 };
 
-void() trigger_jumppad = { if (self.angles != '0 0 0')
+void() trigger_jumppad = 
+{
+	if (self.angles != '0 0 0')
 		SetMovedir();
 
 	self.solid = SOLID_TRIGGER;

@@ -1,9 +1,6 @@
-void(float index, float type, .string) SV_AddStatString = #232;
-
-void(float index, float type, .float) SV_AddStatFloat = #232;
-
-
 // Entity Sending
+void(float index, float type, .string) SV_AddStatString = #232;
+void(float index, float type, .float) SV_AddStatFloat = #232;
 
 .float() SendEntity;
 .float SendFlags ;
@@ -17,12 +14,10 @@ void(float index, float type, .float) SV_AddStatFloat = #232;
 .float timels;
 .float msg;
 .float lf;
-
 .entity vweapon;
 .float vweaponstate;
 .float crosshairflag;
 .float tetherhasmodel;
-
 .float pulseicons;
 .float deadmenuflag;
 .float wlightning;
@@ -31,7 +26,7 @@ void(float index, float type, .float) SV_AddStatFloat = #232;
 .float artifacttime;
 .float tethertime;
 .float tether_global_time;
-
+.float hubstate;
 .float damagescreen;
 .float shrine;
 .float relics;
@@ -41,8 +36,6 @@ void(float index, float type, .float) SV_AddStatFloat = #232;
 .float spotted_maps;
 .float time_hudmessage;
 .float stat_time_hudmessage;
-
-
 .float foundedrelics;
 
 
@@ -59,6 +52,18 @@ float ENT_HMMSG = 2;
 float ENT_HUDMSG2 = 3;
 //float ENT_ARTIFACT 				= 4;  
 
+.float ammo_coachgun;
+.float ammo_bombs;
+.float ammo_cannon;
+.float ammo_lance;
+.float ammo_spitter;
+.float ammo_retcher;
+.float ammo_spitter;
+.float ammo_shotgun;
+.float ammo_boil;
+
+
+// stats!
 const float STAT_RMENU = 34;
 const float STAT_LF = 35;
 const float STAT_X = 36;
@@ -69,6 +74,8 @@ const float STAT_AMMO_COACHGUN = 40;
 const float STAT_AMMO_CANNON = 41;
 const float STAT_AMMO_BOMBS = 42;
 const float STAT_AMMO_SHOTGUN = 43;
+const float STAT_AMMO_LANCE = 91;
+const float STAT_AMMO_BOIL = 96;
 const float STAT_RD_ST = 44;
 const float STAT_RD_LS = 45;
 const float STAT_RD_TR = 46;
@@ -113,13 +120,12 @@ const float STAT_SPOTTED_MAPS = 87;
 const float STAT_USED_RELICS = 88;
 const float STAT_FOUND_RELICS = 89;
 const float STAT_TETHERTIME = 90;
-
-
+const float STAT_HUBSTATE = 92;
 const float STAT_DARM = 93;
 const float STAT_RARM = 94;
 const float STAT_RD_CA = 95;
 
-
+// items
 float IT_COACHGUN = 1;
 float IT_SHOTGUN = 2;
 float IT_SPITTER = 4;
@@ -127,7 +133,8 @@ float IT_RETCHER = 8;
 float IT_CANNON = 16;
 float IT_MELEE = 32;
 float IT_LANCE = 64;
-float IT_EXTRA_WEAPON = 128;
+//float IT_EXTRA_WEAPON = 128;
+float IT_BOIL = 128;
 float IT_VIEWMODEL = 512;
 float IT_ROCKETS = 1024;
 float IT_CELLS = 2048;
@@ -140,16 +147,17 @@ float IT_SUPERHEALTH = 65536;
 float IT_KEY1 = 131072;
 float IT_KEY2 = 262144;
 float IT_KEY3 = 256;
-
-
 float IT_SUIT = 2097152;
 float IT_QUAD = 4194304;
 
+
+// relics
 float RL_E1M1 = 1;
 float RL_E1M2 = 2;
 float RL_E1M3 = 4;
 float RL_E1M4 = 8;
 float RL_E1M5 = 16;
+
 
 float SLOT_ARMOR1 = 1;
 float SLOT_ARMOR2 = 2;
@@ -307,9 +315,9 @@ float CENTERPRINT_W = 8388608;
 float SG_MathModulus(float a, float b)
 {
 	return (a - (floor(a / b) *b));
-}
+};
 
-string SG_GetFormattedTimeStringUnZoned(float tTime)
+string (float tTime) SG_GetFormattedTimeStringUnZoned =
 {
 	local float nTime;
 	nTime = rint(tTime);
@@ -325,9 +333,11 @@ string SG_GetFormattedTimeStringUnZoned(float tTime)
 	else
 		strTime = strcat(strTime, ftos(nSeconds));
 	return strTime;
-}
+};
 
-string(string strtofix) case_fixed = { if (strlen(strtofix) == 1)
+string(string strtofix) case_fixed = 
+{ 
+	if (strlen(strtofix) == 1)
 		strtofix = strtoupper(strtofix);
 	else
 	{
@@ -353,4 +363,4 @@ string(string strtofix) case_fixed = { if (strlen(strtofix) == 1)
 		strtofix = "Mouse Wheel Down";
 	strtofix = strcat("[", strtofix, "]");
 	return strtofix;
-}
+};

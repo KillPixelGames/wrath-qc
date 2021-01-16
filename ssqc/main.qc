@@ -17,7 +17,9 @@ void() Precache;
 void() check_tether;
 void()check_maxammo;
 .float message_number;
-void() CSQC_AddStats = { SV_AddStatFloat(STAT_RMENU, 8, rmenu);
+void() CSQC_AddStats = 
+{
+	SV_AddStatFloat(STAT_RMENU, 8, rmenu);
 	SV_AddStatFloat(STAT_LF, 8, lf);
 	SV_AddStatFloat(STAT_X, 8, origin_x);
 	SV_AddStatFloat(STAT_Y, 8, origin_y);
@@ -29,6 +31,7 @@ void() CSQC_AddStats = { SV_AddStatFloat(STAT_RMENU, 8, rmenu);
 	SV_AddStatFloat(STAT_AMMO_COACHGUN, 8, ammo_coachgun);
 	SV_AddStatFloat(STAT_AMMO_FLAMETHROWER, 8, ammo_spitter);
 	SV_AddStatFloat(STAT_AMMO_SHOTGUN, 8, ammo_shotgun);
+	SV_AddStatFloat(STAT_AMMO_LANCE, 8, ammo_lance);
 	SV_AddStatFloat(STAT_RD_LS, 8, LifeSiphon);
 	SV_AddStatFloat(STAT_RD_ST, 8, SoulTether);
 	SV_AddStatFloat(STAT_RD_TR, 8, TrinketofRespite);
@@ -78,7 +81,9 @@ void() CSQC_AddStats = { SV_AddStatFloat(STAT_RMENU, 8, rmenu);
 
 entity lastspawn;
 
-void() worldspawn = { lastspawn = world;
+void() worldspawn = 
+{
+	lastspawn = world;
 	skill = cvar("skill");
 	//Precache();
 	check_enemies_frik();
@@ -90,6 +95,8 @@ void() worldspawn = { lastspawn = world;
 	check_attar();
 	check_itemlight();
 	check_maxammo();
+	float noqcprecaches = cvar("cl_noqcprecache");	
+	if(noqcprecaches != 1)
 	precaches();
 	CSQC_AddStats();
 	//	check_tether();
@@ -142,6 +149,8 @@ void() worldspawn = { lastspawn = world;
 
 	lightstyle(16, "a");
 
+
+
 	// styles 32-62 are assigned by the light program for switchable lights
 
 	// 63 testing
@@ -159,7 +168,11 @@ void() precache_monster_executioner;
 void() precache_monster_oppressor;
 void() precache_monster_widow;
 void() precache_monster_wretch;
-void() precaches = { precache_monster_afflicted();
+void() precache_monster_symbol;
+void() precache_monster_lurker;
+void() precaches = 
+{
+	precache_monster_afflicted();
 	precache_monster_heretic();
 	precache_monster_fallen();
 	precache_monster_stricken();
@@ -170,15 +183,11 @@ void() precaches = { precache_monster_afflicted();
 	precache_monster_widow();
 	precache_monster_wretch();
 	precache_monster_oppressor();
+	precache_monster_symbol();
+    precache_monster_lurker();
 	precache_model("models/artifacts/effects/confounding_attar_cloud.md3 " );
-	precache_model("models/player/footstep.md3" );
-	precache_model("models/weapons/lance/w_shotgun.md3" );
-	precache_model("models/objects/switch1.md3" );
-	precache_model("models/fx/tether.spr" );
-	precache_model("models/items/life_heart.spr" );
-	precache_model("models/items/manuscript.md3" );
+	//precache_model("models/items/manuscript.md3" );
 	precache_model("models/enemies/incisor/incisor_spike.md3" );	precache_model("models/artifacts/active/cruel_aegis_active.md3");
-	precache_model("models/artifacts/active/drowners_apparatus_active.md3");
 	precache_model("models/artifacts/active/life_siphon_active.md3");
 	precache_model("models/artifacts/active/soul_tether_active.md3");
 	precache_model("models/artifacts/cruel_aegis.md3");
@@ -192,6 +201,7 @@ void() precaches = { precache_monster_afflicted();
 	precache_model("models/artifacts/soul_marker.md3");
 	precache_model("models/artifacts/soul_marker.md3");
 	precache_model("models/artifacts/soul_tether.md3");
+	precache_model("models/dev/sphere.md3");
 	precache_model("models/dev/gizmo.md3");
 	//precache_model ("models/fx/tether.spr");
 	precache_model("models/gibs/gib_large.md3");
@@ -292,9 +302,39 @@ void() precaches = { precache_monster_afflicted();
 	precache_model ("models/projectiles/proj_oppressor_explo.md3");
 	precache_model ("models/projectiles/proj_oppressor.md3");
 	precache_model ("models/dev/node.md3");
-
-
-
+	precache_model ("models/alpha/head.md3");
+	precache_model ("models/alpha/upper.md3");
+	precache_model ("models/alpha/lower.md3");
+	precache_model ("models/weapons/lance/v_flash.md3");
+	precache_model ("models/artifacts/effects/trinket_dome.md3");
+	precache_model ("models/artifacts/mark_flame.md3");
+	precache_model ("models/player/footstep.md3");
+	precache_model ("models/weapons/lance/w_shotgun.md3");
+	precache_model ("models/players/outlander/player.md3");
+	precache_model ("models/objects/switch1.md3");
+	precache_model ("models/fx/tether.spr");
+	precache_model ("models/projectiles/proj_boil.md3");
+	precache_model ("models/weapons/boil/v_beam.md3");
+	precache_model ("models/projectiles/proj_boilb.md3");
+	precache_model ("models/projectiles/proj_boila.md3");
+	precache_model("models/weapons/lance/w_lance.md3");
+	precache_model("models/items/ammo_lance.md3");
+	precache_model("models/items/life_heart.spr");
+	precache_model("models/artifacts/trinket_of_reflection.md3");
+	precache_model("models/items/lances.md3");
+	precache_model("models/items/manuscript.md3");
+	precache_model("models/enemies/lurker/lurker.md3");
+	precache_sound("objects/switch1_use.ogg");
+	precache_sound("items/artifacts/artifactE_end.ogg");
+	precache_sound("weapons/lance/raise.ogg");
+	precache_sound("weapons/lance/inspect.ogg");
+    precache_sound("objects/switch1_use.ogg");
+    precache_sound("items/artifacts/artifactE_end.ogg");
+    precache_sound("weapons/lance/raise.ogg");
+    precache_sound("weapons/lance/inspect.ogg");
+    precache_sound("weapons/boil/fire1.ogg");
+    precache_sound("weapons/boil/raise.ogg");
+    precache_sound("weapons/boil/inspect.ogg");
 	//	precache_sound ("env/rain.wav");
 	//	precache_sound ("objects/sigil_flight.ogg");
 	//	precache_sound ("weapons/cannon/dryfire.ogg");
@@ -302,10 +342,10 @@ void() precaches = { precache_monster_afflicted();
 	//	precache_sound ("weapons/cannon/lower.ogg");
 	//	precache_sound ("weapons/cannon/raise.ogg");
 	precache_sound ("items/ore.ogg");
-	precache_sound ("items/artifacts/artifactE_end.ogg");
+//	precache_sound ("items/artifacts/artifactE_end.ogg");
 	precache_sound ("items/sigils/sigil_flight_active.ogg");
 	precache_sound ("items/sigils/sigil_flight_end.ogg");
-	precache_sound ("objects/switch1_use.ogg");
+//	precache_sound ("objects/switch1_use.ogg");
 	precache_sound ("weapons/cannon/fire1_1.ogg");
 	precache_sound ("weapons/cannon/fire1_2.ogg");
 	precache_sound ("weapons/cannon/fire1_3.ogg");
@@ -319,7 +359,7 @@ void() precaches = { precache_monster_afflicted();
 	precache_sound ("weapons/cannon/inspect.ogg");
 	precache_sound ("weapons/cannon/lower.ogg");
 	precache_sound ("weapons/cannon/raise.ogg");
-	precache_sound ("weapons/lance/raise.ogg");
+//	precache_sound ("weapons/lance/raise.ogg");
 	precache_sound("doors/glyph_locked.ogg");
 	precache_sound("doors/glyph_unlocked.ogg");
 	precache_sound("enemies/oppressor/fire_loop.wav");
@@ -412,11 +452,17 @@ void() precaches = { precache_monster_afflicted();
 	precache_sound("impact/projectiles/slag1_explo1.ogg");
 	precache_sound("impact/projectiles/slag1_explo2.ogg");
 	precache_sound("impact/projectiles/slag1_explo3.ogg");
-	precache_sound("impact/projectiles/slag1_explo4.ogg");
-	precache_sound("impact/projectiles/slag1_explo5.ogg");
+//	precache_sound("impact/projectiles/slag1_explo4.ogg");
+//	precache_sound("impact/projectiles/slag1_explo5.ogg");
 	precache_sound("impact/projectiles/slag2_explo1.ogg");
 	precache_sound("impact/projectiles/slag2_explo2.ogg");
 	precache_sound("impact/projectiles/slag2_explo3.ogg");
+	precache_sound("impact/projectiles/trinket_med1.ogg");
+	precache_sound("impact/projectiles/trinket_med2.ogg");
+	precache_sound("impact/projectiles/trinket_med3.ogg");
+	precache_sound("impact/projectiles/trinket_small1.ogg");
+	precache_sound("impact/projectiles/trinket_small2.ogg");
+	precache_sound("impact/projectiles/trinket_small3.ogg");
 	precache_sound("items/armor1.ogg");
 	precache_sound("items/armor_dark1.ogg");
 	precache_sound("items/armor_shard1.ogg");
@@ -445,6 +491,7 @@ void() precaches = { precache_monster_afflicted();
 	precache_sound("items/artifacts/artifactG_end.ogg");
 	precache_sound("items/artifacts/artifactG_pickup.ogg");
 	precache_sound("items/artifacts/artifactG_use.ogg");
+	precache_sound("items/artifacts/artifactG_loop.ogg");
 	precache_sound("items/artifacts/artifactH_end.ogg");
 	precache_sound("items/artifacts/artifactH_pickup.ogg");
 	precache_sound("items/artifacts/artifactH_use.ogg");
@@ -473,7 +520,7 @@ void() precaches = { precache_monster_afflicted();
 	precache_sound("items/sigils/sigil_flight_end.ogg"); // (sound when effect ends)
 	precache_sound("items/sigils/sigil_flight_start.ogg"); // (sound when you get sigil)
 	precache_sound("items/slugs.ogg");
-	precache_sound("jump.ogg");
+//	precache_sound("jump.ogg");
 	precache_sound("misc/null.wav");
 	precache_sound("misc/null.wav");
 	precache_sound("misc/null.wav");
@@ -612,7 +659,6 @@ void() precaches = { precache_monster_afflicted();
 	precache_sound("player/water_surfacing1.ogg");
 	precache_sound("player/water_surfacing2.ogg");
 	precache_sound("player/water_surfacing3.ogg");
-	precache_sound("tems/sigils/sigil_flight_start.ogg");
 	precache_sound("ui/journal/journal_close.ogg");
 	precache_sound("ui/journal/journal_open.ogg");
 	precache_sound("ui/journal/journal_page3.ogg");
@@ -626,7 +672,7 @@ void() precaches = { precache_monster_afflicted();
 	precache_sound("weapons/coachgun/lower.ogg");
 	precache_sound("weapons/coachgun/raise.ogg");
 	precache_sound("weapons/lance/fire1.ogg");
-	precache_sound("weapons/lance/inspect.ogg");
+//	precache_sound("weapons/lance/inspect.ogg");
 	precache_sound("weapons/melee/attack1.ogg");
 	precache_sound("weapons/melee/attack2.ogg");
 	precache_sound("weapons/melee/attack3.ogg");

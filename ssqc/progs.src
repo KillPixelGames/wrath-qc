@@ -8,23 +8,26 @@ nodegraph/definitions.qc
 wrathdefs.qc
 //player/sv_user.qc
 subroutines.qc
+frik_file.qc
+
 main.qc                                             // Main subroutines
 gore.qc
+
 dmg_system.qc
 //sprites.qc
 editor/editor.qc
-frik_file.qc
+
 
 
 func_readable.qc
-player/radial.qc
+player/artifact.qc
 player/player.qc
-//player/model.qc                                         
+player/model.qc                                         
 player/client.qc                                           // Client subroutines
 player/use.qc
 
 
-
+weapons/node_editor.qc
 weapons/weapon_system.qc
 weapons/w_melee.qc
 weapons/w_coachgun.qc
@@ -33,6 +36,7 @@ weapons/w_spitter.qc
 weapons/w_retcher.qc
 weapons/w_shotgun.qc
 weapons/w_lance.qc
+weapons/w_boil.qc
 weapons/w_viewmodel.qc
 
 
@@ -46,6 +50,7 @@ entities/trigger.qc
 entities/place_model.qc
 entities/items.qc
 entities/func_destruct.qc
+entities/func_trap.qc
 entities/func_weather.qc
 entities/jumpad.qc
 entities/portal.qc
@@ -56,19 +61,31 @@ entities/portal.qc
 monsters/ai.qc
 monsters/monsters.qc
 monsters/monster_afflicted.qc
+//monsters/mercenary.qc
+monsters/node_ai.qc
 monsters/monster_widow.qc
 monsters/monster_wraith.qc
 monsters/monster_executioner.qc
 
+
+monsters/monster_template.qc
 monsters/monster_invader.qc
 monsters/monster_wretch.qc
+monsters/monster_incisor.qc
 monsters/monster_stricken.qc
 monsters/monster_heretic.qc
 monsters/monster_fallen.qc
 monsters/monster_oppressor.qc
+monsters/monster_symbol.qc
+monsters/mercenary.qc
 
-monsters/spawner.qc
 ///////
 monsters/dummy.qc
+monsters/crawler.qc
+monsters/monster_buffer.qc
+monsters/monster_lurker.qc
+///////
+
+monsters/spawner.qc
 
 nodegraph/nodegraph.qc

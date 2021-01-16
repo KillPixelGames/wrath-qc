@@ -7,7 +7,9 @@ void() idle_shotgun;
 
 .float empty_shells;
 
-void() idle_shotgun = { if (self.playerdeadtime > time)
+void() idle_shotgun = 
+{
+	if (self.playerdeadtime > time)
 	{
 		self.think = PlayerDeathThink;
 		self.nextthink = time + 0.1;
@@ -93,7 +95,9 @@ void() shot_projectile_think =
 .float waittime;
 .float copied;
 void(string locsound, float rnd, float vol, float nchannel, float iswav, float atten) randomsound2;
-void() shotgun_proj_touch = { local vector org;
+void() shotgun_proj_touch = 
+{
+	local vector org;
 	//self.velocity =	self.oldvelocity;
 
 	if (other == self.owner)
@@ -102,7 +106,23 @@ void() shotgun_proj_touch = { local vector org;
 		remove(self);
 
 	if (other.solid == SOLID_TRIGGER)
-	return;	// trigger field, do nothing
+		return;	// trigger field, do nothing
+
+/*
+	local float surfnum;
+	local string s;
+	surfnum = getsurfacenearpoint(other, self.origin);
+	if (surfnum >= 0)
+	{
+		s = getsurfacetexture(other, surfnum);
+		if((s == "textures/skies/hub1/hub1_sky_") || (s == "textures/skies/hub1/undercrofts_sky") || (s == "models/skies/hub1_cloud_ring1") || (s == "models/skies/hub1_cloud_ring2")) 
+		{
+			remove(self);
+			return;
+		}
+	}
+*/
+
 
 	if (pointcontents(self.origin) == CONTENT_SKY)
 	{
@@ -233,6 +253,12 @@ void() shotgun_proj_touch = { local vector org;
 		self.copied = 1;
 		}
 		bullet_clone.solid = SOLID_TRIGGER;
+		if (other.classname == "monster_lurker")
+		{
+			makevectors2(self.angles);
+			vector neworg  = self.origin + v_forward * 5;
+			setorigin (bullet_clone, neworg);
+		}
 		self.movetype = 0;
 		setmodel (self,"");
 		self.touch = SUB_Null;
@@ -258,13 +284,13 @@ void(vector org, vector dir, float order, entity ownerproj) launch_projectile_co
 	shotgun_proj.lifetime = time + 5;
 	shotgun_proj.think = shot_projectile_think;
 	shotgun_proj.nextthink = time;
+	shotgun_proj.clipgroup = 2;
 	setmodel (shotgun_proj, "models/projectiles/proj_shrapnel.md3");
 	setsize (shotgun_proj, '0 0 0', '0 0 0');
 	if(ownerproj.classname == "player")
 	makevectors(ownerproj.v_angle);
 	else
 	makevectors(ownerproj.angles);
-	
 	//org -=v_forward*order ;
 	setorigin (shotgun_proj, org);
 	local vector rvec;
@@ -276,7 +302,9 @@ void(vector org, vector dir, float order, entity ownerproj) launch_projectile_co
 	shotgun_proj.oldvelocity = shotgun_proj.velocity;
 	shotgun_proj.nspeed = (coach_proj_vel +(25 * order));
 };
-void(vector org, vector dir, float order, entity ownerproj) launch_projectile = { local entity shotgun_proj;
+void(vector org, vector dir, float order, entity ownerproj) launch_projectile = 
+{
+	local entity shotgun_proj;
 	shotgun_proj = spawn();
 	shotgun_proj.owner = ownerproj;
 	shotgun_proj.movetype = MOVETYPE_BOUNCEMISSILE;
@@ -290,6 +318,7 @@ void(vector org, vector dir, float order, entity ownerproj) launch_projectile = 
 	shotgun_proj.think = shot_projectile_think;
 	shotgun_proj.lifetime = time + 5;
 	shotgun_proj.nextthink = time;
+	shotgun_proj.clipgroup = 2;
 	setmodel(shotgun_proj, "models/projectiles/proj_shrapnel.md3");
 	setsize(shotgun_proj, '0 0 0', '0 0 0');
 
@@ -354,7 +383,18 @@ void()shotgun_projectile_touch =
 		remove(self);
 		return;
 	}
-
+	/*local float surfnum;
+	local string s;
+	surfnum = getsurfacenearpoint(other, self.origin);
+	if (surfnum >= 0)
+	{
+		s = getsurfacetexture(other, surfnum);
+		if((s == "textures/skies/hub1/hub1_sky_") || (s == "textures/skies/hub1/undercrofts_sky") || (s == "models/skies/hub1_cloud_ring1") || (s == "models/skies/hub1_cloud_ring2")) 
+		{
+			remove(self);
+			return;
+		}
+	}*/
 	self.classname = "shotgun_projectile_explosion";
 	if ((other.takedamage) && (other.solid != SOLID_BSP))
 	{
@@ -421,7 +461,9 @@ void()shotgun_projectile_touch =
 };
 
 
-void() shotgun_projectile_drunk = { self.explodcount += 1;
+void() shotgun_projectile_drunk = 
+{
+	self.explodcount += 1;
 	self.velocity = ((self.velocity + ((v_right *proj_shotgun_drunkfactorh) *crandom())) + ((v_up *proj_shotgun_drunkfactorv) *crandom()));
 	self.nextthink = time + proj_shotgun_timing;	// screw up fast
 	if (self.explodcount < 50)
@@ -433,7 +475,9 @@ void() shotgun_projectile_drunk = { self.explodcount += 1;
 
 .float time_piston;
 
-void() wfire_shotgunempty1 = { 
+void() wfire_shotgunempty1 = 
+{
+	
 
 	float centered_frames;
 	if(self.centered == 1)	centered_frames = 100;	
@@ -449,6 +493,8 @@ void() wfire_shotgunempty1 = {
 		dir = aim(self, 100000);
 		FireBullets(self.buckshot_count, dir, '0.3 0.3 0', self.shotgun_damage1, self.shotgun_spread1);
 		self.effects += EF_MUZZLEFLASH;
+		float active_punchangle = cvar ("cl_punch");
+		if(active_punchangle == 1)
 		self.punchangle_x = -5;
 		self.ammo_shotgun -= 2;
 		//muzzle_shotgun(self.vweapon, 1);
@@ -487,7 +533,9 @@ void() wfire_shotgunempty1 = {
 	self.nextthink = time + 0.05;
 };
 
-void() wsfire_shotgunempty1 = { self.empty_shells = 1;
+void() wsfire_shotgunempty1 = 
+{
+	self.empty_shells = 1;
 
 	self.vweaponframe += 1;
 	float centered_frames;
@@ -558,6 +606,8 @@ void() wsfire_shotgunempty1 = { self.empty_shells = 1;
 		
 		
 		self.attack_finished = time + self.shotgun_time2;
+		float active_punchangle = cvar ("cl_punch");
+		if(active_punchangle == 1)
 		self.punchangle_x = -7;
 		makevectors(self.angles);
 		local float rf;
@@ -616,8 +666,11 @@ void() wsfire_shotgunempty1 = { self.empty_shells = 1;
 	self.nextthink = time + 0.05;
 };
 
-void() wsfire_shotgun1 = { self.vweaponframe += 1;
-
+void() wsfire_shotgun1 = 
+{
+	self.vweaponframe += 1;
+
+
 	float centered_frames;
 
 
@@ -685,6 +738,8 @@ void() wsfire_shotgun1 = { self.vweaponframe += 1;
 		
 		self.attack_finished = time + self.shotgun_time2;
 		self.lastweapontime = time + 1.25;
+		float active_punchangle = cvar ("cl_punch");
+		if(active_punchangle == 1)
 		self.punchangle_x = -5;
 		makevectors(self.angles);
 		local float rf;
@@ -750,7 +805,9 @@ void() wsfire_shotgun1 = { self.vweaponframe += 1;
 
 };
 
-void() wfire_shotgun1 = { self.vweaponframe += 1;
+void() wfire_shotgun1 = 
+{
+	self.vweaponframe += 1;
 	self.shotgun_fire1 = 1;
 	
 	float centered_frames;
@@ -764,6 +821,8 @@ void() wfire_shotgun1 = { self.vweaponframe += 1;
 		dir = aim(self, 100000);
 		FireBullets(self.buckshot_count, dir, '0.3 0.3 0', self.shotgun_damage1, self.shotgun_spread1);
 		self.effects += EF_MUZZLEFLASH;
+		float active_punchangle = cvar ("cl_punch");
+		if(active_punchangle == 1)
 		self.punchangle_x = -5;
 		self.ammo_shotgun -= 2;
 		//muzzle_shotgun(self.vweapon, 1);
@@ -858,7 +917,9 @@ void() wsfire_shotgun = {
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_shotgun = { 
+void() wfire_shotgun = 
+{
+	
 
 	float centered_frames,centered_framesb;
 	if(self.centered == 1)	
@@ -892,13 +953,17 @@ void() wfire_shotgun = {
 	self.nextthink = time + 0.05;
 };
 
-void() pick_up_shotgun2 = { self.think = idle_shotgun;
+void() pick_up_shotgun2 = 
+{
+	self.think = idle_shotgun;
 	self.pick_up_time = time + 0.5;
 	self.vweaponstate = 1;
 	self.nextthink = time + 0.05;
 };
 
-void() pick_up_shotgun = { self.lastweapon = IT_SHOTGUN;
+void() pick_up_shotgun = 
+{
+	self.lastweapon = IT_SHOTGUN;
 	self.weapon = IT_SHOTGUN;
 	self.shotgun_fire1 = 0;
 	sound(self, CHAN_WEAPON, "weapons/shotgun/inspect.ogg", 1, ATTN_NORM);
@@ -916,7 +981,9 @@ void() pick_up_shotgun = { self.lastweapon = IT_SHOTGUN;
 	self.nextthink = time + 4.95;
 }
 
-void() empty_reload_shotgun = { sound(self, CHAN_AUTO, "weapons/shotgun/emptytoreload.ogg", 1, ATTN_NORM);
+void() empty_reload_shotgun = 
+{
+	sound(self, CHAN_AUTO, "weapons/shotgun/emptytoreload.ogg", 1, ATTN_NORM);
 	self.realoding = 1;
 	self.empty_shells = 0;
 	self.shotgun_clip = 2;
@@ -926,7 +993,9 @@ void() empty_reload_shotgun = { sound(self, CHAN_AUTO, "weapons/shotgun/emptytor
 	self.think = idle_shotgun;
 }
 
-void() raise_shotgun2 = { if (self.vweaponframe == 103)
+void() raise_shotgun2 = 
+{
+	if (self.vweaponframe == 103)
 		W_SetWeapon();
 	self.vweaponframe += 1;
 	if (self.vweaponframe >= 106)
@@ -941,7 +1010,9 @@ void() raise_shotgun2 = { if (self.vweaponframe == 103)
 	self.nextthink = time + 0.025;
 };
 
-void() raise_shotgun = { self.weapon = IT_SHOTGUN;
+void() raise_shotgun = 
+{
+	self.weapon = IT_SHOTGUN;
 	self.shotgun_fire1 = 0;
 	sound(self, CHAN_AUTO, "weapons/shotgun/raise.ogg", 1, ATTN_NORM);
 	W_SetWeapon();
@@ -956,7 +1027,9 @@ void() raise_shotgun = { self.weapon = IT_SHOTGUN;
 	self.nextthink = time;
 };
 
-void() lower_shotgun2 = { self.vweaponframe += 1;
+void() lower_shotgun2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe >= 111)
 		self.think = raise_weapon;
 	else
@@ -966,7 +1039,9 @@ void() lower_shotgun2 = { self.vweaponframe += 1;
 
 void() zoom_shotgun = {};
 
-void() lower_shotgun = { self.shotgun_fire1 = 0;
+void() lower_shotgun = 
+{
+	self.shotgun_fire1 = 0;
 	sound(self, CHAN_AUTO, "weapons/shotgun/lower.ogg", 1, ATTN_NORM);
 	self.vweaponframe = 107;
 	self.attack_finished = time + 0.125;

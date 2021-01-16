@@ -2,7 +2,9 @@
 .float gwmd;
 void() wfire_cannon;
 
-void() idle_cannon = { if (self.playerdeadtime > time)
+void() idle_cannon = 
+{
+	if (self.playerdeadtime > time)
 	{
 		self.think = PlayerDeathThink;
 		self.nextthink = time;
@@ -27,35 +29,65 @@ void() prelease_cannon = {
 	self.nextthink = time + 0.05;
 };
 
-void() slag2_explode10 = { self.skin += 1;self.think = SUB_Remove;self.nextthink = time + 0.05;
+void() slag2_explode10 = 
+{
+	self.skin += 1;self.think = SUB_Remove;self.nextthink = time + 0.05;
 };
-void() slag2_explode9 = { self.skin += 1;self.think = slag2_explode10;self.nextthink = time + 0.05;
+void() slag2_explode9 = 
+{
+	self.skin += 1;self.think = slag2_explode10;self.nextthink = time + 0.05;
 };
-void() slag2_explode8 = { self.skin += 1;self.think = slag2_explode9;self.nextthink = time + 0.05;
+void() slag2_explode8 = 
+{
+	self.skin += 1;self.think = slag2_explode9;self.nextthink = time + 0.05;
 };
-void() slag2_explode7 = { self.skin += 1;self.think = slag2_explode8;self.nextthink = time + 0.05;
+void() slag2_explode7 = 
+{
+	self.skin += 1;self.think = slag2_explode8;self.nextthink = time + 0.05;
 };
-void() slag2_explode6 = { self.skin += 1;self.think = slag2_explode7;self.nextthink = time + 0.05;
+void() slag2_explode6 = 
+{
+	self.skin += 1;self.think = slag2_explode7;self.nextthink = time + 0.05;
 };
-void() slag2_explode5 = { self.skin += 1;self.think = slag2_explode6;self.nextthink = time + 0.05;
+void() slag2_explode5 = 
+{
+	self.skin += 1;self.think = slag2_explode6;self.nextthink = time + 0.05;
 };
-void() slag2_explode4 = { self.skin += 1;self.think = slag2_explode5;self.nextthink = time + 0.05;
+void() slag2_explode4 = 
+{
+	self.skin += 1;self.think = slag2_explode5;self.nextthink = time + 0.05;
 };
-void() slag2_explode3 = { self.skin += 1;self.think = slag2_explode4;self.nextthink = time + 0.05;
+void() slag2_explode3 = 
+{
+	self.skin += 1;self.think = slag2_explode4;self.nextthink = time + 0.05;
 };
-void() slag2_explode2 = { self.skin += 1;self.think = slag2_explode3;self.nextthink = time + 0.05;
+void() slag2_explode2 = 
+{
+	self.skin += 1;self.think = slag2_explode3;self.nextthink = time + 0.05;
 };
-void() slag2_explode1 = { self.skin += 0;self.think = slag2_explode2;self.nextthink = time + 0.05;
+void() slag2_explode1 = 
+{
+	self.skin += 0;self.think = slag2_explode2;self.nextthink = time + 0.05;
 };
-void() slag_explode5 = { self.skin += 1;self.think = SUB_Remove;self.nextthink = time + 0.05;
+void() slag_explode5 = 
+{
+	self.skin += 1;self.think = SUB_Remove;self.nextthink = time + 0.05;
 };
-void() slag_explode4 = { self.skin += 1;self.think = slag_explode5;self.nextthink = time + 0.05;
+void() slag_explode4 = 
+{
+	self.skin += 1;self.think = slag_explode5;self.nextthink = time + 0.05;
 };
-void() slag_explode3 = { self.skin += 1;self.think = slag_explode4;self.nextthink = time + 0.05;
+void() slag_explode3 = 
+{
+	self.skin += 1;self.think = slag_explode4;self.nextthink = time + 0.05;
 };
-void() slag_explode2 = { self.skin += 1;self.think = slag_explode3;self.nextthink = time + 0.05;
+void() slag_explode2 = 
+{
+	self.skin += 1;self.think = slag_explode3;self.nextthink = time + 0.05;
 };
-void() slag_explode1 = { self.skin += 0;self.think = slag_explode2;self.nextthink = time + 0.05;
+void() slag_explode1 = 
+{
+	self.skin += 0;self.think = slag_explode2;self.nextthink = time + 0.05;
 };
 void() nextframe = 
 {
@@ -90,7 +122,9 @@ void() slagdrunk =
 	}
 };
 
-void() srelease_cannon2 = { self.vweaponframe += 1;
+void() srelease_cannon2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe >= 40)
 		self.think = idle_cannon;
 	else
@@ -98,7 +132,9 @@ void() srelease_cannon2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.05;
 };
 
-void() srelease_cannon = { self.vweaponframe = 31;
+void() srelease_cannon = 
+{
+	self.vweaponframe = 31;
 	self.think = srelease_cannon2;
 	self.nextthink = time + 0.05;
 };
@@ -113,7 +149,9 @@ void() cannon_proj_touch_fade=
 	self.nextthink = time + 0.05;
 };
 
-void(float m) cannon_proj_touch_impact = { self.movetype = MOVETYPE_NONE;
+void(float m) cannon_proj_touch_impact = 
+{
+	self.movetype = MOVETYPE_NONE;
 
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
@@ -162,7 +200,9 @@ void(entity perpetrator, float value, vector exp_origin) T_RocketJump =
 };
 
 
-void() cannon_proj_touch = { local vector org;
+void() cannon_proj_touch = 
+{
+	local vector org;
 	org = self.origin;
 	local string snd;
 	if(other == self.owner)
@@ -172,12 +212,12 @@ void() cannon_proj_touch = { local vector org;
 		return;
 	if (other.solid == SOLID_TRIGGER)
 		return;
-	self.classname = "explosionn";
 
 	if (self.cnt == 1)
 	{
+	self.classname = "explosion_ore";
 	
-		if(deathmatch == 1)
+		if((deathmatch == 1) || (other.classname == "player"))
 		{
 			T_Damage(other, self, self.owner,slagcannon_damage1_mp);
 			T_SplashDamage(self, self.owner,slagsplashdamage_mp, world, slagsplashradius);
@@ -194,7 +234,8 @@ void() cannon_proj_touch = { local vector org;
 	}
 	else
 	{
-		if(deathmatch == 1)
+	self.classname = "explosion_oreb";
+		if((deathmatch == 1) || (other.classname == "player"))
 		{
 			T_Damage(other, self, self.owner,slagcannon_damage2_mp);
 			T_SplashDamage(self, self.owner, slagsplashdamage2_mp, world, slagsplashradius2);
@@ -212,7 +253,9 @@ void() cannon_proj_touch = { local vector org;
 		sound(self, CHAN_AUTO, snd, 1, 0.125);
 	}
 };
-void(float type, float forg) W_FireCannon = { local vector dir, rorg, tagorg;
+void(float type, float forg) W_FireCannon = 
+{
+	local vector dir, rorg, tagorg;
 	local float sv, tagindex;
 
 	newmis = spawn();
@@ -243,6 +286,7 @@ void(float type, float forg) W_FireCannon = { local vector dir, rorg, tagorg;
 	}
 	else
 	{
+		newmis.classname = "ore2";
 		tagindex = gettagindex(self.vweapon, "muzzle_4");
 		tagorg = gettaginfo(self.vweapon, tagindex);
 		newmis.scale = 1;
@@ -264,7 +308,9 @@ void(float type, float forg) W_FireCannon = { local vector dir, rorg, tagorg;
 	self.vweaponframe = 3;
 };
 
-void() wfire_cannon14 = { self.vweaponframe = 15;
+void() wfire_cannon14 = 
+{
+	self.vweaponframe = 15;
 	if ((self.button0) && (self.ammo_cannon >= 1))
 	{
 		self.think = wfire_cannon;
@@ -282,7 +328,9 @@ void() wfire_cannon14 = { self.vweaponframe = 15;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon13 = { self.vweaponframe = 14;
+void() wfire_cannon13 = 
+{
+	self.vweaponframe = 14;
 	if (self.ammo_cannon >= 1)
 		self.think = wfire_cannon14;
 	else
@@ -311,7 +359,9 @@ void() wfire_cannon12 = {
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon11 = { self.vweaponframe = 12;
+void() wfire_cannon11 = 
+{
+	self.vweaponframe = 12;
 	if (self.ammo_cannon >= 1)
 		self.think = wfire_cannon12;
 	else
@@ -323,7 +373,9 @@ void() wfire_cannon11 = { self.vweaponframe = 12;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon10 = { 
+void() wfire_cannon10 = 
+{
+	
 	//snd = strcat("weapons/cannon/fire1_", ftos(floor(random() *5) + 1), ".ogg");
 	//sound(self, CHAN_AUTO, snd, 1, ATTN_NORM);
 	weapon_sound("weapons/cannon/fire1_", 5);
@@ -339,7 +391,9 @@ void() wfire_cannon10 = {
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon9 = { self.vweaponframe = 10;
+void() wfire_cannon9 = 
+{
+	self.vweaponframe = 10;
 	if ((self.button0) && (self.ammo_cannon >= 1))
 	{
 		self.think = wfire_cannon10;
@@ -360,7 +414,9 @@ void() wfire_cannon9 = { self.vweaponframe = 10;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon8 = { self.vweaponframe = 9;
+void() wfire_cannon8 = 
+{
+	self.vweaponframe = 9;
 	if (self.ammo_cannon >= 1)
 		self.think = wfire_cannon9;
 	else
@@ -372,7 +428,9 @@ void() wfire_cannon8 = { self.vweaponframe = 9;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon7 = { 
+void() wfire_cannon7 = 
+{
+	
 	//snd = strcat("weapons/cannon/fire1_", ftos(floor(random() *3) + 1), ".ogg");
 	//sound(self, CHAN_AUTO, snd, 1, ATTN_NORM);
 	//self.ammo_cannon -= 1;
@@ -389,7 +447,9 @@ void() wfire_cannon7 = {
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon6 = { self.vweaponframe = 7;
+void() wfire_cannon6 = 
+{
+	self.vweaponframe = 7;
 	if (self.ammo_cannon >= 1)
 		self.think = wfire_cannon7;
 	else
@@ -401,7 +461,9 @@ void() wfire_cannon6 = { self.vweaponframe = 7;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon5 = { 
+void() wfire_cannon5 = 
+{
+	
 	//snd = strcat("weapons/cannon/fire1_", ftos(floor(random() *3) + 1), ".ogg");
 	//sound(self, CHAN_AUTO, snd, 1, ATTN_NORM);
 	//self.ammo_cannon -= 1;
@@ -418,7 +480,9 @@ void() wfire_cannon5 = {
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon4 = { self.vweaponframe = 5;
+void() wfire_cannon4 = 
+{
+	self.vweaponframe = 5;
 	if ((self.button0) && (self.ammo_cannon >= 1))
 	{
 		self.think = wfire_cannon5;
@@ -439,7 +503,9 @@ void() wfire_cannon4 = { self.vweaponframe = 5;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon3 = { self.vweaponframe = 4;
+void() wfire_cannon3 = 
+{
+	self.vweaponframe = 4;
 	if (self.ammo_cannon >= 1)
 		self.think = wfire_cannon4;
 	else
@@ -451,7 +517,9 @@ void() wfire_cannon3 = { self.vweaponframe = 4;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon2 = { 
+void() wfire_cannon2 = 
+{
+	
 	weapon_sound("weapons/cannon/fire1_", 5);
 	W_FireCannon(1, 2);
 	self.vweaponframe = 3;
@@ -467,7 +535,9 @@ void() wfire_cannon2 = {
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon1 = { self.vweaponframe = 2;
+void() wfire_cannon1 = 
+{
+	self.vweaponframe = 2;
 	if (self.ammo_cannon >= 1)
 		self.think = wfire_cannon2;
 	else
@@ -479,7 +549,9 @@ void() wfire_cannon1 = { self.vweaponframe = 2;
 	self.nextthink = time + 0.05;
 };
 
-void() wfire_cannon = { if (self.ammo_cannon < 1)
+void() wfire_cannon = 
+{
+	if (self.ammo_cannon < 1)
 		return;
 	//ocal string snd;
 	//snd = strcat("weapons/cannon/fire1_", ftos(floor(random() *3) + 1), ".ogg");
@@ -495,7 +567,9 @@ void() wfire_cannon = { if (self.ammo_cannon < 1)
 	self.nextthink = time + 0.05;
 };
 
-void() wsfire_cannon1 = { self.vweaponframe += 1;
+void() wsfire_cannon1 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe >= 30)
 	{
 		if ((self.button3) && (self.ammo_cannon >= 5))
@@ -508,7 +582,9 @@ void() wsfire_cannon1 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.05;
 };
 
-void() wsfire_cannon = { if (self.ammo_cannon < 5)
+void() wsfire_cannon = 
+{
+	if (self.ammo_cannon < 5)
 		return;
 	//local string snd;
 	//snd = strcat("weapons/cannon/fire2_", ftos(floor(random() *2) + 1), ".ogg");
@@ -577,7 +653,9 @@ void() pick_up_cannon2 =
 	self.nextthink = time + 0.05;
 };
 
-void() pick_up_cannon = { self.weapon = IT_CANNON;
+void() pick_up_cannon = 
+{
+	self.weapon = IT_CANNON;
 	self.lastweapon = IT_CANNON;
 	W_SetWeapon();
 
@@ -594,7 +672,9 @@ void() pick_up_cannon = { self.weapon = IT_CANNON;
 	self.nextthink = time + 2.95;
 };
 
-void() raise_cannon2 = { if (self.vweaponframe == 42)
+void() raise_cannon2 = 
+{
+	if (self.vweaponframe == 42)
 		W_SetWeapon();
 
 	self.vweaponframe += 1;
@@ -606,7 +686,9 @@ void() raise_cannon2 = { if (self.vweaponframe == 42)
 };
 
 
-void() raise_cannon = { self.weapon = IT_CANNON;
+void() raise_cannon = 
+{
+	self.weapon = IT_CANNON;
 	W_SetWeapon();
 	//sound(self, CHAN_WEAPON, "weapons/cannon/raise.ogg", 1, ATTN_NORM);
 	self.vweaponglowmod = '1 1 1';
@@ -620,7 +702,9 @@ void() raise_cannon = { self.weapon = IT_CANNON;
 	self.nextthink = time + 0.0125;
 };
 
-void() lower_cannon2 = { self.vweaponframe += 1;
+void() lower_cannon2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe == 55)
 		remove(self.pipes);
 	if (self.vweaponframe >= 60)
@@ -630,7 +714,9 @@ void() lower_cannon2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.0125;
 };
 
-void() lower_cannon = { 
+void() lower_cannon = 
+{
+	
 	sound(self, CHAN_AUTO, "weapons/cannon/lower.ogg", 1, ATTN_NORM);
 	self.vweaponframe = 51;
 	self.attack_finished = time + 0.375;

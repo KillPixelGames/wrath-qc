@@ -5,7 +5,9 @@ float rmenualpha;
 vector real_radialpos;
 vector gomp;
 
-vector(vector pos) relconsizex = { vector newpos;
+vector(vector pos) relconsizex = 
+{
+	vector newpos;
 	newpos = pos;
 	newpos_x -= ((960 - vid_width) *0.5);
 	newpos_y += ((540 - vid_height) *0.5);
@@ -18,14 +20,16 @@ float oldmarkerposx;
 float firstslot;
 float lastslot;
 
-void() fl_slot = { float slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10;
+void() fl_slot = 
+{
+	float slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10;
 	slot1 = 0;
 	slot2 = getstatf(STAT_RD_DA);
 	slot3 = 0;
 	slot4 = getstatf(STAT_RD_CA);
 	slot5 = 0;
 	slot6 = getstatf(STAT_RD_LS);
-	slot7 = 0;
+	slot7 = getstatf(STAT_RD_TR);
 	slot8 = getstatf(STAT_RD_AE);
 	slot9 = 0;
 	slot10 = 0;
@@ -80,7 +84,9 @@ void() fl_slot = { float slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8,
 
 };
 
-void() slot_icons = { float slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10;
+void() slot_icons = 
+{
+	float slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10;
 	vector col1, col2, col3, col4, col5, col6, col7, col8, col9, col10;
 	slot1 = 0;
 	slot2 = getstatf(STAT_RD_DA);
@@ -88,7 +94,7 @@ void() slot_icons = { float slot1, slot2, slot3, slot4, slot5, slot6, slot7, slo
 	slot4 = getstatf(STAT_RD_CA);
 	slot5 = 0;
 	slot6 = getstatf(STAT_RD_LS);
-	slot7 = 0;
+	slot7 = getstatf(STAT_RD_TR);
 	slot8 = getstatf(STAT_RD_AE);
 	slot9 = 0;
 	slot10 = 0;
@@ -361,7 +367,9 @@ void() slot_icons = { float slot1, slot2, slot3, slot4, slot5, slot6, slot7, slo
 
 
 float slot_timer;
-float(float cs) nextslot = { 
+float(float cs) nextslot = 
+{
+	
 
 	mm = 0;
 	//restart_cursor();;
@@ -372,7 +380,7 @@ float(float cs) nextslot = {
 	slot4 = getstatf(STAT_RD_CA);
 	slot5 = 0;
 	slot6 = getstatf(STAT_RD_LS);
-	slot7 = 0;
+	slot7 = getstatf(STAT_RD_TR);
 	slot8 = getstatf(STAT_RD_AE);
 	slot9 = 0;
 	slot10 = 0;
@@ -544,7 +552,9 @@ float(float cs) nextslot = {
 		return 1;
 };
 
-float(float cs) prevslot = { 
+float(float cs) prevslot = 
+{
+	
 
 	mm = 0;
 	//restart_cursor();;
@@ -555,7 +565,7 @@ float(float cs) prevslot = {
 	slot4 = getstatf(STAT_RD_CA);
 	slot5 = 0;
 	slot6 = getstatf(STAT_RD_LS);
-	slot7 = 0;
+	slot7 = getstatf(STAT_RD_TR);
 	slot8 = getstatf(STAT_RD_AE);
 	slot9 = 0;
 	slot10 = 0;
@@ -729,7 +739,9 @@ float(float cs) prevslot = {
 float deathmatch;
 
 float inventory_active;
-void() ArtifactMenu = { vector vi;
+void() ArtifactMenu = 
+{
+	vector vi;
 	vi = '220 -400 0';
 	//float a1, a2,a3,a4,a5,a6,a7,a8;
 	//float s1, s2,s3,s4,s5,s6,s7,s8;
@@ -770,7 +782,7 @@ void() ArtifactMenu = { vector vi;
 		slot4 = getstatf(STAT_RD_CA);
 		slot5 = 0;
 		slot6 = getstatf(STAT_RD_LS);
-		slot7 = 0;
+		slot7 = getstatf(STAT_RD_TR);
 		slot8 = getstatf(STAT_RD_AE);
 		slot9 = 0;
 		slot10 = 0;

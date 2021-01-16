@@ -1,6 +1,8 @@
 float oldtotalprofileslots;
 
-void(vector txt_pos) menu_type_main = { vector buttions_locs;
+void(vector txt_pos) menu_type_main = 
+{
+	vector buttions_locs;
 	buttions_locs_x = ((vid_x / 2) - (128 *vx_rel));
 	buttions_locs_y = 196 * vy_rel;
 
@@ -46,7 +48,9 @@ void(vector txt_pos) menu_type_main = { vector buttions_locs;
 	draw_buttionwrath(buttions_locs, "Quit", 3);
 };
 
-void() menu_type_ingame = { vector buttions_locs;
+void() menu_type_ingame = 
+{
+	vector buttions_locs;
 	buttions_locs_x = ((vid_x / 2) - (128 *vx_rel));
 	buttions_locs_y = 196 * vy_rel;
 
@@ -63,7 +67,9 @@ void() menu_type_ingame = { vector buttions_locs;
 	draw_buttionwrath(buttions_locs, "Quit", 42);
 };
 
-void() confirm_profile = { check_profileslot();
+void() confirm_profile = 
+{
+	check_profileslot();
 	
 	profilesammount = check_profileslottotal();
 	profilesammount++;
@@ -114,7 +120,9 @@ void() confirm_profile = { check_profileslot();
 
 };
 
-void() menu_type_options = { local vector size, buttions_locs;
+void() menu_type_options = 
+{
+	local vector size, buttions_locs;
 	size_x = vid_x;
 	size_y = vid_y;
 	if (oldprofileslot)
@@ -128,7 +136,9 @@ void() menu_type_options = { local vector size, buttions_locs;
 		drawpic('0 0 0', "gfx/menu/background.tga", vid_x *'1 0 0' + vid_y *'0 1 0', '0.65 0.65 0.65', 1, 0);
 	draw_fbuttion3(buttions_locs, "OPTIONS");
 	buttions_locs_y += 56 * vy_rel;
-	draw_buttion(buttions_locs, "CONTROLS", 11);
+	draw_buttion(buttions_locs, "MOUSE SETUP", 11);
+	buttions_locs_y += 56 * vy_rel;
+	draw_buttion(buttions_locs, "CONTROL BINDS", 19);
 	buttions_locs_y += 56 * vy_rel;
 	draw_buttion(buttions_locs, "VIDEO", 12);
 	buttions_locs_y += 56 * vy_rel;
@@ -140,7 +150,9 @@ void() menu_type_options = { local vector size, buttions_locs;
 	buttions_locs_y += 56 * vy_rel;
 };
 
-void() menu_type_difficult = { local vector size, buttions_locs;
+void() menu_type_difficult = 
+{
+	local vector size, buttions_locs;
 	size_x = vid_x;
 	size_y = vid_y;
 
@@ -159,33 +171,32 @@ void() menu_type_difficult = { local vector size, buttions_locs;
 	draw_buttion(buttions_locs, "OUTLANDER", 48);
 };
 
-void() menu_type_options_controls = { local vector size, buttions_locs;
+void() menu_type_options_controls = 
+{
+	local vector size, buttions_locs;
 	size_x = vid_x;
 	size_y = vid_y;
+
+
 	if (clientstate() != CS_CONNECTED)
 		drawpic('0 0 0', "gfx/menu/background.tga", vid_x *'1 0 0' + vid_y *'0 1 0', '0.25 0.25 0.3', 1, 0);
 
 	buttions_locs_x = ((vid_x / 2) - (128 *vx_rel));
-	buttions_locs_y = 8 * vy_rel;
+	buttions_locs_y = 32 * vy_rel;
 
-	draw_fbuttion3(buttions_locs, "CONTROL OPTIONS");
-	buttions_locs_x -= 322 * vx_rel;
-	buttions_locs_y += 42 * vy_rel;
+	draw_fbuttion3(buttions_locs, "MOUSE OPTIONS");
 
 	////////// MOUSE SENSITIVITY
-	buttions_locs_x -= 36 * vx_rel;
+	buttions_locs_x -= 222 * vx_rel;
+	buttions_locs_y += 42 * vy_rel;
+	float org_x	 = buttions_locs_x;
 	draw_fbuttionsmall(buttions_locs, "Mouse Sensitivity",0);
-	buttions_locs_x += 96 * vx_rel;
-	float y_pos = buttions_locs_y; 
-	float x_pos = buttions_locs_x; 
-	
+	buttions_locs_x += 150 * vx_rel;
 	draw_buttion(buttions_locs, "<", 101);
 	buttions_locs_x += 290 * vx_rel;
 	draw_buttion(buttions_locs, ">", 102);
-
 	buttions_locs_x -= 145 * vx_rel;
 	buttions_locs_y += 16 * vy_rel;
-
 	drawfill(buttions_locs, fixed_vector('256 4 0'), '0.5 0.5 0.35', 0.7, 0);
 	senm = cvar("sensitivity");
 	local vector barpos;
@@ -195,44 +206,32 @@ void() menu_type_options_controls = { local vector size, buttions_locs;
 	//drawfill(barpos, fixed_vector('4 16 0'), '0.75 0.75 0.5', 1, 0);
 	drawfilldraggeable(barpos, fixed_vector('4 16 0'), '0.75 0.75 0.5', 1, 0, 2,101, 102, 256 / 100);
 	string msen;msen = substring(ftos(senm),0,3);draw_fbuttion2(barpos + fixed_vector('-128.5 -24 0'), msen);
-	buttions_locs_x -= 401 * vx_rel;	// back to the x pos
-	buttions_locs_y += 28 * vy_rel;
-
+	buttions_locs_y += 36 * vy_rel;
 	////////
+
 	////////// MOUSE MOUSE SENSITIVY
-	vector buttions_locs_a, barpos2_a;
-	buttions_locs_a_y = y_pos; 
-	buttions_locs_a_x = x_pos; 
-	buttions_locs_a_x += 426* vx_rel; 
-	draw_fbuttionsmall(buttions_locs_a, "Menu Mouse Sensitivity",0);
-	buttions_locs_a_x -= 156* vx_rel; 
-	buttions_locs_a_x += 286 * vx_rel;
-	draw_buttion(buttions_locs_a, "<", 114);
-	buttions_locs_a_x += 290 * vx_rel;
-	
-	
-	buttions_locs_a_x -= 132* vx_rel; 
-	draw_buttion(buttions_locs_a, ">", 115);
-	buttions_locs_a_x += 132* vx_rel; 
-	
-	buttions_locs_a_y += 16 * vy_rel;
-	buttions_locs_a_x -= 145 * vx_rel;
-	drawfill(buttions_locs_a, fixed_vector('128 4 0'), '0.5 0.5 0.35', 0.7, 0);
+	buttions_locs_x =  org_x;
+	draw_fbuttionsmall(buttions_locs, "Menu Mouse Sensitivity",0);
+	buttions_locs_x += 150 * vx_rel;
+	draw_buttion(buttions_locs, "<", 114);
+	buttions_locs_x += 290 * vx_rel;
+	draw_buttion(buttions_locs, ">", 115);
+	buttions_locs_y += 16 * vy_rel;
+	buttions_locs_x -= 145 * vx_rel;
+	drawfill(buttions_locs, fixed_vector('256 4 0'), '0.5 0.5 0.35', 0.7, 0);
 	macel = cvar("saved5");
 	local vector barpos2_a;
-	barpos2_a = buttions_locs_a - fixed_vector('28 0 0');
+	barpos2_a = buttions_locs - fixed_vector('28 0 0');
 	barpos2_a_y -= 8 * vy_rel;
-	barpos2_a_x += (macel *128 + 25.5) *vx_rel;
-	//drawfill(barpos2_a, fixed_vector('4 16 0'), '0.75 0.75 0.5', 1, 0);
+	barpos2_a_x += (macel *256 + 25.5) *vx_rel;
 	drawfilldraggeable(barpos2_a, fixed_vector('4 16 0'), '0.75 0.75 0.5', 1, 0, 3,114, 115, 256 / 100);
 	string smacel;smacel = substring(ftos(macel),0,3);draw_fbuttion2(barpos2_a + fixed_vector('-128.5 -24 0'), smacel);
+	buttions_locs_y += 36 * vy_rel;
 
-	
 	////////// MOUSE ACCELERATION
-	buttions_locs_x += 156* vx_rel; 
+	buttions_locs_x =  org_x;
 	draw_fbuttionsmall(buttions_locs, "Mouse Acceleration",0);
-	buttions_locs_x -= 156* vx_rel; 
-	buttions_locs_x += 256 * vx_rel;
+	buttions_locs_x += 150 * vx_rel;
 	draw_buttion(buttions_locs, "<", 103);
 	buttions_locs_x += 290 * vx_rel;
 	draw_buttion(buttions_locs, ">", 104);
@@ -244,15 +243,13 @@ void() menu_type_options_controls = { local vector size, buttions_locs;
 	barpos2 = buttions_locs - fixed_vector('28 0 0');
 	barpos2_y -= 8 * vy_rel;
 	barpos2_x += (acel *25.5 + 25.5) *vx_rel;
-	//drawfill(barpos2, fixed_vector('4 16 0'), '0.75 0.75 0.5', 1, 0);
 	drawfilldraggeable(barpos2, fixed_vector('4 16 0'), '0.75 0.75 0.5', 1, 0, 14,103, 104, 256 / 100);
 	string macel;macel = substring(ftos(acel),0,3);draw_fbuttion2(barpos2 + fixed_vector('-128.5 -24 0'), macel);
-
 	buttions_locs_x -= 401 * vx_rel;	// back to the x pos
 	buttions_locs_y += 28 * vy_rel;
-
 	////////// MOUSE SMOOTHING
-	buttions_locs_x += 156; 
+	buttions_locs_x =  org_x;
+
 	draw_fbuttionsmall(buttions_locs, "Mouse Smoothing",0);
 	buttions_locs_x -= 156; 
 	buttions_locs_x += 320 * vx_rel;
@@ -269,6 +266,7 @@ void() menu_type_options_controls = { local vector size, buttions_locs;
 	buttions_locs_y += 28 * vy_rel;
 
 	////////// MOUSE INVERT
+	buttions_locs_y += 28 * vy_rel;
 	buttions_locs_x += 156; 
 	draw_fbuttionsmall(buttions_locs, "Invert Mouse",0);
 	buttions_locs_x -= 156; 
@@ -284,6 +282,22 @@ void() menu_type_options_controls = { local vector size, buttions_locs;
 	draw_buttion(buttions_locs, mark2, 106);
 	//	buttions_locs_x -= 320 * vx_rel;
 	//	buttions_locs_y +=  28 * vy_rel;
+
+};
+void() menu_type_options_controlbinds = 
+{
+	local vector size, buttions_locs;
+	size_x = vid_x;
+	size_y = vid_y;
+	if (clientstate() != CS_CONNECTED)
+		drawpic('0 0 0', "gfx/menu/background.tga", vid_x *'1 0 0' + vid_y *'0 1 0', '0.25 0.25 0.3', 1, 0);
+
+	buttions_locs_x = ((vid_x / 2) - (128 *vx_rel));
+	buttions_locs_y = 8 * vy_rel;
+
+	draw_fbuttion3(buttions_locs, "CONTROL OPTIONS");
+	buttions_locs_x -= 322 * vx_rel;
+	buttions_locs_y += 42 * vy_rel;
 
 	////////// BIND KEYS
 	buttions_locs_x = (vid_x / 2) - 128 * vx_rel;
@@ -535,10 +549,10 @@ void() menu_type_options_controls = { local vector size, buttions_locs;
 	buttions_locs_x += 128 * vx_rel;
 	tokenize(findkeysforcommand("+button7", 0));
 	if (argv(0) != "-1")
-		string fw_key28 = keynumtostring(stof(argv(0)));
+		string fw_key30 = keynumtostring(stof(argv(0)));
 	else
-		fw_key28 = " ";
-	draw_buttion(buttions_locs, fw_key28, 526);
+		fw_key30 = " ";
+	draw_buttion(buttions_locs, fw_key30, 526);
 	buttions_locs += fixed_vector('-128 33 0');
 	////////////
 
@@ -610,10 +624,16 @@ void() menu_type_options_controls = { local vector size, buttions_locs;
 	else
 		fw_key29 = " ";
 	draw_buttion(buttions_locs, fw_key29, 528);
-	buttions_locs += fixed_vector('-128 33 0');
+	buttions_locs += fixed_vector('-128 133 0');
+
+	draw_buttion(buttions_locs, "Reset to defaults", 120);
+
+
 };
 
-void(float alternative) menu_type_confirmbind = { local vector buttions_locs;
+void(float alternative) menu_type_confirmbind = 
+{
+	local vector buttions_locs;
 	buttions_locs_x = (vid_x / 2) - (128 *vx_rel);
 
 	buttions_locs_y = 172 * vy_rel;
@@ -708,7 +728,9 @@ void(float alternative) menu_type_confirmbind = { local vector buttions_locs;
 
 };
 
-void() menu_type_options_gameplay = { local vector size, buttions_locs;
+void() menu_type_options_gameplay = 
+{
+	local vector size, buttions_locs;
 	size_x = vid_x;
 	size_y = vid_y;
 	if (clientstate() != CS_CONNECTED)
@@ -764,7 +786,76 @@ void() menu_type_options_gameplay = { local vector size, buttions_locs;
 		mark3 = " ";
 	draw_buttion(buttions_locs, mark3, 109);
 	buttions_locs_x -= 320 * vx_rel;
+	buttions_locs_y += 48 * vy_rel;
+
+	////////// CROSSHAIR SCALE
+//	buttions_locs_x += 32 * vx_rel;	//
+//	buttions_locs_y += 48 * vy_rel;
+	draw_fbuttion(buttions_locs, "crosshair scale");
+
+	string crosshair_scale_mark2, crosshair_scale_mark3, crosshair_scale_mark4, crosshair_scale_mark5, crosshair_scale_mark6;
+	string pxelscale;
+
+	float scale_checked = cvar("saved8");
+	if (scale_checked == 1)
+	{
+		crosshair_scale_mark2 = "x";
+		pxelscale = "1";
+	}
+	else
+		crosshair_scale_mark2 = " ";
+	if (scale_checked == 1.5)
+	{
+		crosshair_scale_mark3 = "x";
+		pxelscale = "1.5";
+	}
+	else
+		crosshair_scale_mark3 = " ";
+	if (scale_checked == 2)
+	{
+		crosshair_scale_mark4 = "x";
+		pxelscale = "2";
+	}
+	else
+		crosshair_scale_mark4 = " ";
+	if (scale_checked == 2.5)
+	{
+		crosshair_scale_mark5 = "x";
+		pxelscale = "2.5";
+	}
+	else
+		crosshair_scale_mark5 = " ";
+	if (scale_checked == 3)
+	{
+		crosshair_scale_mark6 = "x";
+		pxelscale = "3";
+	}
+	else
+		crosshair_scale_mark6 = " ";
+
+	buttions_locs_x += 352 * vx_rel;	//
+	buttions_locs_y -= 18 * vy_rel;	//
+	draw_fbuttion2(buttions_locs, pxelscale);
+	buttions_locs_x -= 32 * vx_rel;
+	buttions_locs_y += 18 * vy_rel;	//
+	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
+	draw_buttion(buttions_locs, crosshair_scale_mark2, 720);
+	buttions_locs_x += 42 * vx_rel;
+	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
+	draw_buttion(buttions_locs, crosshair_scale_mark3, 721);
+	buttions_locs_x += 42 * vx_rel;
+	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
+	draw_buttion(buttions_locs, crosshair_scale_mark4, 722);
+	buttions_locs_x += 42 * vx_rel;
+	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
+	draw_buttion(buttions_locs, crosshair_scale_mark5, 723);
+	buttions_locs_x += 42 * vx_rel;
+	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
+	draw_buttion(buttions_locs, crosshair_scale_mark6, 724);
+
+	buttions_locs_x -= 488 * vx_rel;	// back to the x pos	
 	buttions_locs_y += 34 * vy_rel;
+
 
 	////////// CENTERED WEAPON
 	draw_fbuttion(buttions_locs, "Centered Weapons");
@@ -780,6 +871,9 @@ void() menu_type_options_gameplay = { local vector size, buttions_locs;
 	draw_buttion(buttions_locs, mark4, 110);
 	buttions_locs_x -= 320 * vx_rel;
 	buttions_locs_y += 34 * vy_rel;
+
+
+
 
 	////////// SWITCH WEAPON WHEN EMPTY
 	draw_fbuttion(buttions_locs, "Switch Empty Weapon");
@@ -858,8 +952,40 @@ void() menu_type_options_gameplay = { local vector size, buttions_locs;
 	buttions_locs_x -= 320 * vx_rel;
 	buttions_locs_y += 34 * vy_rel;
 	
+	////////// TOGGLE PUNCHANGLE
+	draw_fbuttion(buttions_locs, "Toggle Viewpunch");
+	buttions_locs_x += 320 * vx_rel;
+	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
+	float checked10;
+	string mark10;
+	checked10 = cvar("cl_punch");
+	if (checked10 == 0)
+		mark10 = " ";
+	else
+		mark10 = "x";
+	draw_buttion(buttions_locs, mark10, 121);
+	buttions_locs_x -= 320 * vx_rel;
+	buttions_locs_y += 34 * vy_rel;
+
+	////////// Saved Games Timestamps
+	draw_fbuttion(buttions_locs, "Show Timestamps");
+	buttions_locs_x += 320 * vx_rel;
+	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
+	float checked11;
+	string mark11;
+	checked11 = cvar("show_dates");
+	if (checked11 == 0)
+		mark11 = " ";
+	else
+		mark11 = "x";
+	draw_buttion(buttions_locs, mark11, 122);
+	buttions_locs_x -= 320 * vx_rel;
+	buttions_locs_y += 34 * vy_rel;
+	
 	};
-void() menu_type_options_audio = { local vector size, buttions_locs;
+void() menu_type_options_audio = 
+{
+	local vector size, buttions_locs;
 	size_x = vid_x;
 	size_y = vid_y;
 	if (clientstate() != CS_CONNECTED)
@@ -930,7 +1056,9 @@ void() menu_type_options_audio = { local vector size, buttions_locs;
 	buttions_locs_y += 28 * vy_rel;
 };
 
-void() menu_type_confirmresolution = { local vector buttions_locs;
+void() menu_type_confirmresolution = 
+{
+	local vector buttions_locs;
 	buttions_locs_x = (vid_x / 2) - (128 *vx_rel);
 
 	buttions_locs_y = 172 * vy_rel;
@@ -950,7 +1078,9 @@ void() menu_type_confirmresolution = { local vector buttions_locs;
 	draw_buttion(buttions_locs, "CANCEL", 279);
 };
 
-void() menu_type_confirmfullscreen = { local vector buttions_locs;
+void() menu_type_confirmfullscreen = 
+{
+	local vector buttions_locs;
 	buttions_locs_x = (vid_x / 2) - (128 *vx_rel);
 
 	buttions_locs_y = 172 * vy_rel;
@@ -969,9 +1099,31 @@ void() menu_type_confirmfullscreen = { local vector buttions_locs;
 	buttions_locs_x -= 148 * vx_rel;
 	draw_buttion(buttions_locs, "CANCEL", 322);
 };
+void() menu_type_confirmresettodefaults = 
+{
+	local vector buttions_locs;
+	buttions_locs_x = (vid_x / 2) - (128 *vx_rel);
 
+	buttions_locs_y = 172 * vy_rel;
+	if (clientstate() != CS_CONNECTED)
+		drawpic('0 0 0', "gfx/menu/background.tga", vid_x *'1 0 0' + vid_y *'0 1 0', '0.65 0.65 0.65', 1, 0);
+	buttions_locs_x += 128 * vx_rel;
+	drawfill(buttions_locs + fixed_vector('-256 -32 0'), fixed_vector('464 128 0'), '0.2 0.2 0.23', 0.7, 0);
+	drawfill(buttions_locs + fixed_vector('-200 4 0'), fixed_vector('380 32 0'), '0.1 0.1 0.1', 0.7, 0);
+	buttions_locs_x -= 148 * vx_rel;
+	draw_buttion(buttions_locs, "ACCEPT", 119);
 
-void() menu_type_deleteprofile = { local vector buttions_locs;
+	buttions_locs_x += 148 * vx_rel;
+	buttions_locs_y += 48 * vy_rel;
+	drawfill(buttions_locs + fixed_vector('-200 4 0'), fixed_vector('380 32 0'), '0.1 0.1 0.1', 0.7, 0);
+
+	buttions_locs_x -= 148 * vx_rel;
+	draw_buttion(buttions_locs, "CANCEL", 19);
+};
+
+void() menu_type_deleteprofile = 
+{
+	local vector buttions_locs;
 	buttions_locs_x = (vid_x / 2) - (128 *vx_rel);
 
 	buttions_locs_y = 172 * vy_rel;
@@ -993,7 +1145,9 @@ void() menu_type_deleteprofile = { local vector buttions_locs;
 
 
 
-void() menu_type_confirmantialias = { local vector buttions_locs;
+void() menu_type_confirmantialias = 
+{
+	local vector buttions_locs;
 	buttions_locs_x = (vid_x / 2) - (128 *vx_rel);
 
 	buttions_locs_y = 172 * vy_rel;
@@ -1013,7 +1167,9 @@ void() menu_type_confirmantialias = { local vector buttions_locs;
 	draw_buttion(buttions_locs, "CANCEL", 312);
 };
 
-void() menu_type_options_resolution = { local vector size, buttions_locs;
+void() menu_type_options_resolution = 
+{
+	local vector size, buttions_locs;
 	size_x = vid_x;
 	size_y = vid_y;
 
@@ -1098,12 +1254,14 @@ void() menu_type_options_resolution = { local vector size, buttions_locs;
 	buttions_locs_y += 32 * vy_rel;
 	draw_buttion(buttions_locs, "3440 * 1440", 273);
 	buttions_locs_y += 32 * vy_rel;
-	draw_buttion(buttions_locs, "5120* 2160", 274);
+	draw_buttion(buttions_locs, "3840 * 1600", 274);
+	buttions_locs_y += 32 * vy_rel;
+	draw_buttion(buttions_locs, "5120* 2160", 275);
 	buttions_locs_y += 32 * vy_rel;
 	
 	draw_fbuttion(buttions_locs, "1.9:1");
 	buttions_locs_y += 32 * vy_rel;
-	draw_buttion(buttions_locs, "4096 * 2160", 275);
+	draw_buttion(buttions_locs, "4096 * 2160", 276);
 
 
 	
@@ -1315,7 +1473,7 @@ void() menu_type_options_video =
 
 
 	
-	////////// PIXEL SCALING
+	////////// MAX FPS
 	buttions_locs_x -= 10 * vx_rel;	//
 	buttions_locs_y += 48 * vy_rel;
 	draw_fbuttion(buttions_locs, "max fps");
@@ -1516,14 +1674,14 @@ void() menu_type_options_video =
 
 	buttions_locs_x += 196 * vx_rel;
 	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
-	float checked;
-	string mark;
-	checked = cvar("vid_forcerefreshrate");
-	if (checked == 1)
-		mark = "x";
+	float checkeda;
+	string markb;
+	checkeda = cvar("vid_forcerefreshrate");
+	if (checkeda == 1)
+		markb = "x";
 	else
-		mark = " ";
-	draw_buttion(buttions_locs, mark, 280);
+		markb = " ";
+	draw_buttion(buttions_locs, markb, 280);
 	buttions_locs_x -= 226 * vx_rel;
 
 
@@ -1737,13 +1895,13 @@ void() menu_type_options_video =
 	buttions_locs_x += 246 * vx_rel;
 	drawfill(buttions_locs + fixed_vector('118 10 0'), fixed_vector('20 20 0'), '0.35 0.35 0.35', 0.7, 0);
 	//float checked7;
-	string anim_mark;
+	string anim_markb;
 	checked7 = cvar("r_glsl_postprocess");
 	if (checked7 == 1)
-		anim_mark = "x";
+		anim_markb = "x";
 	else
-		anim_mark = " ";
-	draw_buttion(buttions_locs, anim_mark, 323);
+		anim_markb = " ";
+	draw_buttion(buttions_locs, anim_markb, 323);
 	buttions_locs_x -= 256 * vx_rel;
 	////////// Real Time Lights
 	buttions_locs_y += 48 * vy_rel;
@@ -1764,7 +1922,9 @@ void() menu_type_options_video =
 };
 string string_null;
 
-void(vector txt_pos) menu_type_profile = { vector buttions_locs;
+void(vector txt_pos) menu_type_profile = 
+{
+	vector buttions_locs;
 	buttions_locs_x = ((vid_x / 2) - (70 *vx_rel));
 	buttions_locs_y = 216 * vy_rel;
 
@@ -1814,8 +1974,14 @@ void(vector txt_pos) menu_type_profile = { vector buttions_locs;
 		draw_fbuttion(buttions_locs, "OK");
 		enterindex = 0;
 	}
+	float vid_w = cvar("vid_width");
+	float vid_h = cvar("vid_height");
 
-	txt_pos_x += 312 * vx_rel;
+	if ((vid_w == 2560) && (vid_h == 1440))
+		txt_pos_x += 407 * vx_rel;
+
+	else
+		txt_pos_x += 312 * vx_rel;
 	txt_pos_y += 199 * vy_rel;
 
 	if (nameused == 1)
@@ -1828,14 +1994,18 @@ void(vector txt_pos) menu_type_profile = { vector buttions_locs;
 
 };
 
-void() menuprofile_next = { if (profileslotpage < 10)
+void() menuprofile_next = 
+{
+	if (profileslotpage < 10)
 		profileslotpage++;
 	if (profileslotpage >= 10)
 		profileslotpage = 10;
 	profileslot = profileslotpage;
 	write_currentprofileslot();
 };
-void() menuprofile_prev = { if (profileslotpage > 1)
+void() menuprofile_prev = 
+{
+	if (profileslotpage > 1)
 		profileslotpage--;
 	if (profileslotpage <= 1)
 		profileslotpage = 1;
@@ -1843,12 +2013,21 @@ void() menuprofile_prev = { if (profileslotpage > 1)
 	write_currentprofileslot();
 };
 
-void() menuprofile_select = { profileslotpage = nprof;
+void() menuprofile_select = 
+{
+	profileslotpage = nprof;
 	profileslot = profileslotpage;
 	write_currentprofileslot();
 };
 
-void() menu_type_resume = { if (oldtotalprofileslots > 0)
+void() menu_type_resume = 
+{
+
+	float show_dates = cvar("show_dates");
+
+
+
+ if (oldtotalprofileslots > 0)
 		oldtotalprofileslots = 0;
 
 	local vector size, buttions_locs;
@@ -1871,37 +2050,39 @@ void() menu_type_resume = { if (oldtotalprofileslots > 0)
 
 	drawpic(journalpos, "gfx/menu/load_menu.tga", sizeimage, '1 1 1', 1, 0);
 
-	//drawfill (fixed_vector('90 60 0'),fixed_vector('270 320 0'), '0.1 0.1 0.1', 1, 0);
-	////////////////////////////////////////////////////////////////////////////////
-	//drawfill (fixed_vector('90 59 0'),fixed_vector('270 1 0'), '0.5 0.5 0.6', 1, 0);
-	//drawfill (fixed_vector('90 60 0'),fixed_vector('270 2 0'), '0.3 0.3 0.4', 1, 0);
-
-	/*string csn;
-	if(profileslotpage == 1) csn = "character slot 1";
-	if(profileslotpage == 2) csn = "character slot 2";
-	if(profileslotpage == 3) csn = "character slot 3";
-	if(profileslotpage == 4) csn = "character slot 4";
-	if(profileslotpage == 5) csn = "character slot 5";
-	if(profileslotpage == 6) csn = "character slot 6";
-	if(profileslotpage == 7) csn = "character slot 7";
-	if(profileslotpage == 8) csn = "character slot 8";
-	if(profileslotpage == 9) csn = "character slot 9";
-	if(profileslotpage == 10) csn = "character slot 10";
-	//if(profileslotpage == 11) csn = "character slot 11";
-	//if(profileslotpage == 12) csn = "character slot 12";
-	*/
-	//drawstring (fixed_vector('90 68 0'),ftos(selected_option), fixed_vector('14 14 0'), '0.75 0.75 0.7', 1, 0);
-
-	//drawfill (fixed_vector('90 91 0'),fixed_vector('270 1 0'), '0.5 0.5 0.6', 1, 0);
-	//drawfill (fixed_vector('90 92 0'),fixed_vector('270 2 0'), '0.3 0.3 0.4', 1, 0);
-	/////////////////////////////////////////////////////////////////////////////////////
-	//drawfill (fixed_vector('90 345 0'),fixed_vector('270 1 0'), '0.5 0.5 0.6', 1, 0);
-	//drawfill (fixed_vector('90 346 0'),fixed_vector('270 2 0'), '0.3 0.3 0.4', 1, 0);
-
 	string cname;
-	if (oldprofileslot != profileslot)
-		check_profilenames_str(profileslot);
 	cname = profilename;
+	if (oldprofileslot != profileslot)
+	{
+		check_profilenames_str(profileslot);	
+	}
+	if(show_dates ==  1)
+	{
+
+		checkdates (profilename);
+		get_timestamp_map(profilename);
+		string selected_date = "autosave_date";	
+		
+		if (type_load_selected == 1)
+		{
+			string selected_date = autosave_date;	
+			drawpic(journalpos, timestamp_map1, sizeimage, '1 1 1', 1, 0);
+		}
+		if (type_load_selected == 2)
+		{
+			selected_date = tether_date;	
+			drawpic(journalpos, timestamp_map2, sizeimage, '1 1 1', 1, 0);
+		}
+		if (type_load_selected == 3)
+		{
+			selected_date = shrine_date;	
+			drawpic(journalpos,timestamp_map3, sizeimage, '1 1 1', 1, 0);
+		}
+		
+	}
+
+
+
 
 	float emptyprofile;
 
@@ -1921,7 +2102,7 @@ void() menu_type_resume = { if (oldtotalprofileslots > 0)
 	//drawfill (fixed_vector('90 377 0'),fixed_vector('270 1 0'), '0.5 0.5 0.6', 1, 0);
 	//drawfill (fixed_vector('90 378 0'),fixed_vector('270 2 0'), '0.3 0.3 0.4', 1, 0);
 	vector posstring, fixedpos;
-	fixedpos = fixed_vector('240 80 0');
+	fixedpos = fixed_vector('240 76 0');
 
 	local float posx_modifier;
 	posx_modifier = (size_x / size_y);
@@ -1964,19 +2145,19 @@ void() menu_type_resume = { if (oldtotalprofileslots > 0)
 
 	//posstring_x += aspectratio_fix_x *(vid_rwidth / vid_rheight);
 	if (c_profilename1 != "<empty profile>")
-		draw_buttionprofile((posstring), c_profilename1, 1);posstring_y += 32 * vy_rel;
+		draw_buttionprofile((posstring), c_profilename1, 1);posstring_y += 28 * vy_rel;
 	if (c_profilename2 != "<empty profile>")
-		draw_buttionprofile((posstring), c_profilename2, 2);posstring_y += 32 * vy_rel;
+		draw_buttionprofile((posstring), c_profilename2, 2);posstring_y += 28 * vy_rel;
 	if (c_profilename3 != "<empty profile>")
-		draw_buttionprofile((posstring), c_profilename3, 3);posstring_y += 32 * vy_rel;
+		draw_buttionprofile((posstring), c_profilename3, 3);posstring_y += 28 * vy_rel;
 	if (c_profilename4 != "<empty profile>")
-		draw_buttionprofile((posstring), c_profilename4, 4);posstring_y += 32 * vy_rel;
+		draw_buttionprofile((posstring), c_profilename4, 4);posstring_y += 28 * vy_rel;
 	if (c_profilename5 != "<empty profile>")
-		draw_buttionprofile((posstring), c_profilename5, 5);posstring_y += 32 * vy_rel;
+		draw_buttionprofile((posstring), c_profilename5, 5);posstring_y += 28 * vy_rel;
 	if (c_profilename6 != "<empty profile>")
-		draw_buttionprofile((posstring), c_profilename6, 6);posstring_y += 32 * vy_rel;
+		draw_buttionprofile((posstring), c_profilename6, 6);posstring_y += 28 * vy_rel;
 	if (c_profilename7 != "<empty profile>")
-		draw_buttionprofile((posstring), c_profilename7, 7);posstring_y += 32 * vy_rel;
+		draw_buttionprofile((posstring), c_profilename7, 7);posstring_y += 28 * vy_rel;
 
 	if (c_profilename1 != "<empty profile>")
 		strunzone(c_profilename1);
@@ -2031,7 +2212,7 @@ void() menu_type_resume = { if (oldtotalprofileslots > 0)
 
 	local string sorete;
 	sorete = ftos(currentprofilessaves);
-	deletebuttonpos_y = pos_y + 186 * vy_rel;
+	deletebuttonpos_y = pos_y + 192 * vy_rel;
 
 	if (!emptyprofile)
 	{
@@ -2062,7 +2243,7 @@ void() menu_type_resume = { if (oldtotalprofileslots > 0)
 			{
 				draw_buttionload((buttions_locs), "Shrine", 3);
 			}
-			buttions_locs_y = pos_y + 186 * vy_rel;
+			buttions_locs_y = pos_y + 192 * vy_rel;
 			fixedpos = fixed_vector('20 0 0');
 			buttions_locs_x += (fixedpos_x *(posx_modifier));
 			local vector txt_pos;
@@ -2081,8 +2262,27 @@ void() menu_type_resume = { if (oldtotalprofileslots > 0)
 				draw_buttionwrath(buttions_locs, "Load", 7);
 			else
 				drawpic(txt_pos, "gfx/menu/load_game.tga", imgsize, '1 1 1', 1, 0);
+			
 			draw_buttionwrath(deletebuttonpos, "Delete", 16);
 		}
+		
+		if(show_dates ==  1)
+		{			
+			txt_pos_y -= 87 * vy_rel;
+			txt_pos_x += 24 * vx_rel;
+			if (type_load_selected >= 1)
+			{
+				txt_pos_x += 0 * vx_rel;
+				string selected_date_a = substring(selected_date,0,11);
+				string selected_date_b = substring(	selected_date,11,10);
+				txt_pos_y -= 6 * vy_rel;
+				drawstring(txt_pos, selected_date_a,fixed_vector('10 10 0'), '-1 -1 -1', 0.7, 0);	
+				txt_pos_x += 9 * vx_rel;
+				txt_pos_y += 84 * vy_rel;
+				drawstring(txt_pos, selected_date_b,fixed_vector ('10 10 0'), '-1 -1 -1', 0.7, 0);	
+			}
+		}
+		
 	}
 
 	oldprofileslot = profileslot;

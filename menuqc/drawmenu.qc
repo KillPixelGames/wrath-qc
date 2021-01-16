@@ -1,4 +1,6 @@
- float menuversion = 1.27;
+
+
+
 float smallbuttons;
 
  void() m_display;
@@ -8,7 +10,49 @@ float smallbuttons;
  float number_load_selected;
 float profilemenuversion;
 
- void(string txttoclear) writeempty = { local float writeparms;
+void() precache_menu_files =
+{
+	precache_pic("gfx/cursor.tga");
+	precache_pic("gfx/menu/background.tga");
+	precache_pic("gfx/menu/begin_active.tga");
+	precache_pic("gfx/menu/begin.tga");
+	precache_pic("gfx/menu/delete_profile_active.tga");
+	precache_pic("gfx/menu/delete_profile.tga");
+	precache_pic("gfx/menu/depart_active.tga");
+	precache_pic("gfx/menu/depart.tga");
+	precache_pic("gfx/menu/end_splash.tga");
+	precache_pic("gfx/menu/load_game_active2.tga");
+	precache_pic("gfx/menu/load_game_active.tga");
+	precache_pic("gfx/menu/load_game.tga");
+	precache_pic("gfx/menu/load_menud.tga");
+	precache_pic("gfx/menu/load_menu_e1m1.tga");
+	precache_pic("gfx/menu/load_menu_e1m2.tga");
+	precache_pic("gfx/menu/load_menu_e1m3.tga");
+	precache_pic("gfx/menu/load_menu_e1m4.tga");
+	precache_pic("gfx/menu/load_menu_e1m5.tga");
+	precache_pic("gfx/menu/load_menu_hub1.tga");
+	precache_pic("gfx/menu/load_menu.tga");
+	precache_pic("gfx/menu/logo.tga");
+	precache_pic("gfx/menu/options_active.tga");
+	precache_pic("gfx/menu/options.tga");
+	precache_pic("gfx/menu/resume_active.tga");
+	precache_pic("gfx/menu/resume.tga");
+	precache_pic("gfx/splashes/arrow.tga");
+	precache_pic("gfx/splashes/_blank.tga");
+	precache_pic("gfx/splashes/e1m1_16-9.tga");
+	precache_pic("gfx/splashes/e1m2_16-9.tga");
+	precache_pic("gfx/splashes/e1m3_16-9.tga");
+	precache_pic("gfx/splashes/e1m4_16-9.tga");
+	precache_pic("gfx/splashes/e1m5_16-9.tga");
+	precache_pic("gfx/splashes/endgame.tga");
+	precache_pic("gfx/splashes/hub1_16-9.tga");
+	precache_pic("gfx/splashes/loading_ring.tga");
+};
+
+
+ void(string txttoclear) writeempty = 
+{
+	local float writeparms;
  	writeparms = fopen_wrath(txttoclear, FILE_WRITE);	//open what file to use in write mode
  	fputs(writeparms, "\n");	//and again
  	fputs(writeparms, "\n");	//and again
@@ -26,7 +70,9 @@ float profilemenuversion;
 
 
  
- void() delete_profiles = { writeempty("profiles/currentprofileslot.txt");
+ void() delete_profiles = 
+{
+	writeempty("profiles/currentprofileslot.txt");
  	writeempty("profiles/profilenames.txt");
  	writeempty("profiles/profileslot.txt");
  	writeempty("profiles/totalfileslot.txt");
@@ -42,7 +88,9 @@ float profilemenuversion;
  };
 void()deleteallprofiles;
 void()write_totalprofileslot_updatedversion;
- void() check_menuversion = { local float readparms, localmenuversion;
+ void() check_menuversion = 
+{
+	local float readparms, localmenuversion;
  	local string readtext;
  	readparms = fopen_wrath("menuversion.txt", FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
  	readtext = fgets(readparms);	//read the text
@@ -72,6 +120,9 @@ void()write_totalprofileslot_updatedversion;
  	fputs(writeparms, "\n");	//and again
  	fclose_wrath(writeparms);
 	
+	float maxfps = cvar ("cl_maxfps");
+	if((maxfps <= 0) || (maxfps > 1000))	
+	cmd("cl_maxfps 1000\n");
 	
  	//	deleteallprofiles();
  }
@@ -88,7 +139,9 @@ void()write_totalprofileslot_updatedversion;
  	mouse_pos_y = vid_ry / 2;
  };
 
- void() updateMouse = { vid_rx = cvar("vid_conwidth");
+ void() updateMouse = 
+{
+	vid_rx = cvar("vid_conwidth");
  	vid_ry = cvar("vid_conheight");
  	vector raw_mouse;
  	raw_mouse = getmousepos();
@@ -112,7 +165,9 @@ void()write_totalprofileslot_updatedversion;
  		mouse_pos_y = vid_ry;
  };
  string(float kn) keynumtostring_wrath;
- string(float kn) keynumtostring_wrath_f = { if (kn == 127)
+ string(float kn) keynumtostring_wrath_f = 
+{
+	if (kn == 127)
  		return "space bar";
  	else
  	{
@@ -120,7 +175,9 @@ void()write_totalprofileslot_updatedversion;
  		return n;
  	}
  };
- void() check_save = { local float readparms;
+ void() check_save = 
+{
+	local float readparms;
  	local string readtext;
  	readparms = fopen_wrath("adpsav.dll", FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
  	if (readparms != -1)
@@ -131,7 +188,9 @@ void()write_totalprofileslot_updatedversion;
  	}
  };
 
- void(string nameprofile) check_profile_saves = { local float readparms;
+ void(string nameprofile) check_profile_saves = 
+{
+	local float readparms;
  	local string readtext, profilename_svs;
  	profilename_svs = strcat("profiles/", nameprofile, ".frk");
  	readparms = fopen_wrath(profilename_svs, FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
@@ -143,7 +202,9 @@ void()write_totalprofileslot_updatedversion;
  	}
  };
 
- void() check_profileslot = { local float readparms;
+ void() check_profileslot = 
+{
+	local float readparms;
  	local string readtext;
  	readparms = fopen_wrath("profiles/profileslot.txt", FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
  	if (readparms != -1)
@@ -154,7 +215,9 @@ void()write_totalprofileslot_updatedversion;
  	}
  };
 
- float() check_profileslottotal = { local float readparms;
+ float() check_profileslottotal = 
+{
+	local float readparms;
  	local string readtext;
  	readparms = fopen_wrath("profiles/totalfileslot.txt", FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
  	if (readparms != -1)
@@ -168,7 +231,9 @@ void()write_totalprofileslot_updatedversion;
  	else
  		return 0;
  };
- void() check_profilenames = { local float readparms;
+ void() check_profilenames = 
+{
+	local float readparms;
  	local string readtext;
  	readparms = fopen_wrath("profiles/profilenames.txt", FILE_READ);	//open what file to use (THIS TIME IN READ MODE)
  	if (readparms != -1)
@@ -201,7 +266,9 @@ void()write_totalprofileslot_updatedversion;
  	}
  };
 
- void(float nprofile) check_profilenames_str = { check_profilenames();
+ void(float nprofile) check_profilenames_str = 
+{
+	check_profilenames();
  	if (nprofile == 1) profilename = strzone(profilename1);
  	if (nprofile == 2) profilename = strzone(profilename2);
  	if (nprofile == 3) profilename = strzone(profilename3);
@@ -224,7 +291,9 @@ void()write_totalprofileslot_updatedversion;
  string c_profilename6;
  string c_profilename7;
 
- void() check_profilenames_str2 = { check_profilenames();
+ void() check_profilenames_str2 = 
+{
+	check_profilenames();
  	c_profilename1 = strzone(profilename1);
  	c_profilename2 = strzone(profilename2);
  	c_profilename3 = strzone(profilename3);
@@ -234,7 +303,9 @@ void()write_totalprofileslot_updatedversion;
  	c_profilename7 = strzone(profilename7);
  };
 
- void() write_save = { local float writeparms;
+ void() write_save = 
+{
+	local float writeparms;
  	local string writethis;
  	writeparms = fopen_wrath("adpsav.dll", FILE_WRITE);	//open what file to use in write mode
  	writethis = ftos(1);	//prepare the next thing to write
@@ -243,7 +314,9 @@ void()write_totalprofileslot_updatedversion;
  	fclose_wrath(writeparms);
  };
 
- void() write_currentprofileslot = { check_profilenames_str(profileslot);
+ void() write_currentprofileslot = 
+{
+	check_profilenames_str(profileslot);
  	local float writeparms;
  	local string writethis;
  	writeparms = fopen_wrath("profiles/currentprofileslot.txt", FILE_WRITE);	//open what file to use in write mode
@@ -259,7 +332,9 @@ void()write_totalprofileslot_updatedversion;
  		strunzone(profilename);
  };
 
- void() write_totalprofileslot = { local float writeparms;
+ void() write_totalprofileslot = 
+{
+	local float writeparms;
  	local string writethis;
  	writeparms = fopen_wrath("profiles/totalfileslot.txt", FILE_WRITE);	//open what file to use in write mode
  	writethis = ftos(profilesammount);	//prepare the next thing to write
@@ -268,7 +343,9 @@ void()write_totalprofileslot_updatedversion;
  	fclose_wrath(writeparms);
  };
 
- void() write_totalprofileslot_updatedversion = { local float writeparms;
+ void() write_totalprofileslot_updatedversion = 
+{
+	local float writeparms;
  	check_profileslot();
 	local string writethis;
  	writeparms = fopen_wrath("profiles/totalfileslot.txt", FILE_WRITE);	//open what file to use in write mode
@@ -279,7 +356,9 @@ void()write_totalprofileslot_updatedversion;
  };
 
 
- void() write_currentprofileslotfirsttime = { check_profilenames_str(profileslot);
+ void() write_currentprofileslotfirsttime = 
+{
+	check_profilenames_str(profileslot);
  	local float profilenamef;
  	local string profilenamestring;
  	profilenamestring = strcat("profiles/", profilename, ".frk");
@@ -291,7 +370,9 @@ void()write_totalprofileslot_updatedversion;
  	write_currentprofileslot();
  };
  
- void() write_menuversion = { check_profilenames_str(profileslot);
+ void() write_menuversion = 
+{
+	check_profilenames_str(profileslot);
  	local float profilenamef;
  	local string profilenamestring;
  	profilenamestring = strcat("profiles/", profilename,"/menu.version");
@@ -305,7 +386,9 @@ void()write_totalprofileslot_updatedversion;
  		strunzone(profilename);
  };
  
- void() write_profileslot = { local float writeparms;
+ void() write_profileslot = 
+{
+	local float writeparms;
  	local string writethis;
  	writeparms = fopen_wrath("profiles/profileslot.txt", FILE_WRITE);	//open what file to use in write mode
  	writethis = ftos(profileslot);	//prepare the next thing to write
@@ -314,7 +397,9 @@ void()write_totalprofileslot_updatedversion;
  	fclose_wrath(writeparms);
  };
 
- void() write_profilenames = { local float writeparms;
+ void() write_profilenames = 
+{
+	local float writeparms;
  	local string writethis;
  	writeparms = fopen_wrath("profiles/profilenames.txt", FILE_WRITE);	//open what file to use in write mode
  	writethis = profilename1;	//prepare the next thing to write
@@ -372,8 +457,13 @@ void()write_totalprofileslot_updatedversion;
  		strunzone(profilename);
  };
  
- void() m_init = { 
+ void() m_init = 
+{
+	
  
+
+	precache_menu_files();
+
 	check_menuversion();
  	cmd("exec start.cfg\n");
  	vid_wres = cvar("vid_width");
@@ -413,7 +503,9 @@ void()write_totalprofileslot_updatedversion;
  	//	check_profilenames();
  };
 
- void() remove_tether = { local float writeparms;
+ void() remove_tether = 
+{
+	local float writeparms;
  	local string writethis;
  	read_currentprofileslot();
  	local string campaignloc;
@@ -426,27 +518,35 @@ void()write_totalprofileslot_updatedversion;
  	fclose_wrath(writeparms);
  };
 
- void() m_init2 = { refresh_mouse();
+ void() m_init2 = 
+{
+	refresh_mouse();
  	time = gettime();
  	cmd("play2 cdtracks/track006\n");
  	check_save();
  }
 
- void() m_main = { cmd("\n disconnect \n");
+ void() m_main = 
+{
+	cmd("\n disconnect \n");
  	menutype = M_TYPE_NONE;
  	m_toggle(1);
  	m_init2();
  	selected_option = 0;
  }
 
- void(string s) GameCommand = { if (s == "backtomainmenu")
+ void(string s) GameCommand = 
+{
+	if (s == "backtomainmenu")
  		callfunction("m_main");
  };
 
  float releasedmouse;
  float mousereleased;
 float mouse1_held;
- void(float key, float ascii) m_keyup = { float deadmenu;
+ void(float key, float ascii) m_keyup = 
+{
+	float deadmenu;
  	deadmenu = cvar("scratch3");
 
  	if (key == K_MOUSE1)
@@ -460,7 +560,9 @@ float mouse1_held;
  float menuingame;
  float zmenuingame;
 
- void() restart_consize = { vid_wres = cvar("vid_width");
+ void() restart_consize = 
+{
+	vid_wres = cvar("vid_width");
  	vid_hres = cvar("vid_height");
  	string consize_w, consize_h;
  	consize_w = ftos(vid_wres / 2);
@@ -484,7 +586,9 @@ string(float keynum) keynumtostring_wrath =
 
  float last_selected_option;
  float mouseactive;
- void(float key, float ascii) m_keydown = { float deadmenu;
+ void(float key, float ascii) m_keydown = 
+{
+	float deadmenu;
  	deadmenu = cvar("scratch3");
  	if (deadmenu)
 	 {
@@ -518,7 +622,7 @@ string(float keynum) keynumtostring_wrath =
  			zmenuingame = 1;
  		}
 
- 		if ((menutype == M_TYPE_AUDIO) || (menutype == M_TYPE_VIDEO) || (menutype == M_TYPE_CONTROLS) || (menutype == M_TYPE_GAMEPLAY))
+ 		if ((menutype == M_TYPE_AUDIO) || (menutype == M_TYPE_VIDEO) || (menutype == M_TYPE_CONTROLS) || (menutype == M_TYPE_CONTROLBINDS) || (menutype == M_TYPE_GAMEPLAY))
  			menutype = M_TYPE_OPTIONS;
  		if (menutype == M_TYPE_RESOLUTION)
  		{
@@ -672,7 +776,7 @@ string(float keynum) keynumtostring_wrath =
  		tokenize(findkeysforcommand(localkey, 0));
  	if (stof(argv(0)) == keybind)
  		{
- 			menutype = M_TYPE_CONTROLS;
+ 			menutype = M_TYPE_CONTROLBINDS;
  			return;
 		}
 		
@@ -711,11 +815,10 @@ string(float keynum) keynumtostring_wrath =
  		if (gkcommand == 29) localkey = "\"impulse 89\"";	// 528
 
 		setkeybind_bindmap(keybind, localkey, 0);
-		string bindcmd;		
- 		bindcmd = strcat("in_bind 0 ", keynumtostring_wrath(keybind), " ", localkey, "\n");
+		bindcmd = strcat("in_bind 0 ", keynumtostring_wrath(keybind), " ", localkey, "\n");
  		cmd(bindcmd);
  		if (keybind)
- 			menutype = M_TYPE_CONTROLS;
+ 			menutype = M_TYPE_CONTROLBINDS;
  		return;
  	}
 
@@ -760,7 +863,9 @@ string(float keynum) keynumtostring_wrath =
  float last_selected_option;
  float mouseactive;
 
- void(vector pos, string txt, float index) draw_buttionwrath = { local float txt_len;
+ void(vector pos, string txt, float index) draw_buttionwrath = 
+{
+	local float txt_len;
  	local vector txt_pos;
  	local string picimage;
 
@@ -855,8 +960,8 @@ string(float keynum) keynumtostring_wrath =
  	local vector mins, max;
  	mins = pos;
  	max = pos2;
- 	mins -= fixed_vector('24 32 0');
- 	max += fixed_vector('8 -8 0');
+ 	mins -= fixed_vector('24 24 0');
+ 	max += fixed_vector('8 -16 0');
 
  	if (mouse_pos_x > mins_x && mouse_pos_x < max_x)
  	{
@@ -1042,10 +1147,15 @@ string(float keynum) keynumtostring_wrath =
 
  	if ((index >= 500) && (index <= 528))
 	{
-	if (smallbuttons == 1)
- 	FONT_SIZE= ('10 10 0');
-	else
- 	FONT_SIZE = ('16 16 0');
+		if (smallbuttons == 1)
+			FONT_SIZE= fixed_vector('10 10 0');
+		else
+		{
+		 if (menutype == M_TYPE_CONTROLS)
+			FONT_SIZE = fixed_vector('12.7 12.7 0');
+		else
+			FONT_SIZE = fixed_vector('16 16 0');
+		}
 	}
 
  	txt_len = stringwidth(txt, true, FONT_SIZE);
@@ -1163,7 +1273,7 @@ string(float keynum) keynumtostring_wrath =
  	if ((selected_option == index) && (mouseactive == 1))
  	{
  		if ((index >= 500) && (index <= 528))
- 			cb = '5 5 5';
+ 			cb = '7 7 7';
  		else
  			cb = '4 4 2';
  		if ((index < 7) && (index > 9))
@@ -1187,7 +1297,7 @@ string(float keynum) keynumtostring_wrath =
  			cb = '1 1 1';
  		else
  			cb = '2 1.5 1.5';
- 		alpha = 0.75;
+ 		alpha = 0.7;
  		filllip = '0 0 0';
  	}
 
@@ -1264,7 +1374,12 @@ string(float keynum) keynumtostring_wrath =
 	if (smallbuttons == 1)
  	bfont = fixed_vector('10 10 0');
 	else
+	{
+	 if (menutype == M_TYPE_CONTROLS)
+ 	bfont = fixed_vector('12.7 12.7 0');
+	else
  	bfont = fixed_vector('16 16 0');
+	}
 
  	txt_len = stringwidth(txt, true,bfont);
  	txt_pos_x -= (txt_len / 2);
@@ -1402,6 +1517,17 @@ void(string repeatedprofilename) remove_all_repeated_data = {
 	wrath_fremove(tether_sav);
 	wrath_fremove(shrine_sav);
 
+
+	string autosave_screenshot = strcat("profiles/", repeatedprofilename, "/autosave.png");
+	string tether_screenshot = strcat("profiles/", repeatedprofilename, "/tether.png");
+	string shrine_screenshot = strcat("profiles/", repeatedprofilename, "/shrine.png");
+
+	wrath_fremove(autosave_screenshot);
+	wrath_fremove(tether_screenshot);
+	wrath_fremove(shrine_screenshot);
+
+	string profile_dates = strcat("profiles/", repeatedprofilename, "/dates.txt");
+
 	local string hub1map, e1m1map, e1m2map, e1m3map, e1m4map, e1m5map;
 	hub1map = strcat("profiles/", repeatedprofilename, "/maps/hub1.sav");
 	e1m1map = strcat("profiles/", repeatedprofilename, "/maps/e1m1.sav");
@@ -1519,7 +1645,9 @@ void(string repeatedprofilename) remove_all_repeated_data = {
 	rmtree(cprofiledir);
 	
 };
-void() remove_all_data = { read_currentprofileslot();
+void() remove_all_data = 
+{
+	read_currentprofileslot();
 
 	string frk = strcat("profiles/", profilename, ".frk");
 	wrath_fremove(frk);
@@ -1542,6 +1670,17 @@ void() remove_all_data = { read_currentprofileslot();
 	wrath_fremove(auto_sav);
 	wrath_fremove(tether_sav);
 	wrath_fremove(shrine_sav);
+
+	string autosave_screenshot = strcat("profiles/", profilename, "/autosave.png");
+	string tether_screenshot = strcat("profiles/", profilename, "/tether.png");
+	string shrine_screenshot = strcat("profiles/", profilename, "/shrine.png");
+
+	wrath_fremove(autosave_screenshot);
+	wrath_fremove(tether_screenshot);
+	wrath_fremove(shrine_screenshot);
+
+	string profile_dates = strcat("profiles/",profilename, "/dates.txt");
+
 
 	local string hub1map, e1m1map, e1m2map, e1m3map, e1m4map, e1m5map;
 	hub1map = strcat("profiles/", profilename, "/maps/hub1.sav");
@@ -1826,3 +1965,8 @@ float() current_local_profilenames =
 	}
 	write_totalprofileslot();
  };
+
+
+
+
+

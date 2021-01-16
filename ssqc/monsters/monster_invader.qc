@@ -641,7 +641,9 @@ void()	invader_run1	=[	$inv_run1,	invader_run1	]
 };
 */
 /////////////////////////////////////////////////////////////////////////////////////////////projectile attack
-void() projectile_touch_inv = { local float damg;
+void() projectile_touch_inv = 
+{
+	local float damg;
 	if (other == self.owner)
 		return;
 	self.solid = SOLID_NOT;
@@ -662,7 +664,9 @@ void() projectile_touch_inv = { local float damg;
 	self.think = slag_explode1;
 };
 
-void() shotgun_proj_touch2 = { if (other == self.owner)
+void() shotgun_proj_touch2 = 
+{
+	if (other == self.owner)
 		return;
 	if (pointcontents(self.origin) == CONTENT_SKY)
 	{
@@ -695,6 +699,11 @@ void() shotgun_proj_touch2 = { if (other == self.owner)
 	}
 
 	*/
+	if (other.classname == "dome")
+	{
+		remove(self);
+	}
+
 	if (other.health)
 	{
 		T_Damage(other, self, self.owner, invader_ad);
@@ -713,7 +722,9 @@ void() shotgun_proj_touch2 = { if (other == self.owner)
 
 void() shotgun_proj_touch2;
 
-void(vector org, vector dir, float order, entity ownerproj) launch_projectile_inv = { local entity shotgun_proj;
+void(vector org, vector dir, float order, entity ownerproj) launch_projectile_inv = 
+{
+	local entity shotgun_proj;
 	shotgun_proj = spawn();
 	shotgun_proj.owner = ownerproj;
 	shotgun_proj.movetype = MOVETYPE_FLYMISSILE;
@@ -723,6 +734,7 @@ void(vector org, vector dir, float order, entity ownerproj) launch_projectile_in
 	shotgun_proj.classentity = "projectiles";
 	shotgun_proj.touch = shotgun_proj_touch2;
 	shotgun_proj.classname = "projectile";
+	shotgun_proj.wrathflags += FL_PROJECTILE;
 	shotgun_proj.traileffectnum = particleeffectnum("shottrail");
 	shotgun_proj.think = SUB_Remove;
 	shotgun_proj.nextthink = time + 5;
@@ -954,7 +966,9 @@ void() invader_preattack10 =[$inv_runtoattack10, invader_attack]
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////melee attack
 
-void(float wdmg) invader_melee_attack = { local vector delta;
+void(float wdmg) invader_melee_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -1100,7 +1114,7 @@ void() invader_sattack10 =[$inv_sattack10, invader_sattack]
 	}	
 		
 	
-	if (enemy_is_visible && (self.enemy.health >0))
+	if (enemy_is_visible && (self.enemy.health >0) )
 	{
 		enemy_range = range(self.enemy);
 		if ((enemy_range == RANGE_FAR) || (enemy_range == RANGE_MID))
@@ -1144,7 +1158,9 @@ void() invader_sattack10 =[$inv_sattack10, invader_sattack]
 /////////////////////////////////////////////////////////////////////////////////////////////
 void() invader_death;
 
-void() invader_postpain = { ai_face();
+void() invader_postpain = 
+{
+	ai_face();
 	if (self.health <= 0)
 	{
 		self.solid = SOLID_NOT;
@@ -1247,12 +1263,16 @@ void() invader_mutilated10 =[$inv_mutilate10, invader_postpain] {};
 
 void(entity enemy, float dmg) invader_pain = {	//if(self.pain_finished > time)
 	//	return;
+
+	if(enemy.weapon != IT_BOIL)
+	{
 	if (dmg < invader_dtp)
 		return;
 	local float rp;
 	rp = random() *100;
 	if (invader_rtp <= rp)
 		return;
+	}
 	//	if(self.pain_finished > time)
 	//		return;
 	self.pain_finished = time + 0.25;	// 1.75
@@ -1430,7 +1450,9 @@ self.corpse_angles_x = 90;
 Spawn_Corpse(self);
 };
 
-void() invader_gibdead = { local string tagname;local float tagindex;local vector tagorg;
+void() invader_gibdead = 
+{
+	local string tagname;local float tagindex;local vector tagorg;
 	if (!self.headless)
 	{
 		tagname = ("tag_head");
@@ -1568,7 +1590,9 @@ void() invader_death = {	//	if(self.pain_finished > time)
 
 /*WRATHED monster_invader (1 0 0) (-16 -16 -24) (16 16 40) Ambush*/
 .vector bbvv;
-void() precache_monster_invader = { precache_model("models/enemies/invader/invader.md3");
+void() precache_monster_invader = 
+{
+	precache_model("models/enemies/invader/invader.md3");
 	precache_model("models/enemies/invader/gibs/gib_head.md3");
 	precache_model("models/enemies/invader/gibs/gib_arm_l.md3");
 	precache_model("models/enemies/invader/gibs/gib_arm_r.md3");
@@ -1638,7 +1662,9 @@ self = oself;
 }
 };
 
-void() monster_invader = { precache_model("models/enemies/invader/invader.md3");
+void() monster_invader = 
+{
+	precache_model("models/enemies/invader/invader.md3");
 	precache_model("models/enemies/invader/gibs/gib_head.md3");
 	precache_model("models/enemies/invader/gibs/gib_arm_l.md3");
 	precache_model("models/enemies/invader/gibs/gib_arm_r.md3");

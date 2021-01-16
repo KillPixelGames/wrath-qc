@@ -1,4 +1,6 @@
-void() lower_vmodel2 = { self.vweaponframe += 1;
+void() lower_vmodel2 = 
+{
+	self.vweaponframe += 1;
 	if (self.vweaponframe >= 60)
 		self.think = raise_weapon;
 	else
@@ -6,7 +8,9 @@ void() lower_vmodel2 = { self.vweaponframe += 1;
 	self.nextthink = time + 0.05;
 };
 
-void() lower_vmodel = { self.vweaponframe = 51;
+void() lower_vmodel = 
+{
+	self.vweaponframe = 51;
 	self.attack_finished = time + 0.25;
 	self.think = lower_vmodel2;
 	self.nextthink = time + 0.05;
@@ -15,12 +19,16 @@ void() lower_vmodel = { self.vweaponframe = 51;
 .float randomattack;
 .float oldrandomattack;
 
-void() v_vmodel_idle = { self.vweaponstate = 0;
+void() v_vmodel_idle = 
+{
+	self.vweaponstate = 0;
 	self.vweaponframe = 0;
 
 };
 
-void() w_vmodel_slash2 = { local float lastvweaponframe;
+void() w_vmodel_slash2 = 
+{
+	local float lastvweaponframe;
 	self.vweaponframe += 1;
 
 	if (self.randomattack == 1)
@@ -41,7 +49,9 @@ void() w_vmodel_slash2 = { local float lastvweaponframe;
 	self.nextthink = time + 0.05;
 };
 
-void() w_vmodel_slash1 = { self.oldrandomattack = self.randomattack;
+void() w_vmodel_slash1 = 
+{
+	self.oldrandomattack = self.randomattack;
 
 	if (self.randomattack == 1)
 		self.vweaponframe = 1;
@@ -56,7 +66,9 @@ void() w_vmodel_slash1 = { self.oldrandomattack = self.randomattack;
 
 };
 
-void() w_vmodel_slash = { local float r;
+void() w_vmodel_slash = 
+{
+	local float r;
 
 	r = random();
 
@@ -79,7 +91,9 @@ void() w_vmodel_slash = { local float r;
 	self.nextthink = time;
 };
 
-void() raise_vmodel = { self.weapon = IT_VIEWMODEL;
+void() raise_vmodel = 
+{
+	self.weapon = IT_VIEWMODEL;
 	self.vweaponskin = 0;
 	self.vweaponglowmod = '0 0 0';
 	setmodel(self.vweapon, self.vvweapon_model);

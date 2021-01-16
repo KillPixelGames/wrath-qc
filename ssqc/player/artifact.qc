@@ -8,14 +8,18 @@ void(float n, vector a, entity ownr) Hud_message;
 float SAVED_TETHER = 1;
 float SAVED_SIGIL = 2;
 
-void() Remove_Tether = { self.alpha -= 0.025;
+void() Remove_Tether = 
+{
+	self.alpha -= 0.025;
 	if (self.alpha <= 0)
 		self.think = SUB_Remove;
 	self.nextthink = time + 0.01;
 
 };
 
-void() tether_mark_think = { local float bparticle;
+void() tether_mark_think = 
+{
+	local float bparticle;
 	bparticle = particleeffectnum("tetherparticle");
 	if (tether > 1)
 	{
@@ -30,7 +34,9 @@ void() tether_mark_think = { local float bparticle;
 	self.nextthink = time + 0.1;
 };
 
-void() check_tether = { read_currentprofileslot();
+void() check_tether = 
+{
+	read_currentprofileslot();
 	local string campaignloc;
 	campaignloc = strcat("profiles/", profilename, "/tether.txt");
 
@@ -70,7 +76,9 @@ void() check_tether = { read_currentprofileslot();
 	if (profilename)
 		strunzone(profilename);
 };
-void() check_tether_inmap = { local entity tm;
+void() check_tether_inmap = 
+{
+	local entity tm;
 	tm = find(world, classname, "tether_mark");
 	if (tm)
 		remove(tm);
@@ -119,7 +127,9 @@ void() nowater_type;
 .float tether_model_client;
 void() artifact_client_remove3;
 void()message_garbage_collector;
-void() write_tether = { 
+void() write_tether = 
+{
+	
 
 	nowater_type();
 	Kill_Tether();
@@ -205,10 +215,13 @@ void() write_tether = {
 
 	if (profilename)
 		strunzone(profilename);
-
+	save_screenshot(2,0);
+	writedates(2);
 };
 
-void() LifeSiphon_selected = { self.radialruning = 1;
+void() LifeSiphon_selected = 
+{
+	self.radialruning = 1;
 	sound(self, CHAN_AUTO, "items/artifacts/artifactF_use.ogg", 1, 0.25);
 	self.LifeSiphon_time = time + 20.8;
 	self.radial_time = time + 21;
@@ -217,7 +230,9 @@ void() LifeSiphon_selected = { self.radialruning = 1;
 	sprint(self, "Life Siphon selected\n");
 };
 
-void() Aegis_selected = { self.radialruning = 1;
+void() Aegis_selected = 
+{
+	self.radialruning = 1;
 	sound(self, CHAN_AUTO, "items/artifacts/artifactH_use.ogg", 1, 0.25);
 	self.Aegis_time = time + 15.1;
 	self.radial_time = time + 15.2;
@@ -227,7 +242,9 @@ void() Aegis_selected = { self.radialruning = 1;
 	sprint(self, "Aegis selected\n");
 };
 
-void() Drowner_selected = { self.radialruning = 1;
+void() Drowner_selected = 
+{
+	self.radialruning = 1;
 	sound(self, CHAN_AUTO, "items/artifacts/artifactB_use.ogg", 1, 0.25);
 	self.DrownerApp_time = time + 20.8;
 	self.radial_time = time + 21;
@@ -235,14 +252,7 @@ void() Drowner_selected = { self.radialruning = 1;
 	//	self.radialactive = 0;
 	sprint(self, "Drowner Apparatus selected\n");
 };
-void() TrinketofRespite_selected = { self.radialruning = 1;
-	//	sound (self,CHAN_AUTO,"items/artifacts/artifactB_use.ogg",1,0.25);
-	TrinketofRespite_time = time + 20.8;
-	self.TrinketofRespite -= 1;
-	//	self.radialactive = 0;
-	self.radial_time = time + 21;
-	sprint(self, "Trinket of Respite selected\n");
-};
+
 .float attar_timem;
 
 .entity exenemy;
@@ -454,4 +464,214 @@ void() Attar_selected =
 	setsize(missile, attar_pbboxn,attar_pbbox);
 	setorigin (missile, self.origin);
 };
+
+///////
+.float trinket_touched;
+
+void(vector org, string locsound, float rnd, float vol) randompointsound;
+void() trinket2_touch =
+{
+	float speed;
+	if((other.wrathflags & FL_PROJECTILE)&& (other.owner  != self.owner) && (other.trinket_touched != 1))
+	{
+
+		
+		if(other.owner.classname == "monster_invader")
+		{float bparticle = particleeffectnum("forcefieldsmall"); string string_sound = "impact/projectiles/trinket_small";}
+		else if((other.owner.classname == "monster_heretic") || (other.owner.classname == "monster_stricken"))
+		{bparticle = particleeffectnum("forcefieldbig"); string_sound = "impact/projectiles/trinket_med";}
+		else
+		{bparticle = particleeffectnum("forcefield"); string_sound = "impact/projectiles/trinket_med";}
+
+
+		randompointsound(other.origin, string_sound, 3, 1);
+
+		pointparticles(bparticle, other.origin,(other.velocity), 1);
+		sound (other, CHAN_WEAPON, "misc/null.wav", 0, ATTN_NORM);	// stop loop sound if present
+
+		other.velocity_x = other.velocity_x * random (-3, -0.5);
+		other.velocity_y = other.velocity_y * random (-3, -0.5);
+		other.velocity_z = other.velocity_z * random (-3, -0.5);
+		other.owner = other.enemy;
+		other.trinket_touched = 1;
+	}
+};
+void() dome_remove =
+{
+	self.scale = 1;
+	self.light_lev = 320;	
+	self.color = '1.45 1.6 1.96';
+	sound (self, CHAN_BODY, "misc/null.wav", 0, ATTN_NORM);	// stop loop sound
+	sound (self, CHAN_WEAPON, "misc/null.wav", 0, ATTN_NORM);	// stop loop sound
+	self.think = SUB_RemoveScale;
+	self.nextthink = time;
+};
+
+void() dome_flicker =
+{
+
+	if(self.alpha == 1)
+	{
+		self.light_lev = 10;	
+		self.alpha = random (0.125, 0.5);
+		sound7 (self, CHAN_BODY, "items/artifacts/artifactG_loop.ogg", 0.75, 0.5,150,0);
+	}
+	else
+	{
+		self.light_lev = 180;	
+		self.alpha = 1;
+		sound (self, CHAN_BODY, "misc/null.wav", 0, ATTN_NORM);	// stop loop sound
+	}
+	if(self.lifetime > time)
+	{
+		self.nextthink = time + random(0.125, 0.25);
+		self.think = dome_flicker;
+	}
+	else
+	{
+		self.nextthink = time ;
+		self.think = dome_remove;
+	}
+
+};
+
+void() trinket_spawn = 
+{
+	entity trinket2 = spawn();
+	trinket2.origin = self.origin;
+	trinket2.owner = self;
+	trinket2.origin = self.origin+ '0 0 64';
+	trinket2.classname = "dome";
+	trinket2.solid = SOLID_TRIGGER;
+	setsize(trinket2, '-148 -148 -148', '148 148 148');
+	trinket2.touch = trinket2_touch;
+	trinket2.nextthink = time + 20;
+	trinket2.think = SUB_Remove;
+	entity trinket4 = spawn();
+	trinket4.origin = self.origin;
+	setmodel(trinket4,"models/artifacts/effects/trinket_dome.md3");
+	trinket4.pflags = 129;
+	trinket4.color = '0.72 0.8 0.94';
+	trinket4.style = 1;
+	trinket4.alpha = 1;
+	trinket4.light_lev = 180;	
+	trinket4.scale = 1.2;
+	trinket4.nextthink = time + 15.8;
+	trinket4.lifetime = time + 20.8;
+	sound (trinket4, CHAN_WEAPON, "items/artifacts/artifactG_loop.ogg", 1, 0.5);
+	trinket4.think = dome_flicker;
+	force_retouch = 2;	
+};
+
+void() TrinketofRespite_selected = 
+{ 
+	self.radialruning = 1;
+	//	sound (self,CHAN_AUTO,"items/artifacts/artifactB_use.ogg",1,0.25);
+	TrinketofRespite_time = time + 20.8;
+	self.TrinketofRespite -= 1;
+	//	self.radialactive = 0;
+	self.radial_time = time + 21;
+	trinket_spawn();
+};
+
+///////
+
+float revelation_mark;
+.entity oldowner;
+.float secret;
+void() secret_mark_think =
+{
+	if(self.owner.secret != 1)
+		self.think = SUB_Remove;
+	else
+		self.think = secret_mark_think;
+	self.nextthink = time + 0.05; 
+};
+
+void() info_mark_think =
+{
+	float disttoplayer;
+	if(revelation_mark == 1)
+	{
+		disttoplayer = vlen (single_player.origin - self.origin);
+		if(disttoplayer <= 1024)
+		{	
+			self.alpha = 1;
+			if(disttoplayer <= 128)
+			{
+				self.pflags = 129;
+				self.scale = 1;
+			}
+			else
+			{
+				self.pflags = 0;
+				self.scale = 0.5;	
+			}
+		}
+
+		else
+			self.alpha = -1;
+	}
+	else
+		self.alpha = -1;
+
+//	if(self.owner.secret != 1)
+//		self.think = SUB_Remove;
+//	else
+		self.think = info_mark_think;
+	self.nextthink = time + 0.05; 
+};
+
+void() info_mark =
+{
+	self.owner = find (world, targetname, self.target);
+	self.oldowner = self.owner;
+	self.effects = 512 + EF_ADDITIVE;
+	setmodel (self,"models/artifacts/mark_flame.md3");
+	self.scale =0.5;
+	self.pflags = 0;
+	self.origin_z +=7;
+	self.style = 1; 
+	self.color= '1 1 7';
+	self.light_lev = 32;
+	self.colormod = '0 0.3 1';
+	self.wrathflags += FL_GARBAGE;
+ 	self.think = info_mark_think;
+	self.nextthink = time + 0.25; 
+};
+
+void() mark_revelation =
+{
+	revelation_mark = 1;
+	local entity secret_entity;
+	entity secret_mark;
+	vector org;
+	secret_entity = findradius(self.origin, 1000000);
+	while (secret_entity)
+	{
+		if (secret_entity.wrathflags &FL_SECRET)
+		{
+			if(secret_entity.classname == "trigger_secret")
+				org = (secret_entity.absmin + secret_entity.absmax) * 0.5;
+			else
+				org = secret_entity.origin;
+			secret_mark = spawn();
+			secret_mark.origin = org;
+			secret_mark.owner = secret_entity;
+			secret_mark.oldowner = secret_mark.owner;
+			setmodel(secret_mark,"models/artifacts/soul_marker.md3");
+			secret_mark.colormod = '0 0.3 1';
+			secret_mark.wrathflags += FL_GARBAGE;
+			secret_mark.effects = 512 + EF_NODEPTHTEST + EF_ADDITIVE;
+			secret_mark.think = secret_mark_think;
+			secret_mark.nextthink = time + 0.1; 
+		}
+
+		secret_entity = secret_entity.chain;
+	}
+
+
+};
+
+
 ///////////////////////////////////end of qc file

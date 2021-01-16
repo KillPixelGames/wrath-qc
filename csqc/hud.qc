@@ -25,7 +25,9 @@ float rndm;
 float arailb;
 float shrinepresent;
 
-void() write_tether = { read_currentprofileslot();
+void() write_tether = 
+{
+	read_currentprofileslot();
 	local string campaignloc;
 	campaignloc = strcat("profiles/", profilename, "/tetherclient.txt");
 
@@ -42,7 +44,9 @@ void() write_tether = { read_currentprofileslot();
 
 
  
-void() check_tether = { read_currentprofileslot();
+void() check_tether = 
+{
+	read_currentprofileslot();
 	local string campaignloc;
 	campaignloc = strcat("profiles/", profilename, "/tether.txt");
 	local float readparms;
@@ -59,7 +63,9 @@ void() check_tether = { read_currentprofileslot();
 		strunzone(profilename);
 };
 float shrine_user;
-void() check_shrine_user = { read_currentprofileslot();
+void() check_shrine_user = 
+{
+	read_currentprofileslot();
 	local string campaignloc;
 	campaignloc = strcat("profiles/", profilename, "/shrine_user.txt");
 	local float readparms;
@@ -72,7 +78,9 @@ void() check_shrine_user = { read_currentprofileslot();
 		strunzone(profilename);
 };
 float mm2;
-void() Death_Menu = { vector omp;
+void() Death_Menu = 
+{
+	vector omp;
 
 	if (mm2 == 0)
 	{
@@ -108,10 +116,13 @@ void() Death_Menu = { vector omp;
 
 float crosshairalpha;
 float crosshairalpha2;
-
-void() Crosshair = { vector pos, chcolor;
+float crosshair_scale;
+void() Crosshair = 
+{
+	vector pos, chcolor;
 	float wch, sca, alphd;
 	string image;
+	crosshair_scale = cvar("saved8");
 
 	wch = floor(getstatf(STAT_CROSSHAIR));
 
@@ -134,15 +145,19 @@ void() Crosshair = { vector pos, chcolor;
 
 	chcolor = '1 1 1';
 
-	pos_x = (vid_width / 2) - 16;
-	pos_y = (vid_height / 2) - 16;
+	pos_x = (vid_width / 2) - (16 * vx_rel * crosshair_scale);
+	pos_y = (vid_height / 2) - (16 * vx_rel * crosshair_scale);
 
-	drawpic(pos, "gfx/hud/crosshair1.tga", '32 32 0', chcolor, alphd, 0);
+	drawpic(pos, "gfx/hud/crosshair1.tga", '32 32 0' * vx_rel * crosshair_scale, chcolor, alphd, 0);
+
+
 	if ((crosshairalpha2 > 0) || (crosshairalpha > 0))
-		drawpic(pos, image, '32 32 0', chcolor, sca, 0);
+		drawpic(pos, image, '32 32 0' * vx_rel* crosshair_scale, chcolor, sca, 0);
 };
 
-void(float orgx, float orgy, float orgz, float vx, float localvy, float vz, vector rgb) lbeam2 = { local vector v1, v2, v3, v4, muzzleangles;
+void(float orgx, float orgy, float orgz, float vx, float localvy, float vz, vector rgb) lbeam2 = 
+{
+	local vector v1, v2, v3, v4, muzzleangles;
 	float fangles, fangles2;
 	makevectors(view_angles);
 	muzzleangles = v_right * 3;
@@ -174,7 +189,9 @@ void(float orgx, float orgy, float orgz, float vx, float localvy, float vz, vect
 	R_EndPolygon();
 };
 
-void(float orgx, float orgy, float orgz, float vx, float local_vy, float vz, vector rgb, float dorgx, float dorgy, float dorgz) lbeam = { local vector v1, v2, v3, v4;
+void(float orgx, float orgy, float orgz, float vx, float local_vy, float vz, vector rgb, float dorgx, float dorgy, float dorgz) lbeam = 
+{
+	local vector v1, v2, v3, v4;
 	v1_x = orgx;
 	v1_y = orgy;
 	v1_z = orgz;
@@ -202,7 +219,9 @@ void(float orgx, float orgy, float orgz, float vx, float local_vy, float vz, vec
 	R_EndPolygon();
 };
 
-void(float orgx, float orgy, float orgz, float vx, float local_vy, float vz, vector rgb, float dorgx, float dorgy, float dorgz) railbeam = { local vector v1, v2, v3, v4;
+void(float orgx, float orgy, float orgz, float vx, float local_vy, float vz, vector rgb, float dorgx, float dorgy, float dorgz) railbeam = 
+{
+	local vector v1, v2, v3, v4;
 	v1_x = orgx;
 	v1_y = orgy;
 	v1_z = orgz;
@@ -232,7 +251,9 @@ void(float orgx, float orgy, float orgz, float vx, float local_vy, float vz, vec
 };
 vector dammo_pos;
 
-void() Ammo_Hud = { float c_w, c_a, digits, cws;
+void() Ammo_Hud = 
+{
+	float c_w, c_a, digits, cws;
 	string c_ammo, pic4, pic3, pic2, pic1, digit1, digit2, digit3, digit4;
 	c_w = floor(getstatf(STAT_LASTWEAPON));
 	if (c_w == IT_COACHGUN)
@@ -245,6 +266,8 @@ void() Ammo_Hud = { float c_w, c_a, digits, cws;
 		c_a = getstatf(STAT_AMMO_FLAMETHROWER);
 	else if (c_w == IT_SHOTGUN)
 		c_a = getstatf(STAT_AMMO_SHOTGUN);
+	else if (c_w == IT_LANCE)
+		c_a = getstatf(STAT_AMMO_LANCE);
 
 	c_ammo = ftos(c_a);
 	if (c_a < 0)
@@ -354,6 +377,8 @@ void() Ammo_Hud = { float c_w, c_a, digits, cws;
 
 	if (c_w == IT_CANNON)
 		picofnammo = "gfx/hud/6_ammo";
+	if (c_w == IT_LANCE)
+		picofnammo = "gfx/hud/7_ammo";
 
 	//	float fclframetime = gettime(2);
 	//	float v_sfps = 60 / ((rint (1/ (fclframetime + 0.1))));
@@ -596,7 +621,9 @@ void() Hud_Armor =
 		}
 	}
  };
-void() Hud = { vector postimage;
+void() Hud = 
+{
+	vector postimage;
 	string time0, time1, time2, time3, time4;
 	postimage = '240 -480 0';
 	
@@ -998,7 +1025,7 @@ void() Hud = { vector postimage;
 		if (radialactive == 4)artifact_count = getstatf(STAT_RD_CA);
 		if (radialactive == 5)artifact_count = 0;
 		if (radialactive == 6)artifact_count = getstatf(STAT_RD_LS);
-		if (radialactive == 7)artifact_count = 0;
+		if (radialactive == 7)artifact_count = getstatf(STAT_RD_TR);
 		if (radialactive == 8)artifact_count = getstatf(STAT_RD_AE);
 		if (radialactive == 9)artifact_count = 0;
 		if (radialactive == 10)artifact_count = 0;
@@ -1279,6 +1306,13 @@ void CSQC_UpdateView(float b, float c)
 		DString('-150 -50 0', vframe, 1, 2, '3 1 1', '10 10 0');
 		DString('-150 -90 0', enemyclass, 1, 2, '3 1 1', '10 10 0');
 		DString('-150 -70 0', enemyhealth, 1, 2, '3 1 1', '10 10 0');
+
+		vector player_org;
+		player_org_x =  getstatf(STAT_X);
+		player_org_y =  getstatf(STAT_Y);
+		player_org_z =  getstatf(STAT_Z);
+
+		DString('-150 10 0', vtos(player_org), 1, 2, '1 1 3', '10 10 0');
 	}
 
 	float fclframetime = gettime(2);
@@ -1471,16 +1505,16 @@ void CSQC_UpdateView(float b, float c)
 		else
 			rephicon = 0;
 
-		if (pulseicon & 2048)
+		if (pulseicon & 32768)
 			arphicon = 0;
-		if (pulseicon & 1024)
+		if (pulseicon & 16384)
 			arphicon += clframetime * 27;
 		else
 			arphicon = 0;
 
-		if (pulseicon & 8192)
+		if (pulseicon &131072)
 			drphicon = 0;
-		if (pulseicon & 4096)
+		if (pulseicon & 65536)
 			drphicon += clframetime * 27;
 		else
 			drphicon = 0;
@@ -1568,10 +1602,12 @@ void CSQC_UpdateView(float b, float c)
 					journal_page_maps = 2;
 				if (mapname == "maps/e1m2.bsp")
 					journal_page_maps = 3;
-				if (mapname == "maps/e1m4.bsp") // fix this when e1m3 is released
+				if (mapname == "maps/e1m3.bsp")
 					journal_page_maps = 4;
-				if (mapname == "maps/e1m5.bsp") // fix this when e1m3 is released
+				if (mapname == "maps/e1m4.bsp")
 					journal_page_maps = 5;
+				if (mapname == "maps/e1m5.bsp") 
+					journal_page_maps = 6;
 			}
 		}
 		else if (showjournal == 2)

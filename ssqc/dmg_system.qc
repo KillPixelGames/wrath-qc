@@ -4,8 +4,47 @@ void(entity targ, entity attacker) ClientObituary;
 void() monster_death_use;
 .float warped;
 .float isexplosion;
+.float gibbable;
+.float tdsouls;
+.float tdsouls_time;
+.float turret;
+.float oldturret;
+.float warpedtime;
+void() stricken_preattack1;
+void()stricken_run1;
+void() delete_shrine;
+void() PlayerDeathThink;
+.float playerdeadtime;
+.float deadwaiting;
+.float alreadykilled;
+.entity attached_cloud;
+void(string sound, float r) playersound;
+void(float mtype, vector org, entity ownr) Hud_message;
+void() next_enemy;
 
-float(entity targ, entity inflictor) CanDamage = {	// bmodels need special checking because their origin is 0,0,0
+
+void() FoundTarget;
+.float exec_push;
+.float paintake;
+.float randomattacked;
+.float randomattack;
+.float dmgscreenf;
+.float dmgscreenb;
+.float dmgscreenr;
+.float dmgscreenl;
+.float dmgbscreenf;
+.float dmgbscreenb;
+.float dmgbscreenr;
+.float dmgbscreenl;
+.float flyer;
+void() mercenary_pain_think;
+.float oldturret;
+.float onlymelee;
+.float  sustained_damage;
+
+float(entity targ, entity inflictor) CanDamage = 
+{	
+	// bmodels need special checking because their origin is 0,0,0
 	if (targ.movetype == MOVETYPE_PUSH)
 	{
 		traceline(inflictor.origin, 0.5 *(targ.absmin + targ.absmax), TRUE, self);
@@ -33,72 +72,69 @@ float(entity targ, entity inflictor) CanDamage = {	// bmodels need special check
 		return TRUE;
 	return FALSE;
 };
-.float gibbable;
-.float tdsouls;
-.float tdsouls_time;
-.float turret;
-.float oldturret;
-void() stricken_preattack1;
-void()stricken_run1;
-void() siphon_effect_think = { self.frame++;
-	self.alpha -= 0.2;
 
+void() siphon_effect_think = 
+{ 
+	self.frame++;
+	self.alpha -= 0.2;
 	if (self.alpha == 0)
 		self.alpha = -1;
-
 	if (self.frame <= 9)
 		self.think = siphon_effect_think;
 	else
 		self.think = SUB_Remove;
-
 	self.nextthink = time + 0.1;
-}
+};
 
-void(vector org, entity e) life_siphon_effect = { local entity siphon_effect;
-	siphon_effect = spawn();
+void(vector org, entity e) life_siphon_effect = 
+{ 
+	float r = random();
+
+	entity siphon_effect = spawn();
 	siphon_effect.alpha = 2;
 	siphon_effect.origin = org;
 	setmodel(siphon_effect, "models/artifacts/effects/life_siphon_humanoid.md3");
-	float r = random();
 	if (r > 0.5)
 		siphon_effect.skin = 1;
+	if (e.classname == "monster_lurker")
+	{
+		setmodel(siphon_effect, "models/artifacts/effects/life_siphon_lurker.md3");
+		self.skin = 0;
+	}
 	if (e.classname == "monster_heretic")
 	{
 		setmodel(siphon_effect, "models/artifacts/effects/life_siphon_heretic.md3");
 		self.skin = 0;
 	}
-
 	if (e.classname == "monster_wraith")
 	{
 		setmodel(siphon_effect, "models/artifacts/effects/life_siphon_wraith.md3");
 		self.skin = 0;
 	}
-
 	if (e.classname == "monster_stricken")
 	{
 		setmodel(siphon_effect, "models/artifacts/effects/life_siphon_stricken.md3");
 		self.skin = 0;
 	}
-
 	siphon_effect.think = siphon_effect_think;
 	siphon_effect.nextthink = time;
 };
-void() delete_shrine;
-void() PlayerDeathThink;
-.float playerdeadtime;
-.float deadwaiting;
-.float alreadykilled;
-.entity attached_cloud;
-void(string sound, float r) playersound;
-void(float mtype, vector org, entity ownr) Hud_message;
-void() next_enemy;
+void()null;
+.entity buffer;
 void(entity targ, entity attacker, float gibable) Killed = 
 { 
+
+
+	
+	float health_gain;
+	
+	if(self.buffer !=  world)
+		self.buffer.goalentity = world;	
+
 	if((attacker.flags &FL_MONSTER) && (attacker.enemy ==  targ))
 	{
 		attacker.enemy = world;
-		local entity oself;
-		oself = self;
+		entity oself = self;
 		self = attacker;
 		next_enemy();
 		self = oself;	
@@ -123,39 +159,37 @@ void(entity targ, entity attacker, float gibable) Killed =
 		targ.journal_jmessagesm = JB_I;
 	if (targ.classname == "monster_oppressor")
 		targ.journal_jmessagesm = JB_J;
-
-	local entity pl;
-	pl = find(world, classname, "player");
-
+	if (targ.classname == "monster_lurker")
+		targ.journal_jmessagesm = JB_K;
+	entity pl = find(world, classname, "player");
 	if (!(pl.journal_jmessagesm &targ.journal_jmessagesm) && (targ.flags &FL_MONSTER))
 	{
 		pl.journal_jmessagesm += targ.journal_jmessagesm;
 		Hud_message(35, pl.origin, pl);
 	}
+		/*
+	1 = fallen
+	2 = wraith
+	3 = afflicted
+	4 = widow
+	5 = invader
+	6 = heretic
+	7 = executioner
+	8 = stricken
+	9 = opressor
+	10 = lurker
 
-	/*
-1 = fallen
-2 = wraith
-3 = afflicted
-4 = widow
-5 = invader
-6 = heretic
-7 = executioner
-8 = stricken
-9 = opressor
-
-float	JB_A					= 1;
-float	JB_B					= 2;
-float	JB_C					= 4;
-float	JB_D					= 8;
-float	JB_E					= 16;
-float	JB_F					= 32;
-float	JB_G					= 64;
-float	JB_H					= 128;
-float	JB_J					= 256;
-float	JB_k					= 512;
-*/
-
+	float	JB_A					= 1;
+	float	JB_B					= 2;
+	float	JB_C					= 4;
+	float	JB_D					= 8;
+	float	JB_E					= 16;
+	float	JB_F					= 32;
+	float	JB_G					= 64;
+	float	JB_H					= 128;
+	float	JB_J					= 256;
+	float	JB_k					= 512;
+	*/
 	oself = self;
 	self = targ;
 	self.classentity = "corpse";
@@ -169,13 +203,11 @@ float	JB_k					= 512;
 		self.health = -1;
 	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE)
 	{
-		// doors, triggers, etc
 		self.enemy = attacker;
 		self.th_die();
 		self = oself;
 		return;
 	}
-
 	if (self.classname == "player")
 	{
 		self.playerdeadtime = time + 100000000;
@@ -197,8 +229,6 @@ float	JB_k					= 512;
 		return;
 	}
 
-
-	// bump the monster counter
 	if (self.flags &FL_MONSTER)
 	{
 		if (attacker.isexplosion)
@@ -226,12 +256,10 @@ float	JB_k					= 512;
 				attacker.vweaponglowmod = '0.6 0.6 0.6';
 			if (attacker.melee_kills == 4)
 				attacker.vweaponglowmod = '0.8 0.8 0.8';
-
 			if (attacker.melee_kills == 5)
 			{
 				attacker.melee_kill_uber = 1;
 				attacker.vweaponglowmod = '1 1 1';
-				//attacker.vweaponskin = 1;
 				attacker.melee_kill_time = time + 7;
 			}
 			else
@@ -257,81 +285,86 @@ float	JB_k					= 512;
 
 			if (floor(attacker.health) <= 99)
 				sound7(attacker, CHAN_AUTO, "player/gain_health.ogg", 1, ATTN_NORM, 100, 0);
-			float health_gain;
-
+				health_gain = 5;
 			if (self.classname == "monster_fallen")
-				health_gain = attacker.health + 5;
+				health_gain = 5;
 			if (self.classname == "monster_wraith")
-				health_gain = attacker.health + 5;
+				health_gain = 5;
 			if (self.classname == "monster_afflicted")
-				health_gain = attacker.health + 10;
+				health_gain = 10;
 			if (self.classname == "monster_widow")
-				health_gain = attacker.health + 10;
+				health_gain = 10;
 			if (self.classname == "monster_invader")
-				health_gain = attacker.health + 10;
+				health_gain = 10;
 			if (self.classname == "monster_heretic")
-				health_gain = attacker.health + 20;
+				health_gain = 20;
 			if (self.classname == "executioner")
-				health_gain = attacker.health + 30;
+				health_gain = 30;
 			if (self.classname == "monster_stricken")
-				health_gain = attacker.health + 30;
+				health_gain = 30;
 			if (self.classname == "monster_wretch")
-				health_gain = attacker.health + 20;
+				health_gain = 15;
 			if (self.classname == "monster_oppressor")
-				health_gain = attacker.health + 20;
-			if(health_gain > 100)
-			health_gain = 100;			
-			
-			attacker.health = health_gain; 
+				health_gain = 20;
+			if (self.classname == "monster_lurker")
+				health_gain = 10;
+			attacker.health += health_gain; 
+			if(attacker.health > 100)
+			attacker.health = 100;			
 			life_siphon_effect(self.origin, self);
-
+			self.th_stand = null;
+			self.th_walk = null;
+			self.th_run = null;
+			self.th_missile = null;
+			self.th_melee = null;
+			self.th_pain = nullpain; // th_pain has two arguments 
+			self.flags = 0;
 		}
 	}
 	if (self.watertype == CONTENT_LAVA)	// do lava damage
 	{
-	self.effects = 0;
-	self.health = -9999;
+		self.effects = 0;
+		self.health = -9999;
 	}
 	self.th_die();
 	self.touch = SUB_Null;
 	monster_death_use();
 	self = oself;
 };
+.float forced_idle_time;
+.float evading;
+.entity temp_buffer;
+.float shieldtime;
+.float shieldspawned_time;
+void()lance_muzzle_think;
+void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = 
+{	 
+	vector dir;
+	entity oldself;
+	float save;
+	float take;
+	float floatdmg;
+	float waterdamagearmor;
+	float rest_damage;
+	float jdir;
+	vector vec;
+	float dot, dotb, doup, dmgup, dmgside;
+	vector vec2, inflictorangles;
 
-void() FoundTarget;
-.float exec_push;
-.float paintake;
-.float randomattacked;
-.float randomattack;
-
-.float dmgscreenf;
-.float dmgscreenb;
-.float dmgscreenr;
-.float dmgscreenl;
-
-.float dmgbscreenf;
-.float dmgbscreenb;
-.float dmgbscreenr;
-.float dmgbscreenl;
-.float flyer;
-
-.float oldturret;
-.float onlymelee;
-.float  sustained_damage;
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { local vector dir;
-	local entity oldself;
-	local float save;
-	local float take;
-
+	if(attacker.forced_idle_time > time)
+	{
+	//attacker.enemy =  world;
+	//	return;
+	damage = damage * 0.25;
+	}
 	if (!targ.takedamage)
 		return;
-
 	if (!(targ.health))
 		return;
+	
 
 	if (targ.classname == "player")
 	{
-		local float floatdmg;
 		if (skill == 0)
 			floatdmg = damage *0.25;
 		if (skill == 1)
@@ -340,8 +373,6 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 			floatdmg = damage *0.75;
 		if (skill == 3)
 			floatdmg = damage *1;
-	
-		damage = floatdmg;
 	}
 
 	if (damage <= 0)
@@ -351,17 +382,13 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 	// check for quad damage powerup on the attacker
 	if ((targ.only_damage_monster == 1) && (attacker.classname == "player"))
 		return;
-
 	if (attacker.super_damage_finished > time)
 		damage = damage * 4;
 	// save damage based on the target's armor level
-
-	local float waterdamagearmor;
 	if (attacker.classname == "badwater")
 		waterdamagearmor = 1;
 	else
 		waterdamagearmor = 0;
-	local float rest_damage;
 	damage = floor(damage);
 	if ((waterdamagearmor == 0) && (targ.Aegis_time < time))
 	{
@@ -418,7 +445,6 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 	{
 		dir = targ.origin - (inflictor.absmin + inflictor.absmax) *0.5;
 		dir = normalize(dir);
-		local float jdir;
 
 		if (attacker.exec_push)
 			jdir = attacker.exec_push;
@@ -431,9 +457,6 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 
 	if ((targ.classname == "player") && ((attacker.flags &FL_MONSTER) || (attacker.classname == "aoe")))
 	{
-		local vector vec;
-		local float dot, dotb, doup, dmgup, dmgside;
-
 		makevectors2(targ.angles);
 		vec = normalize(rorigin(attacker) - rorigin(targ));
 		dot = vec * v_forward;
@@ -514,10 +537,46 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 		}
 	}
 
-	local vector vec2, inflictorangles;
 	vec2 = inflictor.origin - targ.origin;
 	inflictorangles = vectoangles(vec);
+	if((targ.shieldtime > time) )
+	{
 
+		take = take * 0.05;
+		if ((targ.shieldspawned_time < time) && (attacker.classname =="player"))
+		{
+			string shieldmodel = "models/weapons/lance/v_flash.md3";
+			entity shield = spawn();
+			shield.owner = targ;
+			setmodel(shield, shieldmodel);
+			shield.scale = 1;
+			if(targ.classname == "monster_stricken")
+			shield.scale = 2.25;
+			if(targ.classname == "monster_executioner")
+			shield.scale = 2;
+			if(targ.classname == "monster_heretic")
+			shield.scale = 1.75;
+			shield.origin = targ.origin;
+			sound7(targ,CHAN_AUTO,"weapons/lance/fire1.ogg",1,0.25,50,0);
+			targ.shieldspawned_time  = time + 0.2;
+			shield.alpha = 2;
+			shield.frame = 3;
+			if(targ.temp_buffer.classname == "monster_buffer")
+			te_lightning1(targ,targ.origin, targ.temp_buffer.origin);
+			makevectors2(targ.angles);
+			pointparticles(particleeffectnum("wraith_fire_impact"), targ.origin + v_forward * (10 * shield.scale), '0 0 0', 1);
+
+			shield.think = lance_muzzle_think;
+			shield.nextthink = time + 0.05;
+			entity copyshield1 = spawn();
+			copyentity (shield, copyshield1);
+			entity copyshield2 = spawn();
+			copyentity (shield, copyshield2);
+
+			//void(vector org, float radius, float lifetime, vector color) te_customflash 
+			te_customflash (targ.origin, 128,1,'0.5 0.85 1'); 
+		}
+	}
 	if ((!(targ.flags &FL_GODMODE)) && ((targ.Aegis_time < time)))
 	{
 		if ((teamplay == 1) && (targ.team > 0) && (targ.team == attacker.team))
@@ -539,7 +598,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 	//react to the damage
 	oldself = self;
 	self = targ;
-	
+
 	if((self.classname == "monster_stricken") && (attacker.flags & FL_MONSTER))
 	{
 		if(!self.turret)
@@ -549,78 +608,72 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = { 
 		}	
 	}
 	
-	/*if((self.classname == "monster_stricken") && (attacker.classname == "player"))
-	{
-	self.turret = self.oldturret;
-	if(self.turret >= 1)
-	self.th_run = stricken_preattack1;
-	else
-	self.th_run = stricken_run1;
-	}*/
-	
-	if ((self.flags &FL_MONSTER) && (attacker != world)) 
-	{
-		//get mad unless of the same class (except for soldiers)
-		if ((self != attacker) && (attacker != self.enemy) && (attacker.classname == "player"))
-		{
-		if ((self.onlymelee == 1) && (attacker.flyer == 1))	
-			return;
-			self.enemy = attacker;
-			FoundTarget();
-		}
-	}
-
-	/*if ((self.flags &FL_MONSTER) && (attacker.flags &FL_CLIENT) && (!self.enemy))
-	{
-		self.enemy = attacker;
-		FoundTarget ();
-	}*/
-	if ((self.flags &FL_MONSTER) && (attacker.friendly_monster == 1)&&(attacker.flags &FL_MONSTER))
-	{
-		if ((self.onlymelee == 1) && (attacker.flyer == 1))	
-		return;
-		self.enemy = attacker;
-		FoundTarget();
-	}
-
-	if (self.th_pain)
-	{
-		self.paintake = take;
-		self.randomattacked = attacker.randomattack;
-		if(take > self.damagetopain)
-		{
-			self.th_pain(attacker, take);
-			self.sustained_damage = 0;
-		}
-		else
-			self.sustained_damage += take;
-
-		if(self.sustained_damage > self.damagetopain)
-			self.th_pain(attacker, take);		
-
-		// nightmare mode monsters don't go into pain frames often
-		if (attacker.classname == "player")
-		{
-			if ((self.flags &FL_MONSTER) && (self.bloody == TRUE))
+			if ((self.flags &FL_MONSTER) && (attacker != world) && (!self.warped)) 
 			{
-				if (attacker.isexplosion)
-					decal_monster_pain(rorigin(self), inflictorangles);
-				else
-					decal_monster_pain(rorigin(self), self.enemy.angles);
+				//get mad unless of the same class (except for soldiers)
+				if ((self != attacker) && (attacker != self.enemy) && (attacker.classname == "player"))
+				{
+				if ((self.onlymelee == 1) && (attacker.flyer == 1))	
+					return;
+					self.enemy = attacker;
+					FoundTarget();
+				}
 			}
+
+
+			if ((self.flags &FL_MONSTER) && (attacker.friendly_monster == 1)&&(attacker.flags &FL_MONSTER))
+			{
+				if ((self.onlymelee == 1) && (attacker.flyer == 1))	
+				return;
+				self.enemy = attacker;
+				FoundTarget();
+			}
+
+		if(self.nextthink > time)
+		self.nextthink = time;
+
+		if ((self.th_pain) && (!self.warped))
+		{
+			self.paintake = take;
+			self.randomattacked = attacker.randomattack;
+			if(take > self.damagetopain)
+			{
+				self.th_pain(attacker, take);
+				self.sustained_damage = 0;
+			}
+			else
+				self.sustained_damage += take;
+
+			if(self.sustained_damage > self.damagetopain)
+				self.th_pain(attacker, take);		
+
+			// nightmare mode monsters don't go into pain frames often
+			if (attacker.classname == "player")
+			{
+				if ((self.flags &FL_MONSTER) && (self.bloody == TRUE))
+				{
+					if (attacker.isexplosion)
+						decal_monster_pain(rorigin(self), inflictorangles);
+					else
+						decal_monster_pain(rorigin(self), self.enemy.angles);
+				}
+			}
+
+			if (((skill == 3) || (attacker.flags & FL_MONSTER)) && (self.flags & FL_MONSTER))
+				self.pain_finished = time + 5;
+
 		}
 
-		if ((skill == 3) || (attacker.flags & FL_MONSTER))
-			self.pain_finished = time + 5;
+		self = oldself;
 
-	}
 
-	self = oldself;
 };
 
-void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDamage = { local float points;
-	local entity head;
-	local vector org;
+void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDamage = 
+{ 
+	float points;
+	entity head;
+	vector org;
 	inflictor.isexplosion = 1;
 	head = findradius(inflictor.origin, damage + 40);
 	while (head)
@@ -665,13 +718,18 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 .vector fake_origin;
 float(vector spot1, vector spot2, entity e) visibleb;
 
-void(entity inflictor, entity attacker, float damage, entity ignore, float radius) T_SplashDamage = { local float points;
-	local entity head;
-	local vector org;
+void(entity inflictor, entity attacker, float damage, entity ignore, float radius) T_SplashDamage = 
+{ 	
+	float points;
+	entity head;
+	vector org;
 	inflictor.isexplosion = 1;
 	
 	
 	head = findradius(inflictor.origin, radius);
+
+
+
 	while (head)
 	{
 		if (head != ignore)
@@ -681,7 +739,17 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float radiu
 				
 				org = head.origin + (head.mins + head.maxs) *0.5;
 				if(head.solid == SOLID_BSP)
-				radius += vlen (head.absmax - head.absmin) * 0.5;
+					radius += vlen (head.absmax - head.absmin) * 0.5;
+				if((head == attacker) && (inflictor.classname == "explosion_ore"))
+					damage = damage * 0.25;
+				if((head == attacker) && (inflictor.classname == "explosion_oreb"))
+					damage = damage * 0.25;
+				if((head == attacker) && (inflictor.classname == "explosion_retcher"))
+					damage = damage * 0.25;
+				if((head == attacker) && (inflictor.classname == "aoe"))
+					damage = damage * 0.1;
+
+
 				points = damage / radius *(radius - (vlen(inflictor.origin - org)));
 				if (head == attacker)
 					points = points *0.5;
@@ -728,7 +796,9 @@ void()backtonormal_physics_think
 	self.nextthink = time;
 };
 
-void(entity inflictor, entity targ, float damage, float pushfactor) explo_physics = { local vector dir;
+void(entity inflictor, entity targ, float damage, float pushfactor) explo_physics = 
+{ 
+	vector dir, z_vel;
 	if ((inflictor != world) && (targ.movetype == MOVETYPE_STEP) && (targ.timepushing < time)&& (targ.health > 0))
 	{
 		dir = targ.origin - (inflictor.absmin + inflictor.absmax) *0.5;
@@ -744,15 +814,38 @@ void(entity inflictor, entity targ, float damage, float pushfactor) explo_physic
 		targ.oldthink = targ.think;
 		targ.think = backtonormal;
 		targ.nextthink = time + 0.1;
-		local vector z_vel;
 		z_vel_z =pushfactor * 12;
 		targ.velocity = targ.velocity + dir *damage * pushfactor +z_vel;
 		}
 };
+void(entity inflictor, entity targ, float damage, float pushfactor) explo_physics_gibs = 
+{ 
+	vector dir, z_vel;
+	if ((inflictor != world) && (targ.timepushing < time))
+	{
+		dir = targ.origin - (inflictor.absmin + inflictor.absmax) *0.5;
+		dir = normalize(dir);
+		if (!targ.oldmovetype)
+			targ.oldmovetype = targ.movetype;
+		targ.movetype = MOVETYPE_BOUNCE;
+		targ.timepushing = time + 1;
+		targ.gravity = 0.15;
+		if (targ.flags &FL_ONGROUND)
+			targ.flags -= FL_ONGROUND;
+		targ.backedtonormal = 0;
+		targ.oldthink = targ.think;
+		targ.think = backtonormal;
+		targ.nextthink = time + 0.1;
+		z_vel_z =pushfactor * 5;
+		targ.velocity = targ.velocity + dir *damage * pushfactor +z_vel;
+		}
+};
 
-void(entity inflictor, float damage, float damagetoplayer, entity ignore, float radius, float pushfactor) T_SplashDamageMonster = { local float points;
-	local entity head;
-	local vector org;
+void(entity inflictor, float damage, float damagetoplayer, entity ignore, float radius, float pushfactor) T_SplashDamageMonster = 
+{ 
+	float points;
+	entity head;
+	vector org;
 	inflictor.isexplosion = 1;
 	head = findradius(inflictor.origin, radius);
 
@@ -800,8 +893,10 @@ void(entity inflictor, float damage, float damagetoplayer, entity ignore, float 
 	}
 };
 
-void(entity attacker, float damage) T_BeamDamage = { local float points;
-	local entity head;
+void(entity attacker, float damage) T_BeamDamage = 
+{	
+	float points;
+	entity head;
 	head = findradius(attacker.origin, damage + 40);
 	while (head)
 	{

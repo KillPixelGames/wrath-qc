@@ -41,7 +41,9 @@ void() wraith_side1;
 void() wraithAttackFinished;
 
 void() wraith_run1b;
-void() wraith_run1 = { if (self.enemy != world)
+void() wraith_run1 = 
+{
+	if (self.enemy != world)
 		self.think = wraithAttackFinished;
 	else
 		self.think = wraith_run1b;
@@ -53,7 +55,9 @@ void() wraith_run1 = { if (self.enemy != world)
 wraithCheckAttack
 =================
 */
-float() wraithCheckAttack = { local vector spot1, spot2;
+float() wraithCheckAttack = 
+{
+	local vector spot1, spot2;
 	local entity targ;
 	local float chance;
 
@@ -137,7 +141,9 @@ wraithAttackFinished
 */
 void() wraith_fast1;
 
-void() wraithAttackFinished = { local float renemy_range;
+void() wraithAttackFinished = 
+{
+	local float renemy_range;
 	local vector spot1, spot2;
 	spot1 = rorigin(self) + self.view_ofs;
 	spot2 = self.enemy.origin;
@@ -166,7 +172,9 @@ void() wraithAttackFinished = { local float renemy_range;
 	self.nextthink = time + 0.025;
 };
 
-void() wraithCheckDistance = { local float renemy_range;
+void() wraithCheckDistance = 
+{
+	local float renemy_range;
 	local vector spot1, spot2;
 	spot1 = rorigin(self) + self.view_ofs;
 	spot2 = self.enemy.origin;
@@ -198,7 +206,9 @@ void() wraithCheckDistance = { local float renemy_range;
 .float righty_dir;
 .float lefty_dir;
 
-void() wraith_checkr_direction = { local vector source;
+void() wraith_checkr_direction = 
+{
+	local vector source;
 
 	makevectors(self.v_angle);
 	source = self.origin;
@@ -208,7 +218,9 @@ void() wraith_checkr_direction = { local vector source;
 	else
 		self.righty_dir = 0;
 };
-void() wraith_checkl_direction = { local vector source;
+void() wraith_checkl_direction = 
+{
+	local vector source;
 
 	makevectors(self.v_angle);
 	source = self.origin;
@@ -227,7 +239,9 @@ FAST ATTACKS
 ==============================================================================
 */
 
-void() proj_wraith_explo = { self.alpha -= 0.1;
+void() proj_wraith_explo = 
+{
+	self.alpha -= 0.1;
 	self.frame += 1;
 	if (self.alpha < 0)
 		self.think = SUB_Remove;
@@ -235,9 +249,14 @@ void() proj_wraith_explo = { self.alpha -= 0.1;
 		self.think = proj_wraith_explo;
 	self.nextthink = time + 0.05;
 }
-void() WraithProjectileTouch = { local float damg;
+void() WraithProjectileTouch = 
+{
+	local float damg;
 	if (other == self.owner)
 		return;	// don't explode on owner
+	if(other.solid == SOLID_TRIGGER)
+	return;
+
 	if (pointcontents(self.origin) == CONTENT_SKY)
 	{
 		remove(self);
@@ -268,7 +287,9 @@ void() WraithProjectileTouch = { local float damg;
 	self.think = proj_wraith_explo;
 
 };
-void() wraith_StartFast = { local entity missile;
+void() wraith_StartFast = 
+{
+	local entity missile;
 
 	self.v_angle = self.angles;
 	makevectors2(self.angles);
@@ -282,6 +303,7 @@ void() wraith_StartFast = { local entity missile;
 	missile = spawn();
 	missile.owner = self;
 	missile.classentity = "projectiles";
+	missile.wrathflags += FL_PROJECTILE;
 
 	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_CORPSE;
@@ -305,7 +327,9 @@ void() wraith_StartFast = { local entity missile;
 	setorigin(missile, tagorg);
 };
 
-void() wraith_idlesound = { local float wr;
+void() wraith_idlesound = 
+{
+	local float wr;
 	wr = random() *5;
 
 	if (self.waitmin < time)
@@ -424,7 +448,9 @@ void() wraith_walk10 =[$hover10, wraith_walk1]
 void() wraith_lside9;
 void() wraith_rside9;
 
-void(float f) wraith_check_sidewall = { if ((test_side_wall(f)))
+void(float f) wraith_check_sidewall = 
+{
+	if ((test_side_wall(f)))
 	{
 		self.attack_state = AS_MISSILE;
 		self.think = wraith_fast1;
@@ -516,7 +542,9 @@ void() wraith_lside10 =[$wfl1, wraithCheckDistance]
 	ai_run(4);
 };
 
-void() wraith_side1 = { local vector source;
+void() wraith_side1 = 
+{
+	local vector source;
 	local float r;
 	makevectors(self.v_angle);
 	source = self.origin;
@@ -803,7 +831,9 @@ void() wraith_death1 =[$death1, wraith_death2]
 	self.flags = self.flags - (self.flags &FL_ONGROUND);
 };
 
-void() bloodgib_think = { self.skin += 1;
+void() bloodgib_think = 
+{
+	self.skin += 1;
 
 	if (self.skin >= 9)
 		self.think = SUB_Remove;
@@ -883,7 +913,9 @@ void() wraith_die = {	// check for gib
 	wraith_death1();
 };
 
-void() random_wraithpain = { local float r;
+void() random_wraithpain = 
+{
+	local float r;
 	r = random();
 	self.nextthink = time;
 	self.sustained_damage = 0;
@@ -904,7 +936,10 @@ void() random_wraithpain = { local float r;
 	}
 };
 
-void(entity attacker, float damage) wraith_pain = { if (damage < 20)
+void(entity attacker, float damage) wraith_pain = 
+{
+	
+	if ((damage < 20) && (attacker.weapon != IT_BOIL))
 		return;	// didn't flinch
 	painsound("enemies/wraith/pain");
 
@@ -912,13 +947,17 @@ void(entity attacker, float damage) wraith_pain = { if (damage < 20)
 	self.nextthink = time;
 };
 
-void() wraith_Missile = { wraith_fast1();
+void() wraith_Missile = 
+{
+	wraith_fast1();
 };
 
 /*
 	WRATHED monster_wraith (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-void() precache_monster_wraith = { precache_model("models/enemies/wraith/wraith_tail2.md3");
+void() precache_monster_wraith = 
+{
+	precache_model("models/enemies/wraith/wraith_tail2.md3");
 	precache_model("models/enemies/wraith/wraith_tail1.md3");
 	precache_model("models/enemies/wraith/wraith_head.md3");
 	precache_model("models/enemies/wraith/wraith_back3.md3");
@@ -959,7 +998,9 @@ void() precache_monster_wraith = { precache_model("models/enemies/wraith/wraith_
 	precache_sound("enemies/wraith/sight3.ogg");
 };
 
-void() monster_wraith = { precache_model("models/enemies/wraith/wraith_tail2.md3");
+void() monster_wraith = 
+{
+	precache_model("models/enemies/wraith/wraith_tail2.md3");
 	precache_model("models/enemies/wraith/wraith_tail1.md3");
 	precache_model("models/enemies/wraith/wraith_head.md3");
 	precache_model("models/enemies/wraith/wraith_back3.md3");

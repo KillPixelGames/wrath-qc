@@ -2,7 +2,9 @@
 .float notouch;
 void() door_return;
 
-void() door_wait = { self.state = STATE_TOP;
+void() door_wait = 
+{
+	self.state = STATE_TOP;
 	activator = self.enemy;
 	self.usable = 0;
 	self.nextthink = self.ltime + self.wait;
@@ -11,7 +13,9 @@ void() door_wait = { self.state = STATE_TOP;
 	self.think = door_return;
 };
 void() door_fire;
-void() door_blocked = { if (other.classname == "monster_fallen")
+void() door_blocked = 
+{
+	if (other.classname == "monster_fallen")
 		other.solid = SOLID_CORPSE;
 	T_Damage(other, self, self, self.dmg);
 
@@ -25,7 +29,9 @@ void() door_blocked = { if (other.classname == "monster_fallen")
 	door_fire(); */
 };
 .float fake_lighted;
-void() door_done = { sound(self, CHAN_VOICE, self.noise2, self.volume, self.atten);
+void() door_done = 
+{
+	sound(self, CHAN_VOICE, self.noise2, self.volume, self.atten);
 	self.state = STATE_BOTTOM;
 	if (!self.notouch)
 		self.usable = 1;
@@ -37,13 +43,17 @@ void() door_done = { sound(self, CHAN_VOICE, self.noise2, self.volume, self.atte
 	}*/
 };
 
-void() door_return = { self.state = STATE_DOWN;
+void() door_return = 
+{
+	self.state = STATE_DOWN;
 	self.usable = 0;
 	sound(self, CHAN_VOICE, self.noise, self.volume, self.atten);
 	SUB_CalcMove(self.pos1, self.speed, door_done);
 };
 
-void() door_fire = { if (self.state == STATE_UP || self.state == STATE_TOP)
+void() door_fire = 
+{
+	if (self.state == STATE_UP || self.state == STATE_TOP)
 	{
 		door_return();
 		return;
@@ -55,11 +65,15 @@ void() door_fire = { if (self.state == STATE_UP || self.state == STATE_TOP)
 	SUB_CalcMove(self.pos2, self.speed, door_wait);
 };
 
-void() door_use = { self.enemy = activator;
+void() door_use = 
+{
+	self.enemy = activator;
 	door_fire();
 };
-void() door_puse = { SUB_UseTargets();
-	SUB_UseTargets2();	//targetname2 for double doors
+void() door_puse = 
+{
+	SUB_UseTargets();
+	//SUB_UseTargets2();	//targetname2 for double doors
 	door_fire();
 };
 .float metaldoor;
@@ -113,24 +127,15 @@ void(entity ownr) spawn_attached_model =
 	attachedmodel.think = attached_think;
 	attachedmodel.nextthink = time + 0.025;
 };
-void() func_door = { if (self.keyrequired == 4)
+void() func_door = 
+{ 
+	if (self.keyrequired == 4)
 	{
 		if (!self.noise)
 			self.noise = "doors/coffer_open.ogg";
 		self.noise2 = "doors/coffer_locked.ogg";
 	}
 
-	/*	else
-		{
-			if(!self.noise)
-				self.noise = "misc/Door_Move.wav";
-			if(self.metaldoor >= 1)
-				self.noise = "misc/Metal_Gate_Open.wav";
-			if(!self.noise2)
-				self.noise2 = "misc/Door_Stop_Move.wav";
-		}
-
-	*/
 	local float attn;
 	if (!self.volume)
 		self.volume = 1;
@@ -140,13 +145,21 @@ void() func_door = { if (self.keyrequired == 4)
 	if (self.rad_sound <= 0)
 		attn = 0;
 	self.atten = attn;
-
 	precache_sound(self.noise);
 	precache_sound(self.noise2);
 	SetMovedir();
 	self.classname = "func_door";
 	self.movetype = MOVETYPE_PUSH;
 	self.solid = SOLID_BSP;
+	if(self.startnonsolid == 1)
+	{
+		self.oldsolid = self.solid;
+		self.wrathflags += FL_STARTNONSOLID;
+		self.solid = SOLID_NOT;
+		self.think = turn_solid;
+		self.nextthink =  self.ltime + 1;
+	}
+
 	setmodel(self, self.model);
 	if (!self.speed)
 		self.speed = 60;
@@ -171,21 +184,20 @@ void() func_door = { if (self.keyrequired == 4)
 		self.pos2 = self.pos1;
 		self.pos1 = self.origin;
 	}
-
+	//self.effects = EF_DYNAMICMODELLIGHT;
 	if (self.keyrequired)
 		self.usable = 1;
 	vector voffset;
 	voffset_z= (self.absmax_z - self.absmin_z) / 2; 
 	if(self.fake_lighted == 1)
 	{
-	self.fake_origin = 0.5 *(self.absmax + self.absmin);
-	self.fake_origin_z = self.absmax_z;
-
-	spawn_lighter(self);
+		self.effects += EF_DYNAMICMODELLIGHT;
 	}
 	if(self.attached_model != string_null)
 	{
-	spawn_attached_model (self);
+		self.fake_origin = 0.5 *(self.absmax + self.absmin);
+		self.fake_origin_z = self.absmax_z;
+		spawn_attached_model (self);
 	}
 
 };

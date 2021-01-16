@@ -2,16 +2,25 @@
 float CHAN_WEAPON2 = 6;
 float CHAN_VOICE2 = 7;
 .float wrathflags;
+.float startnonsolid;
+.float type;
+
+
 
 float FL_GARBAGE = 1;
 float FL_RESPAWN = 2;
-float FL_SHOOTER = 4;
+float FL_SWIMMER = 4;
 float FL_TOSS = 8;
 float FL_SPAWNER = 16;
 float FL_GIB = 32;
 float FL_BBOX = 64;
 float FL_MESSAGE = 128;
 float FL_WONGROUND = 256;
+float FL_PICKUPABLE = 512;
+float FL_STARTNONSOLID = 1024;
+float FL_PROJECTILE = 2048;
+float FL_SECRET = 4096;
+
 
 .vector oldangles;
 .float nojump;
@@ -61,11 +70,12 @@ float skill;
 .float state;
 .float pausetime;
 .float wait;	//timefromfiringtorestarting
-.float delay;	//timefromactivationtofiring
+.float delay; .float delay2; .float delay3; .float delay4; .float delay5; .float delay6; .float delay7; .float delay8; 	
 .float cnt;	//miscflag
 .entity movetarget;
 .entity goalentity;
-.string killtarget;
+.string killtarget; .string killtarget1; .string killtarget2; .string killtarget3; .string killtarget4; .string killtarget5; .string killtarget6; .string killtarget7; .string killtarget8;  
+
 .vector pos1, pos2;	//topandbottompositions
 .vector dest, dest1, dest2;
 .vector mangle;	//angleatstart
@@ -76,7 +86,9 @@ float skill;
 .float inactive;
 .float rad_sound;	// radius sound;
 .float volume;
-.string target2;
+.string target2; .string target3; .string target4; .string target5; .string target6; .string target7; .string target8;
+.string 	death_target;
+
 //
 //sprites
 //
@@ -141,18 +153,15 @@ float globalfake_illumination;
 .float darmorpulsetime;
 .float rdarmorpulsetime;	//secondary timing to reset pulse
 
+.float cannonpulsetime;
+.float rcannonpulsetime;	//secondary timing to reset pulse
+
+.float lancepulsetime;
+.float rlancepulsetime;	//secondary timing to reset pulse
 //
 //Weapons
 //
 //.float	ammo;
-.float ammo_coachgun;
-.float ammo_bombs;
-.float ammo_cannon;
-.float ammo_lance;
-.float ammo_spitter;
-.float ammo_retcher;
-.float ammo_spitter;
-.float ammo_shotgun;
 
 //.string vweaponmodel;
 .float vweaponframe;
@@ -454,6 +463,9 @@ float slagrocketjump;
 .float lance_time2;
 .float lance_alpha_time;
 .float lance_alpha_value;
+.float lance_viewzoom;
+.float lance_viewzoom_time;
+.float lance_viewzoom_rate;
 
 //string cmonster1;
 //string cmonster2;
@@ -595,6 +607,12 @@ entity obj_entity8;
 entity obj_entity9;
 entity obj_entity10;
 
+.float shaked;
+.float shake_camera_time; 
+.float shake_camera_ammountx;
+.float shake_camera_ammounty;
+.float shake_camera_delay; 
+.float shake_camera_refresh_rate; 
 
 void() objerror_messages =
 {
@@ -698,6 +716,17 @@ vector (entity player) cursor_trace_endpos_fixed =
 		makevectors(player.v_angle);
 		vector t_dest = player.origin + player.view_ofs + v_forward *2048;
 		traceline((player.origin + player.view_ofs), t_dest, MOVE_WORLDONLY, player);
+
 		return trace_endpos;
 	}
-}
+};
+vector (entity player) cursor_trace_endpos_forced =
+{
+	vector org;
+	org = player.origin;
+
+		makevectors(player.v_angle);
+		vector t_dest = player.origin + player.view_ofs + v_forward *4096;
+		traceline((player.origin + player.view_ofs), t_dest, MOVE_WORLDONLY, player);
+		return trace_endpos;
+};

@@ -1,4 +1,6 @@
-void() beam_pillar = { self.alpha = self.owner.glowmod_x;
+void() beam_pillar = 
+{
+	self.alpha = self.owner.glowmod_x;
 	self.nextthink = time + 0.05;
 
 	if (self.alpha < 1)
@@ -7,7 +9,9 @@ void() beam_pillar = { self.alpha = self.owner.glowmod_x;
 		self.think = SUB_Null;
 };
 .float used_relicsinhub;
-void() animate_pillar = { self.frame++;
+void() animate_pillar = 
+{
+	self.frame++;
 
 	self.glowmod_x += 0.025;
 	self.glowmod_y += 0.025;
@@ -20,7 +24,7 @@ void() animate_pillar = { self.frame++;
 		local entity pl;
 		pl = find(world, classname, "player");
 		pl.used_relicsinhub++;
-		if (pl.used_relicsinhub == 4)
+		if (pl.used_relicsinhub == 5)
 		{
 			pl.splashtime = time + 5;
 		}
@@ -31,38 +35,50 @@ void() animate_pillar = { self.frame++;
 	self.nextthink = time + 0.05;
 };
 
-void() activate_pillar_a = { if (self.owner.pillar_a_activated)
+void() activate_pillar_a = 
+{
+	if (self.owner.pillar_a_activated)
 		self.think = animate_pillar;
 	else
 		self.think = activate_pillar_a;
 	self.nextthink = time + 0.05;
 };
 
-void() activate_pillar_b = { if (self.owner.pillar_b_activated)
+void() activate_pillar_b = 
+{
+	if (self.owner.pillar_b_activated)
 		self.think = animate_pillar;
 	else
 		self.think = activate_pillar_b;
 	self.nextthink = time + 0.05;
 };
-void() activate_pillar_c = { if (self.owner.pillar_c_activated)
+void() activate_pillar_c = 
+{
+	if (self.owner.pillar_c_activated)
 		self.think = animate_pillar;
 	else
 		self.think = activate_pillar_c;
 	self.nextthink = time + 0.05;
 };
-void() activate_pillar_d = { if (self.owner.pillar_d_activated)
+void() activate_pillar_d = 
+{
+	if (self.owner.pillar_d_activated)
 		self.think = animate_pillar;
 	else
 		self.think = activate_pillar_d;
 	self.nextthink = time + 0.05;
 };
-void() activate_pillar_e = { if (self.owner.pillar_e_activated)
+void() activate_pillar_e = 
+{
+	if (self.owner.pillar_e_activated)
 		self.think = animate_pillar;
 	else
 		self.think = activate_pillar_e;
 	self.nextthink = time + 0.05;
 };
-void() portal_hub1 = { precache_model("models/objects/hubs/hub1_portal.md3");
+void() portal_hub1 = 
+{
+	precache_model("models/objects/hubs/hub1_portal.md3");
 	precache_model("models/objects/hubs/hub1_portal_pillar_a.md3");
 	precache_model("models/objects/hubs/hub1_portal_pillar_a_collision.md3");
 	precache_model("models/objects/hubs/hub1_portal_pillar_b.md3");

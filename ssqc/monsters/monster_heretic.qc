@@ -58,7 +58,9 @@ $frame her_paind1 her_paind2 her_paind3 her_paind4 her_paind5
 	.float runing_time;
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-void() heretic_checkidle = { local float r;
+void() heretic_checkidle = 
+{
+	local float r;
 	r = random() *100;
 	if (heretic_ith >= r)
 		ai_stand();
@@ -239,7 +241,9 @@ void() heretic_srun;
 void() heretic_endchase;
 
 .float chasing;
-void() heretic_subattack = { local entity head;
+void() heretic_subattack = 
+{
+	local entity head;
 
 	head = findradius(rorigin(self), her_radius);	//send lightning line to anything in 250 radius
 	while (head)	// while looking for head
@@ -257,7 +261,9 @@ void() heretic_subattack = { local entity head;
 };
 .entity chase_enemy;
 
-void(void() thinkst) heretic_checkchase = { 
+void(void() thinkst) heretic_checkchase = 
+{
+	
 
 	if(self.enemy != self.chase_enemy)
 	{
@@ -304,7 +310,7 @@ void(void() thinkst) heretic_checkchase = {
 	dir = normalize(vtemp - self.origin);
 	self.velocity = dir * heretic_rsr;
 	
-	if(time > self.chargetime)
+	if(time > self.charge_time)
 		self.think = heretic_endchase;
 	else
 	{	
@@ -394,7 +400,7 @@ void() heretic_endchase5 =[$her_echase5, heretic_run] {};
 void() heretic_prechase =[$her_schase1, heretic_prechase2]
 {
 	self.chase_enemy = self.enemy;
-	self.chargetime = time + her_chargetime;	
+	self.charge_time = time + her_chargetime;	
 	monstersound6("enemies/heretic/chase_start", 5, CHAN_AUTO);
 };
 void() heretic_prechase2 =[$her_schase2, heretic_srun]
@@ -403,7 +409,9 @@ void() heretic_prechase2 =[$her_schase2, heretic_srun]
 };
 
 
-void() heretic_checkrun = { if (self.runing_time > time)
+void() heretic_checkrun = 
+{
+	if (self.runing_time > time)
 		return;
 	local float r;
 	if (visible(self.enemy))
@@ -597,7 +605,9 @@ void()	heretic_run1	=[	$her_run1,	heretic_run1	]
 */
 /////////////////////////////////////////////////////////////////////////////////////////////projectile attack
 .float chasetime;
-void() proj_heretic_explo = { self.alpha -= 0.1;
+void() proj_heretic_explo = 
+{
+	self.alpha -= 0.1;
 	self.frame += 1;
 	if (self.alpha < 0)
 		self.think = SUB_Remove;
@@ -605,8 +615,12 @@ void() proj_heretic_explo = { self.alpha -= 0.1;
 		self.think = proj_heretic_explo;
 	self.nextthink = time + 0.05;
 }
-void() projectile_touch_her = { local float damg;
+void() projectile_touch_her = 
+{
+	local float damg;
 	if (other == self.owner)
+		return;
+	if(other.solid == SOLID_TRIGGER)
 		return;
 	self.solid = SOLID_NOT;
 	if (pointcontents(self.origin) == CONTENT_SKY)
@@ -666,7 +680,9 @@ void()proj_heretic_explo_think =
 };	
 
 
-void(vector org, vector dir, entity ownerproj) launch_projectile_her = { local entity projectile;
+void(vector org, vector dir, entity ownerproj) launch_projectile_her = 
+{
+	local entity projectile;
 	projectile = spawn();
 	projectile.owner = ownerproj;
 	projectile.movetype = MOVETYPE_FLYMISSILE;
@@ -680,7 +696,7 @@ void(vector org, vector dir, entity ownerproj) launch_projectile_her = { local e
 	projectile.nextthink = time + 0.1;
 	projectile.lifetime = time + 12;
 	projectile.classentity = "projectiles";
-	
+	projectile.wrathflags += FL_PROJECTILE;
 	local entity oself;oself = self;self = projectile;
 	randomsound2("enemies/heretic/proj_loop", 3, 1, CHAN_WEAPON, 0, 0.25);
 	self = oself;
@@ -731,7 +747,9 @@ void() heretic_attack4 =[$her_atk4, heretic_attack5]
 		launch_projectile_her(tagorg, dir, self);
 	}
 };
-void() heretic_attack5 = { self.frame = $her_atk5;
+void() heretic_attack5 = 
+{
+	self.frame = $her_atk5;
 	self.glowmod = '0.5 0.5 0.5';
 
 	if (visibleinfront(self.enemy, 4096))
@@ -762,7 +780,9 @@ void() heretic_attack5 = { self.frame = $her_atk5;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////melee attack
 
-void(float wdmg) heretic_melee_attack = { local vector delta;
+void(float wdmg) heretic_melee_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -830,7 +850,9 @@ void() heretic_sattack5 =[$her_batk5, heretic_run]
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-void() heretic_postpain = { ai_pain(4);
+void() heretic_postpain = 
+{
+	ai_pain(4);
 	local float r;
 	r = random() *100;
 	if (heretic_pth <= r)
@@ -880,6 +902,9 @@ void() heretic_paind5 =[$her_paind5, heretic_postpain]
 
 void(entity enemy, float dmg) heretic_pain = 
 { 
+
+	if(self.warped == 1)
+	return;
 	if (self.movingz)
 	{
 		self.velocity_z = 0;
@@ -914,7 +939,9 @@ void(entity enemy, float dmg) heretic_pain =
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-void() tonge_think = { if (self.owner.classname != "monster_heretic")
+void() tonge_think = 
+{
+	if (self.owner.classname != "monster_heretic")
 		remove(self);
 
 	if (self.owner.health < 0)
@@ -924,7 +951,9 @@ void() tonge_think = { if (self.owner.classname != "monster_heretic")
 	self.nextthink = time + 0.025;
 }
 
-void() heretic_diea1 = { self.solid = 0;
+void() heretic_diea1 = 
+{
+	self.solid = 0;
 	self.takedamage = 0;
 	drop_item(self.origin + '0 0 40', "fangs", 10, self);
 	decal_monster_gib(self.origin);
@@ -996,7 +1025,9 @@ void() heretic_diea1 = { self.solid = 0;
 
 /*WRATHED monster_heretic (1 0 0) (-16 -16 -24) (16 16 40) Ambush*/
 .vector bbvv;
-void() precache_monster_heretic = { precache_model("models/enemies/heretic/heretic.md3");
+void() precache_monster_heretic = 
+{
+	precache_model("models/enemies/heretic/heretic.md3");
 	precache_model("models/enemies/heretic/tongues.md3");
 	precache_model("models/projectiles/proj_heretic_explo.md3");
 	precache_model("models/enemies/heretic/gibs/gib_backa.md3");
@@ -1051,7 +1082,9 @@ void() precache_monster_heretic = { precache_model("models/enemies/heretic/heret
 	precache_sound("enemies/heretic/end_chase.ogg");
 };
 
-void() monster_heretic = { precache_model("models/projectiles/proj_heretic.md3");
+void() monster_heretic = 
+{
+	precache_model("models/projectiles/proj_heretic.md3");
 	precache_model("models/enemies/heretic/heretic.md3");
 	precache_model("models/enemies/heretic/tongues.md3");
 	precache_model("models/projectiles/proj_heretic_explo.md3");

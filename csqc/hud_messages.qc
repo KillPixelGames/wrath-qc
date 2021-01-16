@@ -7,9 +7,11 @@ float oldhud_messages;
 .vector icolor;
 float msgtime;
 float removingmessages;
-void() SUB_Remove = {};
+void() SUB_Remove = {remove(self);};
 float savingtether;
-void() check_tether2 = { read_currentprofileslot();
+void() check_tether2 = 
+{
+	read_currentprofileslot();
 
 	local string campaignloc;
 	campaignloc = strcat("profiles/", profilename, "/tetherclient.txt");
@@ -25,7 +27,9 @@ void() check_tether2 = { read_currentprofileslot();
 
 };
 
-void() check_shrine = { read_currentprofileslot();
+void() check_shrine = 
+{
+	read_currentprofileslot();
 	local string campaignloc;
 	campaignloc = strcat("profiles/", profilename, "/shrine.txt");
 	local float readparms;
@@ -39,15 +43,21 @@ void() check_shrine = { read_currentprofileslot();
 
 };
 
-void() Remove_Message = { self.removing = 1;
+void() Remove_Message = 
+{
+	self.removing = 1;
 
 };
 
-void() Remove_Message2 = { self.removing = 1;
+void() Remove_Message2 = 
+{
+	self.removing = 1;
 };
 
 .float deleted;
-void() MessageThink2 = { if (self.removing == 1)
+void() MessageThink2 = 
+{
+	if (self.removing == 1)
 	{
 		self.iflag = 0;
 		self.msgalpha -= ap;
@@ -75,7 +85,9 @@ void() MessageThink2 = { if (self.removing == 1)
 	}
 };
 
-void() Hud_Messages_Draw2 = { local string image;
+void() Hud_Messages_Draw2 = 
+{
+	local string image;
 	if (self.msg == 17)
 		image = "gfx/hud/msg_shells.tga";
 	string str;
@@ -84,7 +96,9 @@ void() Hud_Messages_Draw2 = { local string image;
 	DString(self.imagepos + '130 8 0', str, self.msgalpha, 1, '1 1 1', '12 12 12');	//void(vector pos, string str, float alph, float escala, vector coloracion, vector siz) 
 };
 
-void() MessageThink = { local float alphaincreaser, alphafading, yfading;
+void() MessageThink = 
+{
+	local float alphaincreaser, alphafading, yfading;
 
 	if (clframetime < 0.05)
 		alphaincreaser = api + 0.025;
@@ -148,25 +162,21 @@ void() MessageThink = { local float alphaincreaser, alphafading, yfading;
 	}
 };
 
-void() Hud_Messages_Draw = { local string image;
+void() Hud_Messages_Draw = 
+{
+	local string image;
 	oldhud_messages = hud_messages;
 
 	if (self.msg == 1)
 		image = "gfx/hud/msg_aegis.tga";
 	if (self.msg == 2)
 		image = "gfx/hud/msg_armor.tga";
-	if (self.msg == 3)
-		image = "gfx/hud/msg_coachgun.tga";
 	if (self.msg == 4)
 		image = "gfx/hud/msg_dark_armor.tga";
 	if (self.msg == 5)
 		image = "gfx/hud/msg_dark_helm.tga";
 	if (self.msg == 6)
 		image = "gfx/hud/msg_dark_shard.tga";
-	if (self.msg == 7)
-		image = "gfx/hud/msg_retcher.tga";
-	if (self.msg == 8)
-		image = "gfx/hud/msg_spitter.tga";
 	if (self.msg == 9)
 		image = "gfx/hud/msg_helm.tga";
 	if (self.msg == 10)
@@ -177,8 +187,6 @@ void() Hud_Messages_Draw = { local string image;
 		image = "gfx/hud/msg_lifesiphon.tga";
 	if (self.msg == 13)
 		image = "gfx/hud/msg_shard.tga";
-	if (self.msg == 14)
-		image = "gfx/hud/msg_slagcannon.tga";
 	if (self.msg == 15)
 		image = "gfx/hud/msg_soultether.tga";
 	if (self.msg == 16)
@@ -194,7 +202,7 @@ void() Hud_Messages_Draw = { local string image;
 	if (self.msg == 21)
 		image = "gfx/hud/msg_fangs.tga";
 	if (self.msg == 22)
-		image = "gfx/hud/msg_fangs.tga";
+		image = "gfx/hud/msg_lances.tga";
 	if (self.msg == 23)
 		image = "gfx/hud/msg_coffer_key.tga";
 	if (self.msg == 24)
@@ -206,8 +214,8 @@ void() Hud_Messages_Draw = { local string image;
 			image = "gfx/hud/msg_saved.tga";
 	}
 
-	if (self.msg == 25)
-		image = "gfx/hud/msg_retcher.tga";
+
+
 	if (self.msg == 26)
 	{
 		check_shrine();
@@ -229,8 +237,6 @@ void() Hud_Messages_Draw = { local string image;
 		image = "gfx/hud/msg_glyph_red.tga";
 	if (self.msg == 32)
 		image = "gfx/hud/msg_glyph_yellow.tga";
-	if (self.msg == 33)
-		image = "gfx/hud/msg_shotgun.tga";
 	if (self.msg == 35)
 		image = "gfx/hud/msg_journal_update.tga";
 	if (self.msg == 36)
@@ -252,6 +258,21 @@ void() Hud_Messages_Draw = { local string image;
 		image = "gfx/hud/msg_relic_e1m4.tga";
 	if (self.msg == 54)
 		image = "gfx/hud/msg_relic_e1m5.tga";
+
+
+	if (self.msg == 90)
+		image = "gfx/hud/msg_coachgun.tga";
+	if (self.msg == 91)
+		image = "gfx/hud/msg_shotgun.tga";
+	if (self.msg == 92)
+		image = "gfx/hud/msg_spitter.tga";
+	if (self.msg == 93)
+		image = "gfx/hud/msg_retcher.tga";
+	if (self.msg == 94)
+		image = "gfx/hud/msg_slagcannon.tga";
+	if (self.msg == 95)
+		image = "gfx/hud/msg_retcher.tga";
+
 
 	if (self.msg == 101)
 		image = "gfx/hud/msg_artifactA.tga";
@@ -286,7 +307,9 @@ void() Hud_Messages_Draw = { local string image;
 		DImage2(self.imagepos, image, self.msgalpha, 1, self.icolor, msgsize, 0);
 };
 
-void(float newent) Hud_Messages = { self.msg = ReadShort();
+void(float newent) Hud_Messages = 
+{
+	self.msg = ReadShort();
 	if (newent)
 	{
 		local vector ar;
@@ -308,7 +331,7 @@ void(float newent) Hud_Messages = { self.msg = ReadShort();
 			else
 				fw_key21 = " ";
 			centerprint(strcat("Press ", case_fixed(fw_key21), " to open Journal"));
-			remove(self);
+			return;
 		}
 
 		if (self.msg == 256)
@@ -320,7 +343,7 @@ void(float newent) Hud_Messages = { self.msg = ReadShort();
 			else
 				fw_key7 = " ";
 			centerprint(strcat("Press and hold ", case_fixed(fw_key7), " to open Artifact Inventory"));
-			remove(self);
+			return;
 		}
 
 		if (self.msg == 257)
@@ -332,7 +355,7 @@ void(float newent) Hud_Messages = { self.msg = ReadShort();
 			else
 				fw_key22 = " ";
 			centerprint(strcat("Press ", case_fixed(fw_key22), " to Use Artifact"));
-			remove(self);
+			return;
 		}
 
 		if ((self.msg == 258) || (self.msg == 259))
@@ -354,12 +377,12 @@ void(float newent) Hud_Messages = { self.msg = ReadShort();
 				fw_key5 = " ";
 			centerprint(strcat(case_fixed(fw_key5), " Primary Attack \n\n\n",
 				case_fixed(fw_key6), " Secondary Attack"));
-			remove(self);
+			return;
 		}
 		if (self.msg == 259)
 		{
 			centerprint(strcat("Hold ", case_fixed(fw_key6), " then release at the top of your jump"));
-			remove(self);
+			return;
 		}
 		if (self.msg == 260)
 		{
@@ -369,7 +392,7 @@ void(float newent) Hud_Messages = { self.msg = ReadShort();
 			else
 				fw_key28 = " ";
 			centerprint(strcat("Press ", case_fixed(fw_key28), " to Use Soul Tether (save game) "));
-			remove(self);
+			return;
 		}
 		
 		if (self.msg == 261)
@@ -380,7 +403,7 @@ void(float newent) Hud_Messages = { self.msg = ReadShort();
 			else
 				fw_key29 = " ";
 			centerprint(strcat("Press ", case_fixed(fw_key29), " to Return to Soul Tether (load game)"));
-			remove(self);
+			return;
 		}
 
 
@@ -392,10 +415,12 @@ void(float newent) Hud_Messages = { self.msg = ReadShort();
 		}
 
 
-		}
+	}
 };
 
-void(float newent) Hud_Messages2 = { self.msg = ReadShort();
+void(float newent) Hud_Messages2 = 
+{
+	self.msg = ReadShort();
 	self.item_cnt = ReadShort();
 	if (newent)
 	{
@@ -417,7 +442,9 @@ void(float newent) Hud_Messages2 = { self.msg = ReadShort();
 .vector rorg;
 .float cnt;
 
-void() Health_Messages_Draw = { float menudbg;
+void() Health_Messages_Draw = 
+{
+	float menudbg;
 	menudbg = getstatf(STAT_WRATHDEBUGSCREEN);
 	if (menudbg == 1)
 	{
@@ -434,7 +461,9 @@ void() Health_Messages_Draw = { float menudbg;
 	}
 };
 
-void(float newent) Health_Indicator = { self.origin_x = ReadCoord();
+void(float newent) Health_Indicator = 
+{
+	self.origin_x = ReadCoord();
 	self.origin_y = ReadCoord();
 	self.origin_z = ReadCoord();
 	self.cnt = ReadShort();
@@ -486,7 +515,9 @@ void(float newent)artifact_spawn =
 
 float mrmenualpha;
 
-void() show_messages_ui = { string ui_image;
+void() show_messages_ui = 
+{
+	string ui_image;
 	vector posimage, posimage2, posimage3;
 	ui_image = "gfx/journal/journal.tga";
 	posimage = '-80 -480 0';

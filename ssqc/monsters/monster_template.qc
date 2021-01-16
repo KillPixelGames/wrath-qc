@@ -39,7 +39,9 @@ $frame paina1
 $frame death1
 
 	.float runing_time;
-void() setsizemonster2 = { local vector rbbox, nrbbox;
+void() setsizemonster2 = 
+{
+	local vector rbbox, nrbbox;
 	rbbox_x = dummybbox_x / 2;
 	rbbox_y = dummybbox_y / 2;
 	rbbox_z = dummybbox_z / 2;
@@ -95,7 +97,9 @@ void() dummy_run1 =[$run1, dummy_run1]
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-void() projectile_touch = { local float damg;
+void() projectile_touch = 
+{
+	local float damg;
 	if (other == self.owner)
 		return;
 	self.solid = SOLID_NOT;
@@ -116,7 +120,9 @@ void() projectile_touch = { local float damg;
 	self.think = slag_explode1;
 };
 
-void(float wdmg) dummy_melee_attack = { local vector delta;
+void(float wdmg) dummy_melee_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -132,7 +138,9 @@ void(float wdmg) dummy_melee_attack = { local vector delta;
 	}
 };
 
-void(entity e) missileattack = { e.effects = EF_MUZZLEFLASH;
+void(entity e) missileattack = 
+{
+	e.effects = EF_MUZZLEFLASH;
 	local entity projectile;
 	projectile = spawn();
 	projectile.owner = e;
@@ -146,7 +154,9 @@ void(entity e) missileattack = { e.effects = EF_MUZZLEFLASH;
 	projectile.touch = projectile_touch;
 };
 
-void() dummy_attack = { self.frame = $atk1;
+void() dummy_attack = 
+{
+	self.frame = $atk1;
 	self.think = dummy_run1;
 	self.runing_time = time + dummyrt;
 	ai_face();
@@ -155,7 +165,9 @@ void() dummy_attack = { self.frame = $atk1;
 	self.nextthink = time + dummyat;
 };
 
-void() dummy_attack2 = { self.frame = $atk1;
+void() dummy_attack2 = 
+{
+	self.frame = $atk1;
 	self.think = dummy_run1;
 	self.runing_time = time + dummyrt;
 	self.colormod = ' 1 0 0';
@@ -164,7 +176,9 @@ void() dummy_attack2 = { self.frame = $atk1;
 	self.nextthink = time + dummyat;
 };
 
-void() dummy_preattack = { self.colormod = ' 0 0 1';
+void() dummy_preattack = 
+{
+	self.colormod = ' 0 0 1';
 	self.frame = $patk1;
 	if (dummyattp == 1)
 		self.think = dummy_attack;
@@ -178,7 +192,9 @@ void() dummy_preattack = { self.colormod = ' 0 0 1';
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-void(entity enemy, float dmg) dummy_paina1 = { self.frame = $paina1;
+void(entity enemy, float dmg) dummy_paina1 = 
+{
+	self.frame = $paina1;
 	ai_pain(4);
 
 	local float r;
@@ -193,14 +209,18 @@ void(entity enemy, float dmg) dummy_paina1 = { self.frame = $paina1;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-void() dummy_diea1 = { remove(self);
+void() dummy_diea1 = 
+{
+	remove(self);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 /*WRATHED monster_dummy (1 0 0) (-16 -16 -24) (16 16 40) Ambush*/
 .vector bbvv;
-void() monster_dummy = { precache_model("models/enemies/dummy/dummy.md3");
+void() monster_dummy = 
+{
+	precache_model("models/enemies/dummy/dummy.md3");
 	if (deathmatch)
 	{
 		remove(self);

@@ -19,8 +19,8 @@
  float slayeralpha;
  float slayerstate;
 void()menu_type_deleteprofile;
-
-
+void()menu_type_options_controlbinds;
+void()menu_type_confirmresettodefaults;
 void() check_vectorcolors =
 {
 //	local float readparms, localmenuversion;
@@ -35,7 +35,9 @@ void() check_vectorcolors =
 	vectorwhite = '8 -1 -1';
 	
 };
- void(float a, float b) m_draw = { time = gettime();
+ void(float a, float b) m_draw = 
+{
+	time = gettime();
  
   
  	static float oldtime;
@@ -81,6 +83,19 @@ void() check_vectorcolors =
 		vy_rel = ((vid_y / 540));
 		//smallbuttons = 0;
 		}
+ 		else if ((vid_rx == 4096) && (vid_ry == 2160))
+		{	
+	 	vx_rel = ((vid_x / 1134));
+		vy_rel = ((vid_y / 540));
+		//smallbuttons = 0;
+		}
+ 		else if ((vid_rx == 3840) && (vid_ry == 1600))
+		{	
+	 	vx_rel = ((vid_x / 1134));
+		vy_rel = ((vid_y / 540));
+		//smallbuttons = 0;
+		}
+
 		else
 		{
 		vx_rel = ((vid_x / 960));
@@ -179,6 +194,8 @@ void() check_vectorcolors =
  			menu_type_options_audio();
  		else if (menutype == M_TYPE_CONTROLS)
  			menu_type_options_controls();
+ 		else if (menutype == M_TYPE_CONTROLBINDS)
+ 			menu_type_options_controlbinds();
  		else if (menutype == M_TYPE_GAMEPLAY)
  			menu_type_options_gameplay();
  		else if (menutype == M_TYPE_VIDEO)
@@ -195,6 +212,8 @@ void() check_vectorcolors =
  			menu_type_confirmfullscreen();
 		else if (menutype == M_TYPE_DELETEPROFILE)
 		menu_type_deleteprofile();
+		else if (menutype == M_TYPE_CONTROLRESTART)
+		menu_type_confirmresettodefaults();
  		else if (menutype == M_TYPE_RESUME)
  			menu_type_resume();
 
@@ -237,10 +256,21 @@ void() check_vectorcolors =
  			drawfill('0 0 0', size, '0 0 0', 0.7, 0);
  			menu_type_options_audio();
  		}
- 		else if (menutype == M_TYPE_CONTROLS)
+
+		else if (menutype == M_TYPE_CONTROLS)
  		{
  			drawfill('0 0 0', size, '0 0 0', 0.7, 0);
  			menu_type_options_controls();
+ 		}
+		else if (menutype == M_TYPE_CONTROLRESTART)
+ 		{
+ 			drawfill('0 0 0', size, '0 0 0', 0.7, 0);
+			menu_type_confirmresettodefaults();
+ 		}
+ 		else if (menutype == M_TYPE_CONTROLBINDS)
+ 		{
+ 			drawfill('0 0 0', size, '0 0 0', 0.7, 0);
+ 			menu_type_options_controlbinds();
  		}
  		else if (menutype == M_TYPE_GAMEPLAY)
  		{
@@ -292,17 +322,21 @@ void() check_vectorcolors =
 		}
  	}
 
- 	drawpic(mouse_pos + '16 12 0', "gfx/cursor", '24 24 0', ' 1 1 1', 1, 0);
+ 	drawpic(mouse_pos + fixed_vector('16 20 0'), "gfx/cursor", fixed_vector ('24 24 0'), ' 1 1 1', 1, 0);
  };
 
- void() m_display = { vid_x = cvar("vid_conwidth");
+ void() m_display = 
+{
+	vid_x = cvar("vid_conwidth");
  	vid_y = cvar("vid_conheight");
  	Menu_Active = true;
  	setkeydest(KEY_MENU);
  	setmousetarget(MT_MENU);
  };
 
- void() m_hide = { if (pausesound)
+ void() m_hide = 
+{
+	if (pausesound)
  	{
  		cmd("pausesound 0\n");
 		cmd("impulse 82\n");
@@ -317,7 +351,9 @@ void() check_vectorcolors =
  	setmousetarget(MT_CLIENT);
  };
 
- void(float n) m_toggle = { menutype = M_TYPE_NONE;
+ void(float n) m_toggle = 
+{
+	menutype = M_TYPE_NONE;
  	Menu_Active = n;
  	if (Menu_Active)
  		m_display();

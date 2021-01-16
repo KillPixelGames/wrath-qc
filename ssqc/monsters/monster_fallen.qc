@@ -23,12 +23,16 @@ $frame cr_fall1 cr_fall2 cr_fall3 cr_fall4 cr_fall5 cr_fall6 cr_fall7 cr_fall9 c
 
 void() fallen_run1;
 void() fallen_run;
-void() fallen_check = { ai_stand();
+void() fallen_check = 
+{
+	ai_stand();
 	//if (visibleinfront(self.enemy, 768))
 	//self.think = fallen_run1;
 };
 
-void() fallen_touch = { if (other.classname != "monster_fallen")
+void() fallen_touch = 
+{
+	if (other.classname != "monster_fallen")
 		return;
 
 	self.timeroaming = time + 5;
@@ -83,7 +87,9 @@ void() fallen_stand10 =[$fn_idle10, fallen_stand1]
 	fallen_check();
 };
 
-void(float exdmg, float range) fallen_attack = { local vector delta;
+void(float exdmg, float range) fallen_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (self.enemy.crouch == 1)
 		range += 32;
@@ -152,7 +158,7 @@ void() fallen_run3 =[$fn_walk13, fallen_run4]
 void() fallen_run4 =[$fn_walk14, fallen_run5]
 {
 	ai_runwalk(fn_vwalk4);
-	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint"))
+	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint")&& (self.enemy.noattack != 1))
 	{
 		ai_face();
 		self.think = fallen_attack_melee;
@@ -188,7 +194,7 @@ void() fallen_run9 =[$fn_walk19, fallen_run10]
 void() fallen_run10 =[$fn_walk20, fallen_run1]
 {
 	ai_runwalk(fn_vwalk10);
-	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint"))
+	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint")&& (self.enemy.noattack != 1))
 	{
 		ai_face();
 		self.think = fallen_attack_melee;
@@ -218,7 +224,7 @@ void() fallen_runb3 =[$fn_walk3, fallen_runb4]
 void() fallen_runb4 =[$fn_walk4, fallen_runb5]
 {
 	ai_runwalk(fn_vwalk4);
-	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint"))
+	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint")&& (self.enemy.noattack != 1))
 	{
 		ai_face();
 		self.think = fallen_attack_melee;
@@ -255,7 +261,7 @@ void() fallen_runb9 =[$fn_walk9, fallen_runb10]
 void() fallen_runb10 =[$fn_walk10, fallen_runb1]
 {
 	ai_runwalk(fn_vwalk10);
-	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint"))
+	if ((visible2(self.enemy, 64, 0.3)) && (self.enemy.classname != "path_waypoint")&& (self.enemy.noattack != 1))
 	{
 		ai_face();
 		self.think = fallen_attack_melee;
@@ -402,7 +408,9 @@ void() fallen_attackb10 =[$fn_attackb10, fallen_run]
 	}
 };
 
-void() fallen_attack_melee = { ai_face();
+void() fallen_attack_melee = 
+{
+	ai_face();
 	local float r;
 	r = random();
 	if (r < 0.5)
@@ -480,7 +488,9 @@ void() fallen_walk10 =[$fn_walk10, fallen_walk1]
 	}
 };
 
-void() fallen_walk = { local float r;
+void() fallen_walk = 
+{
+	local float r;
 	r = random();
 
 	self.think = fallen_walk1;
@@ -517,7 +527,9 @@ void() gib_prefade =	// avoid gib levitation
 
 		self.nextthink = time + 0.1;
 	};
-void() bleedzthink = { local float nparticles;
+void() bleedzthink = 
+{
+	local float nparticles;
 	nparticles = particleeffectnum(self.particleffect2);
 
 	local vector tagorg, dir;
@@ -537,6 +549,7 @@ void() bleedzthink = { local float nparticles;
 		arm.glowmod = self.glowmod;
 		arm.model = self.model2;
 		setmodel(arm, arm.model);
+		arm.wrathflags += FL_GIB;	
 		arm.origin = tagorg;
 		arm.angles = self.owner.angles;
 		arm.alpha = 1;
@@ -585,7 +598,9 @@ void() bleedzthink = { local float nparticles;
 	self.nextthink = time + 0.05;
 };
 
-void(string location, string gibmodel, string bleffect, vector vel, entity gwner, float bscale, string addeffect) spawn_gib_stuff = { if (!(vel == '0 0 0'))
+void(string location, string gibmodel, string bleffect, vector vel, entity gwner, float bscale, string addeffect) spawn_gib_stuff = 
+{
+	if (!(vel == '0 0 0'))
 	{
 		local entity bleed;
 		bleed = spawn();
@@ -649,7 +664,9 @@ void(string location, string gibmodel, string bleffect, vector vel, entity gwner
 	}
 };
 
-void() fallen_remove = { self.cnt = 100;
+void() fallen_remove = 
+{
+	self.cnt = 100;
 	self.think = SUB_Remove;
 	self.nextthink = time + 0.5;
 };
@@ -750,7 +767,9 @@ void() fallen_deathb20 =
 	self.nextthink = time + 10 + (random() *10);
 };
 
-void() fallen_deatha = { self.solid = SOLID_NOT;
+void() fallen_deatha = 
+{
+	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_TOSS;
 
 	spawn_gib_stuff("tag_torso", "models/enemies/fallen/gibs/gib_torso_a.md3", "fallen_blood_shower_large", '-40 50 10', self, 0.5, "null");
@@ -803,7 +822,9 @@ void() fallen_deatha = { self.solid = SOLID_NOT;
 };
 
 .float death_legs;
-void() fallen_death = { local float r;
+void() fallen_death = 
+{
+	local float r;
 	r = random();
 	monstersound5("enemies/fallen/die", 3, CHAN_VOICE);
 
@@ -971,7 +992,9 @@ void() fallen_prepainc5 =[$fn_painc5, fallen_run]
 };
 
 //void() crawler_run1 
-void() crawler_death = { chattersound("enemies/fallen/die", 3, 1);
+void() crawler_death = 
+{
+	chattersound("enemies/fallen/die", 3, 1);
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_TOSS;
 	spawn_gib_stuff("tag_head", "models/misc/null.md3", "fallen_blood_shower_small", '50 0 100', self, 0.55, "null");
@@ -990,7 +1013,9 @@ void() crawler_death = { chattersound("enemies/fallen/die", 3, 1);
 	self.nextthink = time + 0.1;
 };
 
-void() ai_crawler_face = { /*
+void() ai_crawler_face = 
+{
+	/*
 	local entity pl;
 	pl = find(world, classname, "player"); 
 	*/
@@ -1002,7 +1027,9 @@ void() ai_crawler_face = { /*
 	self.angles_y = yaw;
 };
 
-void() blood_frames = { if (self.frame <= 12)
+void() blood_frames = 
+{
+	if (self.frame <= 12)
 	{
 		self.frame += 1;
 		self.think = blood_frames;
@@ -1015,7 +1042,9 @@ void() blood_frames = { if (self.frame <= 12)
 	}
 };
 
-void(vector org, entity e) drop_blood = { return;
+void(vector org, entity e) drop_blood = 
+{
+	return;
 	/*
 	local entity blood;
 	blood = spawn();
@@ -1108,7 +1137,9 @@ void() crawler_run8 =[$cr_walk8, crawler_run1]
 		drop_blood(org, self);
 };
 
-void() crawler_start = { self.frame += 1;	//
+void() crawler_start = 
+{
+	self.frame += 1;	//
 
 	if (self.frame >= 115)
 	{
@@ -1131,7 +1162,9 @@ void() crawler_start = { self.frame += 1;	//
 };
 void(entity attacker, float damage) null_pain = {};
 
-void(entity e) fallen_crawler = { local entity crawler;
+void(entity e) fallen_crawler = 
+{
+	local entity crawler;
 	crawler = spawn();
 	crawler.owner = e;
 	crawler.solid = SOLID_SLIDEBOX;
@@ -1208,7 +1241,9 @@ void() fallen_paind20 =[$fn_mutilated20, fallen_paind20]
 
 .float type_mutilated;
 
-void(entity attacker, float damage) fallen_pain = { if ((time < self.pain_finished) && (self.enemy.weapon != IT_COACHGUN))
+void(entity attacker, float damage) fallen_pain = 
+{
+	if ((time < self.pain_finished) && (self.enemy.weapon != IT_COACHGUN))
 		return;
 	if ((self.health <= 75) && (!self.mutilated))
 	{
@@ -1284,7 +1319,9 @@ void(entity attacker, float damage) fallen_pain = { if ((time < self.pain_finish
 };
 
 .float risenframe;
-void() fallen_rise = { self.risenframe += 1;
+void() fallen_rise = 
+{
+	self.risenframe += 1;
 	self.frame += 1;
 
 	if (self.risenframe == 2)
@@ -1325,109 +1362,10 @@ void()check_jump =
 	self.timejump = time + 1;
 	}
 };
-void()check_angles =
+
+void() precache_monster_fallen = 
 {
-	if(self.timeangles > time)
-	return;
-	
-	makevectors(self.angles);
-	local vector source = self.origin;
-	
-	float forwardcheck = self.absmax_y / 2 + 2;
-
-	
-	traceline(source,source + v_forward *forwardcheck +  v_up * -50, FALSE, self);
-	makevectors(self.v_angle);
-
-	if (trace_fraction == 1.0)
-	{
-		local vector best_place;
-		
-		traceline(source,source + v_forward * -64 +  v_right * 128 +  v_up * -50, FALSE, self);
-		if (trace_fraction != 1.0)
-		best_place = trace_endpos;
-		else
-		{
-			traceline(source,source + v_forward * -64 +  v_right * -128 +  v_up * -50, FALSE, self);
-			if (trace_fraction != 1.0)
-				best_place = trace_endpos;
-			else
-			{
-				traceline(source,source + v_forward * -256 + crandom() * (v_right * -128)+  v_up * -50, FALSE, self);
-				best_place = trace_endpos;			
-			}
-		}
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;
-		return;
-	}		
-	
-	
-	tracebox(source, '-5 -5 -5', '5 5 5', source + v_forward *2 +  v_right * 128, FALSE, self);
-	if (trace_fraction == 1.0)
-	{
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;
-		return;
-	}
-	tracebox(source, '-5 -5 -5', '5 5 5', source + v_forward *2 +  v_right * -128, FALSE, self);
-	if (trace_fraction == 1.0)
-	{
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;
-		return;
-	}
-	
-	
-		tracebox(source, '-5 -5 -5', '5 5 5', source + v_forward *2 +  v_right * (forwardcheck * 2), FALSE, self);
-	if (trace_fraction == 1.0)
-	{
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;
-		return;
-	}
-	tracebox(source, '-5 -5 -5', '5 5 5', source + v_forward *2 +  v_right * (forwardcheck * -2), FALSE, self);
-	if (trace_fraction == 1.0)
-	{
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;
-		return;
-	}
-	
-		makevectors(self.v_angle);
-	source = self.origin;
-	tracebox(source, '-5 -5 -5', '5 5 5', source + v_forward *(forwardcheck * -2) +  v_right * (forwardcheck * 2), FALSE, self);
-	if (trace_fraction == 1.0)
-	{
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;
-		return;
-	}
-	tracebox(source, '-5 -5 -5', '5 5 5', source + v_forward *(forwardcheck * -2)+  v_right *(forwardcheck * -2), FALSE, self);
-	if (trace_fraction == 1.0)
-	{
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;		
-		return;
-	}
-	tracebox(source, '-5 -5 -5', '5 5 5', source + v_forward *-128, FALSE, self);
-	if (trace_fraction == 1.0)
-	{
-		self.lastplace_spoted = trace_endpos;
-		self.timeangles = time+ 0.5 + random();
-		self.timeangles2 = time + 2;		
-		return;
-	}
-	
-	};
-void() precache_monster_fallen = { precache_model("models/enemies/fallen/gibs/gib_torso_b.md3");
+	precache_model("models/enemies/fallen/gibs/gib_torso_b.md3");
 	precache_model("models/enemies/fallen/gibs/gib_torso_a.md3");
 	precache_model("models/enemies/fallen/gibs/gib_leg_b_r.md3");
 	precache_model("models/enemies/fallen/gibs/gib_leg_b_l.md3");
@@ -1480,7 +1418,9 @@ void() precache_monster_fallen = { precache_model("models/enemies/fallen/gibs/gi
 	precache_sound("enemies/fallen/swing2.ogg");
 	precache_sound("enemies/fallen/swing3.ogg");
 };
-void() monster_fallen = { precache_model("models/enemies/fallen/gibs/gib_torso_b.md3");
+void() monster_fallen = 
+{
+	precache_model("models/enemies/fallen/gibs/gib_torso_b.md3");
 	precache_model("models/enemies/fallen/gibs/gib_torso_a.md3");
 	precache_model("models/enemies/fallen/gibs/gib_leg_b_r.md3");
 	precache_model("models/enemies/fallen/gibs/gib_leg_b_l.md3");
@@ -1583,7 +1523,6 @@ void() monster_fallen = { precache_model("models/enemies/fallen/gibs/gib_torso_b
 
 	self.exec_push = 8;
 	self.onlymelee =  1;
-
 	self.classname = "monster_fallen";
 	self.th_pain = fallen_pain;
 	self.th_die = fallen_death;

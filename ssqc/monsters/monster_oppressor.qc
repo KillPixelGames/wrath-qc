@@ -207,8 +207,12 @@ void()oppressor_impact =
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-void() oppressor_projectile_touch = { local float damg;
+void() oppressor_projectile_touch = 
+{
+	local float damg;
 	if (other == self.owner)
+		return;
+	if(other.solid == SOLID_TRIGGER)
 		return;
 	self.solid = SOLID_NOT;
 	if (pointcontents(self.origin) == CONTENT_SKY)
@@ -294,6 +298,7 @@ void(entity e, string tagname, string muzzletagname) oppressor_missileattack = {
 	setsize (projectile, opp_proj_size * -0.5,opp_proj_size * 0.5);
 	projectile.solid = SOLID_TRIGGER;
 	projectile.enemy = e.enemy;
+	projectile.wrathflags += FL_PROJECTILE;
 	projectile.classentity = "projectiles";
 	projectile.traileffectnum = particleeffectnum("oppressor_proj_trail");
 	projectile.movetype = MOVETYPE_FLYMISSILE;
@@ -544,7 +549,6 @@ void() oppressor_die =
 	self.th_missile = null;
 	self.th_melee = null;
 	self.th_pain = nullpain;
-	self.th_die = null;
 	//drop_item(self.origin + '0 0 0', "shells_inv", 4, self);
 	self.painframe = 1;
 	self.glowmod = '1 1 1';
@@ -566,7 +570,7 @@ void() oppressor_die =
 	}
 
 	self.think = oppressor_postdie;
-	self.nextthink = time + 0.1;
+	self.nextthink = time;
 };
 
 
@@ -764,7 +768,9 @@ void(entity e) spawn_emitters =
 };	
 /*WRATHED monster_oppressor (1 0 0) (-16 -16 -24) (16 16 40) Ambush*/
 .vector bbvv;
-void() monster_oppressor = { precache_model("models/enemies/oppressor/oppressor.md3");
+void() monster_oppressor = 
+{
+	precache_model("models/enemies/oppressor/oppressor.md3");
 	if (deathmatch)
 	{
 		remove(self);

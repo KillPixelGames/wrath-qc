@@ -1,8 +1,10 @@
 .float timer_item_cnt;
 .float old_cnt;
 .float old_item_cnt;
-.float secret;
-void() hud_message2_think = { if (self.owner.item_cnt)
+
+void() hud_message2_think = 
+{
+	if (self.owner.item_cnt)
 	{
 		self.item_cnt += self.owner.item_cnt;
 		self.owner.item_cnt = 0;
@@ -31,18 +33,24 @@ void(entity e) flash_screen_item =
 }
 
 
-float() Send_Item2 = { WriteByte(MSG_ENTITY, ENT_HUDMSG2);
+float() Send_Item2 = 
+{
+	WriteByte(MSG_ENTITY, ENT_HUDMSG2);
 	WriteShort(MSG_ENTITY, self.msg);
 	WriteShort(MSG_ENTITY, self.item_cnt);
 	return TRUE;
 };
 
-float() Send_Item = { WriteByte(MSG_ENTITY, ENT_HUDMSG);
+float() Send_Item = 
+{
+	WriteByte(MSG_ENTITY, ENT_HUDMSG);
 	WriteShort(MSG_ENTITY, self.msg);
 	return TRUE;
 };
 
-void(float mtype, vector org, entity ownr, float item_cntr) Hud_message2 = { local entity HudMessage;
+void(float mtype, vector org, entity ownr, float item_cntr) Hud_message2 = 
+{
+	local entity HudMessage;
 	if(!(ownr.flags & FL_CLIENT))return;if (ownr.classname != "player")return;
 	HudMessage = spawn();
 	HudMessage.owner = ownr;
@@ -61,9 +69,12 @@ void(float mtype, vector org, entity ownr, float item_cntr) Hud_message2 = { loc
 	HudMessage.nextthink = time;
 };
 .float fullitemtime;
-void(float mtype, vector org, entity ownr) Hud_message = { 
-
-	if(!(ownr.flags & FL_CLIENT))return;if (ownr.classname != "player")return;
+void(float mtype, vector org, entity ownr) Hud_message = 
+{ 
+	if(!(ownr.flags & FL_CLIENT))
+		return;
+	if (ownr.classname != "player")
+		return;
 	ownr.stat_time_hudmessage = 1;
 	/*if(mtype == 109)
 	{
@@ -98,7 +109,9 @@ void() Message_delay =
 	self.nextthink = time + 2;
 }	
 
-void(float mtype, vector org, entity ownr) Hud_message_delay = { 
+void(float mtype, vector org, entity ownr) Hud_message_delay = 
+{
+	
 
 	if(!(ownr.flags & FL_CLIENT))return;if (ownr.classname != "player")return;
 	ownr.stat_time_hudmessage = 1;
@@ -129,7 +142,9 @@ void() respawn_items =
 	self.nextthink = time; 
 };
 
-void() siframes = { /*if (self.frame >= 16)
+void() siframes = 
+{
+	/*if (self.frame >= 16)
 		self.frame = 0; 
 	self.frame += 1;
 	*/
@@ -138,14 +153,18 @@ void() siframes = { /*if (self.frame >= 16)
 	self.think = siframes;
 };
 
-void() twframes = { if (self.frame >= 20)
+void() twframes = 
+{
+	if (self.frame >= 20)
 		self.frame = 0;
 	self.frame += 1;
 	self.nextthink = time + 0.1;	// items start after other solids
 	self.think = twframes;
 };
 .float rwpn;
-void() artifact_drop = { 
+void() artifact_drop = 
+{
+	
 
 	if(self.flags & FL_ONGROUND)
 	self.flags -= FL_ONGROUND;
@@ -267,7 +286,9 @@ void(float ie) StartItem = {
 	self.think = PlaceItem;
 };
 
-void() start_key = { copy_old_data(self);
+void() start_key = 
+{
+	copy_old_data(self);
 		self.use = artifact_drop;
 		self.nextthink = time + 0.2;	// items start after other solids
 		self.think = PlaceItem;
@@ -279,7 +300,9 @@ void() start_key = { copy_old_data(self);
 ////////////////////////////////
 ///weapons and ammo///
 ////////////////////////////////
-void() wammo_touch = { 
+void() wammo_touch = 
+{
+	
 		
 	if(!(other.flags & FL_CLIENT))
 		return;
@@ -290,55 +313,67 @@ void() wammo_touch = {
 	if ((other.attack_finished > time) && (self.itemisweapon == 1))
 		return;
 	
-	if (self.msg == 3)
+	if (self.msg == 90)
 	{
 		other.coachgunclip = 3;
-		other.timefrik = time + 0.75;
+		other.time_pickupweapon = time + 0.75;
 		if (self.spawnflags &1)
-			other.timefrik = 0;
+			other.time_pickupweapon = 0;
 		//if ((time > other.attack_finished) && (!other.button0) && (!other.button3))
 		other.oldimpulse = 2;
 		other.itemtime = time + 0.5;
 		Hud_message(35, other.origin, other);
 	}
-	if (self.msg == 8)
+	if (self.msg == 91)
 	{
-		other.timefrik = time + 0.75;
+		other.time_pickupweapon = time + 0.75;
 		if (self.spawnflags &1)
-			other.timefrik = 0;
-		//if ((time > other.attack_finished) && (!other.button0) && (!other.button3))		
-		other.oldimpulse = 4;
-		other.itemtime = time + 0.5;
-		Hud_message(35, other.origin, other);
-	}
-	if (self.msg == 25)
-	{
-		other.timefrik = time + 0.75;
-		if (self.spawnflags &1)
-			other.timefrik = 0;
-		//if ((time > other.attack_finished) && (!other.button0) && (!other.button3))		
-		other.oldimpulse = 5;
-		other.itemtime = time + 0.5;
-		Hud_message(35, other.origin, other);
-	}
-	if (self.msg == 33)
-	{
-		other.timefrik = time + 0.75;
-		if (self.spawnflags &1)
-			other.timefrik = 0;
+			other.time_pickupweapon = 0;
 
 		other.oldimpulse = 3;
 		other.itemtime = time + 0.5;
 		Hud_message(35, other.origin, other);
 	}
-	if (self.msg == 14)
+	if (self.msg == 92)
 	{
-		other.timefrik = time + 0.75;
+		other.time_pickupweapon = time + 0.75;
 		if (self.spawnflags &1)
-			other.timefrik = 0;
+			other.time_pickupweapon = 0;
+		//if ((time > other.attack_finished) && (!other.button0) && (!other.button3))		
+		other.oldimpulse = 4;
+		other.itemtime = time + 0.5;
+		Hud_message(35, other.origin, other);
+	}
+	if (self.msg == 93)
+	{
+		other.time_pickupweapon = time + 0.75;
+		if (self.spawnflags &1)
+			other.time_pickupweapon = 0;
+		//if ((time > other.attack_finished) && (!other.button0) && (!other.button3))		
+		other.oldimpulse = 5;
+		other.itemtime = time + 0.5;
+		Hud_message(35, other.origin, other);
+	}
+
+	if (self.msg == 94)
+	{
+		other.time_pickupweapon = time + 0.75;
+		if (self.spawnflags &1)
+			other.time_pickupweapon = 0;
 
 		//if ((time > other.attack_finished) && (!other.button0) && (!other.button3))		
 		other.oldimpulse = 6;
+		other.itemtime = time + 0.5;
+		Hud_message(35, other.origin, other);
+	}
+	if (self.msg == 95)
+	{
+		other.time_pickupweapon = time + 0.75;
+		if (self.spawnflags &1)
+			other.time_pickupweapon = 0;
+
+		//if ((time > other.attack_finished) && (!other.button0) && (!other.button3))		
+		other.oldimpulse = 7;
 		other.itemtime = time + 0.5;
 		Hud_message(35, other.origin, other);
 	}
@@ -373,6 +408,11 @@ void() wammo_touch = {
 		if ((other.ammo_spitter >= max_ammo_spitter)&& (self.alwaystouchable != 1))
 			{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
 	}
+	if (self.msg == 25)
+	{
+		if ((other.ammo_lance >= max_ammo_lance)&& (self.alwaystouchable != 1))
+			{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
+	}
 	if (self.msg == 30)
 	{
 		if ((other.ammo_retcher >= max_ammo_retcher) && (self.alwaystouchable != 1))
@@ -384,6 +424,8 @@ void() wammo_touch = {
 				stuffcmd(other, "impulse 34\n");
 		}
 	}
+	if(deathmatch)
+		other.time_pickupweapon = 0;
 	other.items += self.items;
 	other.ammo_coachgun = self.ammo_coachgun + other.ammo_coachgun;
 	if (other.ammo_coachgun > max_ammo_coachgun)
@@ -400,6 +442,10 @@ void() wammo_touch = {
 	other.ammo_retcher = self.ammo_retcher + other.ammo_retcher;
 	if (other.ammo_retcher > max_ammo_retcher)
 		other.ammo_retcher = max_ammo_retcher;
+	other.ammo_lance = self.ammo_lance + other.ammo_lance;
+	if (other.ammo_lance > max_ammo_lance)
+		other.ammo_lance = max_ammo_lance;
+
 	if (self.msg)
 		Hud_message(self.msg, other.origin, other);
 	sound(self, CHAN_AUTO, self.noise, 1, ATTN_NORM);
@@ -425,7 +471,7 @@ void() wammo_touch = {
 			other.rshellspulsetime = time + 0.01;
 		}
 	}
-	if (self.ammo_spitter)	// 32 - 64
+	if (self.ammo_spitter)	// 64 - 128
 	{
 		other.spitterpulsetime = time + 0.5;
 		if (other.spitterpulsetime > time)
@@ -435,7 +481,7 @@ void() wammo_touch = {
 			other.rspitterpulsetime = time + 0.01;
 		}
 	}
-	if (self.ammo_retcher)	//128 - 256
+	if (self.ammo_retcher)	//256 - 512
 	{
 		other.retcherpulsetime = time + 0.5;
 		if (other.retcherpulsetime > time)
@@ -443,6 +489,26 @@ void() wammo_touch = {
 			if (!(other.pulseicons &256))
 				other.pulseicons += 256;
 			other.rretcherpulsetime = time + 0.01;
+		}
+	}
+	if (self.ammo_cannon)	//1024 - 2048
+	{
+		other.cannonpulsetime = time + 0.5;
+		if (other.cannonpulsetime > time)
+		{
+			if (!(other.pulseicons &1024))
+				other.pulseicons += 1024;
+			other.rcannonpulsetime = time + 0.01;
+		}
+	}
+	if (self.ammo_lance)	//4096 - 8192
+	{
+		other.lancepulsetime = time + 0.5;
+		if (other.lancepulsetime > time)
+		{
+			if (!(other.pulseicons &4096))
+				other.pulseicons += 4096;
+			other.rlancepulsetime = time + 0.01;
 		}
 	}
 
@@ -492,7 +558,9 @@ void() wammo_touch = {
 
 };
 
-void() weapon_shotgun = { self.items = IT_SHOTGUN;
+void() weapon_shotgun = 
+{
+	self.items = IT_SHOTGUN;
 	self.itemisweapon = 1;
 	setmodel(self, "models/weapons/shotgun/w_shotgun.md3");
 	self.ammo_shotgun = 2;
@@ -503,11 +571,13 @@ void() weapon_shotgun = { self.items = IT_SHOTGUN;
 	//self.noise  ="items/shotgun.ogg";
 	precache_sound(self.noise);
 	self.touch = wammo_touch;
-	self.msg = 33;
+	self.msg = 91;
 	setsize(self, '-12 -12 -24' ,'12 12 8');
 };
 
-void() weapon_coachgun = { self.items = IT_COACHGUN;
+void() weapon_coachgun = 
+{
+	self.items = IT_COACHGUN;
 	self.itemisweapon = 1;
 	setmodel(self, "models/weapons/coachgun/w_coachgun.md3");
 	self.ammo_coachgun = 3;
@@ -518,11 +588,13 @@ void() weapon_coachgun = { self.items = IT_COACHGUN;
 	//self.noise  ="misc/null.wav";
 	precache_sound(self.noise);
 	self.touch = wammo_touch;
-	self.msg = 3;
+	self.msg =90;
 	setsize(self, '-12 -12 -24' ,'12 12 8');
 };
 
-void() weapon_retcher = { self.items = IT_RETCHER;
+void() weapon_retcher = 
+{
+	self.items = IT_RETCHER;
 	self.itemisweapon = 1;
 	setmodel(self, "models/weapons/retcher/w_retcher.md3");
 	setsize(self, '-12 -12 -24' ,'12 12 8');
@@ -534,10 +606,12 @@ void() weapon_retcher = { self.items = IT_RETCHER;
 	//self.noise  ="misc/null.wav";
 	precache_sound(self.noise);
 	self.touch = wammo_touch;
-	self.msg = 25;
+	self.msg = 93;
 };
 
-void() weapon_spitter = { self.items = IT_SPITTER;
+void() weapon_spitter = 
+{
+	self.items = IT_SPITTER;
 	self.itemisweapon = 1;
 	setmodel(self, "models/weapons/spitter/w_spitter.md3");
 	setsize(self, '-12 -12 -24' ,'12 12 8');
@@ -549,10 +623,12 @@ void() weapon_spitter = { self.items = IT_SPITTER;
 	//self.noise  ="misc/null.wav";
 	precache_sound(self.noise);
 	self.touch = wammo_touch;
-	self.msg = 8;
+	self.msg =92;
 };
 
-void() weapon_slagcannon = { self.items = IT_CANNON;
+void() weapon_cannon = 
+{
+	self.items = IT_CANNON;
 	self.itemisweapon = 1;
 	setmodel(self, "models/weapons/cannon/w_cannon.md3");
 	setsize(self, '-12 -12 -24' ,'12 12 8');
@@ -564,10 +640,30 @@ void() weapon_slagcannon = { self.items = IT_CANNON;
 	StartItem(1);
 	self.origin_z += 24;
 	self.touch = wammo_touch;
-	self.msg = 14;
+	self.msg = 94;
+};
+
+void() weapon_lance = 
+{
+	self.items = IT_LANCE;
+	self.itemisweapon = 1;
+	setmodel(self, "models/weapons/lance/w_lance.md3");
+	setsize(self, '-12 -12 -24' ,'12 12 8');
+	//self.noise  ="misc/null.wav";
+	precache_sound(self.noise);
+	self.ammo_lance = 20;
+	self.rwpn = 1;
+	self.scale = 1;
+	StartItem(1);
+	self.origin_z += 24;
+	self.touch = wammo_touch;
+	self.msg = 95;
 };
 void(entity ownr) spawn_bbox_collider =
 {
+
+
+ownr.wrathflags += FL_PICKUPABLE;
 entity bbox_touch;
 bbox_touch = spawn();
 copyentity (ownr,bbox_touch);
@@ -584,7 +680,9 @@ bbox_touch.think = null;
 ownr.solid = SOLID_NOT;
 ownr.touch = null;
 };
-void() spawnfunc_ammo_shells = { self.noise = "items/shells.ogg";
+void() spawnfunc_ammo_shells = 
+{
+	self.noise = "items/shells.ogg";
 	self.ammo_shotgun = 20;
 	setmodel(self, "models/items/shells.md3");
 	setsizeitem2(self, shells_size);
@@ -598,7 +696,9 @@ void() spawnfunc_ammo_shells = { self.noise = "items/shells.ogg";
 };
 
 
-void() spawnfunc_ammo_slugs = { self.noise = "items/slugs.ogg";
+void() spawnfunc_ammo_slugs = 
+{
+	self.noise = "items/slugs.ogg";
 	if (self.spawnflags)
 	{
 		self.ammo_coachgun = 15;
@@ -620,7 +720,9 @@ void() spawnfunc_ammo_slugs = { self.noise = "items/slugs.ogg";
 	self.oldtouch = self.touch;
 	spawn_bbox_collider(self);
 };
-void() ammo_cysts = { setmodel(self, "models/items/cysts.md3");
+void() ammo_cysts = 
+{
+	setmodel(self, "models/items/cysts.md3");
 	self.noise = "items/cysts.ogg";
 	if (self.spawnflags == 1)
 	{
@@ -646,7 +748,25 @@ void() ammo_cysts = { setmodel(self, "models/items/cysts.md3");
 	spawn_bbox_collider(self);
 };
 
-void() spawnfunc_ammo_ore = { if (self.spawnflags == 1)
+void() spawnfunc_ammo_lance = 
+{
+	setmodel(self, "models/items/ammo_lance.md3");
+	self.noise = "items/ammo_lance.ogg";
+	setsizeitem2(self, explosives_size);
+	self.ammo_lance = 10;
+	precache_sound(self.noise);
+	StartItem(2);
+	self.classname = "lances";
+	self.scale = 1;
+	self.msg = 30;
+	self.touch = wammo_touch;
+	self.oldtouch = self.touch;
+	spawn_bbox_collider(self);
+};
+
+void() spawnfunc_ammo_ore = 
+{
+	if (self.spawnflags == 1)
 	{
 		setmodel(self, "models/items/ore.md3");
 		setsizeitem2(self, orel_size);
@@ -677,7 +797,9 @@ return;
 
 
 
-void() ammo_fangs = { self.noise = "items/fangs.ogg";
+void() ammo_fangs = 
+{
+	self.noise = "items/fangs.ogg";
 
 	if (self.spawnflags == 1)
 	{
@@ -705,7 +827,9 @@ void() ammo_fangs = { self.noise = "items/fangs.ogg";
 /////////////////////////
 ///armor &health///
 /////////////////////////
-void() larmor_touch = { if (other.classname != "player")
+void() larmor_touch = 
+{
+	if (other.classname != "player")
 	if(!(other.flags & FL_CLIENT))		return;
 
 
@@ -727,7 +851,7 @@ void() larmor_touch = { if (other.classname != "player")
 		}
 	}
 
-	if (self.rarmorvalue)	//1024 - 2048
+	if (self.rarmorvalue)	//8192 - 16384
 	{
 		if ((other.rarmorvalue == 100))
 		{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
@@ -737,12 +861,12 @@ void() larmor_touch = { if (other.classname != "player")
 		other.armorpulsetime = time + 0.5;
 		if (other.armorpulsetime > time)
 		{
-			if (!(other.pulseicons &2048))
-				other.pulseicons += 2048;
+			if (!(other.pulseicons &16384))
+				other.pulseicons += 16384;
 			other.rarmorpulsetime = time + 0.01;
 		}
 	}
-	if (self.darmorvalue)	//4096 -8192
+	if (self.darmorvalue)	//32768 -65536
 	{
 		if ((other.darmorvalue == 100))
 		{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
@@ -752,8 +876,8 @@ void() larmor_touch = { if (other.classname != "player")
 		other.darmorpulsetime = time + 0.5;
 		if (other.darmorpulsetime > time)
 		{
-			if (!(other.pulseicons &4096))
-				other.pulseicons += 4096;
+			if (!(other.pulseicons &65536))
+				other.pulseicons += 65536;
 			other.rdarmorpulsetime = time + 0.01;
 		}
 	}
@@ -806,7 +930,9 @@ void() larmor_touch = { if (other.classname != "player")
 
 };
 
-void() health_life_vial = { self.noise = "items/lifeblood_vial1.ogg";
+void() health_life_vial = 
+{
+	self.noise = "items/lifeblood_vial1.ogg";
 	self.pflags = 129;
 	self.health = 10;
 	self.light_lev = 15;
@@ -826,7 +952,9 @@ void() health_life_vial = { self.noise = "items/lifeblood_vial1.ogg";
 	
 };
 
-void() health_life_beaker = { local float r;
+void() health_life_beaker = 
+{
+	local float r;
 	r = random() *3;
 	if (r < 3)
 		self.noise = ("items/lifeblood_beaker3.ogg");
@@ -853,7 +981,9 @@ void() health_life_beaker = { local float r;
 	
 };
 
-void() health_life_chalice = { self.noise = "items/lifeblood_vial3.ogg";
+void() health_life_chalice = 
+{
+	self.noise = "items/lifeblood_vial3.ogg";
 	self.pflags = 129;
 	self.health = 50;
 	self.light_lev = 32;
@@ -872,7 +1002,9 @@ void() health_life_chalice = { self.noise = "items/lifeblood_vial3.ogg";
 	
 };
 
-void() health_life_heart = { self.noise = "items/lifeblood_beaker1.ogg";
+void() health_life_heart = 
+{
+	self.noise = "items/lifeblood_beaker1.ogg";
 	StartItem(3);
 	self.health = 100;
 	self.light_lev = 64;
@@ -891,7 +1023,9 @@ void() health_life_heart = { self.noise = "items/lifeblood_beaker1.ogg";
 	
 };
 
-void() armor_shard = { local float r;
+void() armor_shard = 
+{
+	local float r;
 	r = floor(random() *3);
 	if (r < 1)
 		self.noise = "items/armor_shard1.ogg";
@@ -913,7 +1047,9 @@ void() armor_shard = { local float r;
 	
 };
 
-void() armor_helm = { self.noise = "items/helm1.ogg";
+void() armor_helm = 
+{
+	self.noise = "items/helm1.ogg";
 	precache_sound(self.noise);
 	self.rarmorvalue = 30;
 	setmodel(self, "models/items/helm.md3");
@@ -928,7 +1064,9 @@ void() armor_helm = { self.noise = "items/helm1.ogg";
 	
 };
 
-void() armor_armor = { self.noise = "items/armor1.ogg";
+void() armor_armor = 
+{
+	self.noise = "items/armor1.ogg";
 	precache_sound(self.noise);
 	self.rarmorvalue = 50;
 	setmodel(self, "models/items/armor.md3");
@@ -943,7 +1081,9 @@ void() armor_armor = { self.noise = "items/armor1.ogg";
 	
 };
 
-void() armor_shard_dark = { local float r;
+void() armor_shard_dark = 
+{
+	local float r;
 	r = floor(random() *3);
 	if (r < 1)
 		self.noise = "items/armor_shard_dark1.ogg";
@@ -965,7 +1105,9 @@ void() armor_shard_dark = { local float r;
 	
 };
 
-void() armor_armor_dark = { self.noise = "items/armor_dark1.ogg";
+void() armor_armor_dark = 
+{
+	self.noise = "items/armor_dark1.ogg";
 	precache_sound(self.noise);
 	self.darmorvalue = 50;
 	setmodel(self, "models/items/armor_dark.md3");
@@ -981,7 +1123,9 @@ void() armor_armor_dark = { self.noise = "items/armor_dark1.ogg";
 	
 };
 
-void() armor_helm_dark = { self.noise = "items/helm_dark1.ogg";
+void() armor_helm_dark = 
+{
+	self.noise = "items/helm_dark1.ogg";
 	precache_sound(self.noise);
 	self.darmorvalue = 30;
 	setmodel(self, "models/items/helm_dark.md3");
@@ -1002,7 +1146,9 @@ void() guardian_shield = {};
 /////////////////
 
 	
-void() artifact_touch = { if (other.classname != "player")
+void() artifact_touch = 
+{
+	if (other.classname != "player")
 		return;
 	if(!(other.flags & FL_CLIENT))		return;
 
@@ -1022,13 +1168,10 @@ void() artifact_touch = { if (other.classname != "player")
 		Hud_message(256, other.origin, other);
 		other.centerprint_messages += 1;
 	}
-	else
-	{
-		if (!(other.centerprint_messages &4)) 
-		{	
+	if((self.SoulTether) && (!(other.centerprint_messages &4)) )
+	{	
 		Hud_message(260, other.origin, other);
 		other.centerprint_messages += 4;
-		}
 	}
 
 	other.LifeSiphon += self.LifeSiphon;
@@ -1044,6 +1187,10 @@ void() artifact_touch = { if (other.classname != "player")
 	if (self.msg)
 		Hud_message(self.msg, other.origin, other);
 	SUB_UseTargets();
+
+	flash_screen_item(other);
+
+
 	if (self.secret == 1)
 	{
 		sound(other, CHAN_AUTO, "misc/secret.ogg", 1, ATTN_NONE);
@@ -1054,8 +1201,13 @@ void() artifact_touch = { if (other.classname != "player")
 		found_secrets = found_secrets + 1;
 		self = oself;
 		WriteByte(MSG_ALL, SVC_FOUNDSECRET);
+		self.nextthink = time + 1;
+		self.think = SUB_Remove;
+		self.solid = SOLID_NOT;
+		self.secret  = 0;
+		self.alpha = -1;
+	return;
 	}
-	flash_screen_item(other);
 	if (deathmatch)
 	{
 		self.oldsolid = self.solid;
@@ -1088,7 +1240,9 @@ void() artifact_touch = { if (other.classname != "player")
 
 };
 
-void() radial = { self.scale = 1;
+void() radial = 
+{
+	self.scale = 1;
 	self.movetype = MOVETYPE_BOUNCE;
 	self.solid = SOLID_TRIGGER;
 	self.cnt = 1;
@@ -1096,14 +1250,16 @@ void() radial = { self.scale = 1;
 	self.use = artifact_drop;
 };
 
-void() artifact_soul_tether = { radial();
+void() artifact_soul_tether = 
+{
+	radial();
 	self.modelflags = 8;
 	self.noise = "items/artifacts/artifactE_pickup.ogg";
 	self.noise1 = "items/artifacts/artifactE_use.ogg";
 	precache_sound(self.noise);precache_sound(self.noise1);precache_sound(self.noise2);
 	self.SoulTether = 1;
 	if (self.secret)
-		total_secrets++;
+		{total_secrets++;	self.wrathflags += FL_SECRET;}
 	setmodel(self, "models/artifacts/soul_tether.md3");
 	setsize(self, artifact_nsize, artifact_size);
 	//setsize (self, '-8 -8 -8', ' 9 9 9');
@@ -1115,7 +1271,9 @@ void() artifact_soul_tether = { radial();
 	
 };
 
-void() artifact_life_siphon = { radial();
+void() artifact_life_siphon = 
+{
+	radial();
 	self.modelflags = 8;
 	self.noise = "items/artifacts/artifactF_pickup.ogg";
 	self.noise1 = "items/artifacts/artifactF_use.ogg";
@@ -1123,7 +1281,7 @@ void() artifact_life_siphon = { radial();
 	precache_sound(self.noise);precache_sound(self.noise1);precache_sound(self.noise2);
 	self.LifeSiphon = 1;
 	if (self.secret)
-		total_secrets++;
+		{total_secrets++;	self.wrathflags += FL_SECRET;}
 	setmodel(self, "models/artifacts/life_siphon.md3");
 	setsize(self, artifact_nsize, artifact_size);
 	self.traileffectnum = particleeffectnum("life_siphon");
@@ -1134,7 +1292,9 @@ void() artifact_life_siphon = { radial();
 	
 };
 
-void() artifact_drowners_apparatus = { radial();
+void() artifact_drowners_apparatus = 
+{
+	radial();
 	self.noise = "items/artifacts/artifactB_pickup.ogg";
 	self.noise1 = "items/artifacts/artifactB_use.ogg";
 	self.noise2 = "items/artifacts/artifactB_end.ogg";
@@ -1142,7 +1302,7 @@ void() artifact_drowners_apparatus = { radial();
 	precache_sound(self.noise);precache_sound(self.noise1);precache_sound(self.noise2);
 	self.DrownerApp = 1;
 	if (self.secret)
-		total_secrets++;
+		{total_secrets++;	self.wrathflags += FL_SECRET;}
 	setmodel(self, "models/artifacts/drowners_apparatus.md3");
 	setsize(self, artifact_nsize, artifact_size);
 	self.msg = 102;
@@ -1153,7 +1313,27 @@ void() artifact_drowners_apparatus = { radial();
 
 void() artifact_TrinketofRespite = {};
 
-void() artifact_cruel_aegis = { radial();
+void() artifact_trinket_respite = 
+{
+	radial();
+	self.noise = "items/artifacts/artifactG_pickup.ogg";
+	self.noise1 = "items/artifacts/artifactG_use.ogg";
+	self.noise2 = "items/artifacts/artifactG_end.ogg";
+	precache_sound(self.noise);precache_sound(self.noise1);precache_sound(self.noise2);
+	self.modelflags = 8;
+	self.TrinketofRespite = 1;
+	if (self.secret)
+		{total_secrets++;	self.wrathflags += FL_SECRET;}
+	setmodel(self, "models/artifacts/trinket_of_reflection.md3");
+	setsize(self, artifact_nsize, artifact_size);
+	self.msg = 107;
+	self.touch = artifact_touch;
+	self.oldtouch = self.touch;	
+};
+
+void() artifact_cruel_aegis = 
+{
+	radial();
 	self.noise = "items/artifacts/artifactH_pickup.ogg";
 	self.noise1 = "items/artifacts/artifactH_use.ogg";
 	self.noise2 = "items/artifacts/artifactH_end.ogg";
@@ -1161,17 +1341,17 @@ void() artifact_cruel_aegis = { radial();
 	self.modelflags = 8;
 	self.Aegis = 1;
 	if (self.secret)
-		total_secrets++;
+		{total_secrets++;	self.wrathflags += FL_SECRET;}
 	setmodel(self, "models/artifacts/cruel_aegis.md3");
 	setsize(self, artifact_nsize, artifact_size);
 	self.msg = 108;
 	self.touch = artifact_touch;
-	self.oldtouch = self.touch;
-
-	
+	self.oldtouch = self.touch;	
 };
 
-void() artifact_confounding_attar = { radial();
+void() artifact_confounding_attar = 
+{
+	radial();
 	self.noise = "items/artifacts/artifactD_pickup.ogg";
 	self.noise1 = "items/artifacts/artifactD_use.ogg";
 	self.noise2 = "items/artifacts/artifactD_end.ogg";
@@ -1179,7 +1359,7 @@ void() artifact_confounding_attar = { radial();
 	self.modelflags = 8;
 	self.Attar = 1;
 	if (self.secret)
-		total_secrets++;
+		{total_secrets++;	self.wrathflags += FL_SECRET;}
 	setmodel(self, "models/artifacts/confounding_attar.md3");
 	setsize(self, artifact_nsize, artifact_size);
 	self.msg = 104;
@@ -1197,7 +1377,9 @@ void(vector org, string class, float ammount, entity ownr) drop_item;
 .float classweapon4;
 .float classweapon5;
 void(vector origin, string classt, float item_amm, entity slf) convert_to_item;
-void() weapon_spawner_use = { local entity pl;
+void() weapon_spawner_use = 
+{
+	local entity pl;
 	pl = find(world, classname, "player");
 	if (pl.oldrelics)
 	{
@@ -1243,7 +1425,7 @@ void() weapon_spawner_use = { local entity pl;
 		if (!(pl.items &IT_RETCHER))
 			self.classtype = "retcher";
 		else
-		{	self.classtype = "fangs";
+		{	self.classtype = "cyst";
 			self.item_ammount = retcher_ammount;
 			self.alwaystouchable = 1;}
 	}
@@ -1254,6 +1436,15 @@ void() weapon_spawner_use = { local entity pl;
 		else
 		{	self.classtype = "ore";
 			self.item_ammount = cannon_ammount;
+			self.alwaystouchable = 1;}
+	}
+	if (self.cnt == 6)
+	{
+		if (!(pl.items &IT_LANCE))
+			self.classtype = "lance";
+		else
+		{	self.classtype = "lances";
+			self.item_ammount = 10;
 			self.alwaystouchable = 1;}
 	}
 	if ((self.classtype) && (self.cnt))
@@ -1268,7 +1459,9 @@ void() weapon_spawner_use = { local entity pl;
 		remove(self);
 };
 
-void() weapon_spawner = { if (self.targetname)
+void() weapon_spawner = 
+{
+	if (self.targetname)
 		self.use = weapon_spawner_use;
 	if (!self.targetname)
 	{				
@@ -1285,7 +1478,9 @@ void() weapon_spawner = { if (self.targetname)
 .float classitem5;
 
 .float checkweapon;
-void() item_spawner_use = { local entity pl;
+void() item_spawner_use = 
+{
+	local entity pl;
 	pl = find(world, classname, "player");
 
 
@@ -1351,6 +1546,12 @@ void() item_spawner_use = { local entity pl;
 		self.item_ammount  = cannon_ammount;
 		self.classtype = "ore";
 	}
+	if(self.classitem1 ==  26)
+	{
+		if (!self.item_ammount)
+		self.item_ammount  = cannon_ammount;
+		self.classtype = "lances";
+	}
 	if (self.classitem1 == 5)
 		(self.classtype = "shard");
 	if (self.classitem1 == 6)
@@ -1377,6 +1578,10 @@ void() item_spawner_use = { local entity pl;
 		(self.classtype = "aegis");
 	if(self.classitem1 ==  24)
 		(self.classtype = "attar");
+
+	if(self.classitem1 ==  27)
+		(self.classtype = "trinket");
+
 	if (self.classitem1)
 	{
 		self.use = SUB_Null;
@@ -1392,7 +1597,9 @@ void() item_spawner_use = { local entity pl;
 .float classitem4;
 .float classitem5;
 
-void() item_spawner = { /*	if (!self.classitem0)
+void() item_spawner = 
+{
+	/*	if (!self.classitem0)
 			self.classitem0 = 1;
 
 		if (!self.classitem1)
@@ -1417,12 +1624,16 @@ void() item_spawner = { /*	if (!self.classitem0)
 
 .float PreStartItemvalue;
 
-void() PreStartItem = { StartItem(self.PreStartItemvalue);
+void() PreStartItem = 
+{
+	StartItem(self.PreStartItemvalue);
 };
 .float counter_coffer_use;
 .float counter_coffer_ammount;
 
-void(vector org, string class, float ammount, entity ownr) drop_item = { local entity dropped;
+void(vector org, string class, float ammount, entity ownr) drop_item = 
+{
+	local entity dropped;
 	dropped = spawn();
 	dropped.origin = org;
 	dropped.movetype = MOVETYPE_TOSS;
@@ -1789,7 +2000,23 @@ void(vector org, string class, float ammount, entity ownr) drop_item = { local e
 		dropped.touch = artifact_touch;
 		dropped.oldtouch = dropped.touch;
 	}
-	
+		if (class == "trinket")
+	{
+		dropped.scale = 1;
+		dropped.movetype = MOVETYPE_BOUNCE;
+		dropped.solid = SOLID_TRIGGER;
+		dropped.classname = "artifact_trinket_of_respite";
+		dropped.cnt = 1;
+		dropped.origin_z += 12;
+		dropped.noise = "items/artifacts/artifactG_pickup.ogg";
+		dropped.modelflags = 8;
+		dropped.TrinketofRespite = 1;
+		setmodel(dropped, "models/artifacts/trinket_of_reflection.md3");
+		setsize(dropped, artifact_nsize, artifact_size);
+		dropped.msg = 107;
+		dropped.touch = artifact_touch;
+		dropped.oldtouch = dropped.touch;
+	}
 	dropped.nextthink = time + 0.1;	// items start after other solids
 	dropped.think = check_item_onfloor;
 	
@@ -1902,7 +2129,9 @@ void(vector org, string class, float ammount, entity ownr) drop_item = { local e
 
 };
 
-void(vector org, string class, float ammount, entity slf) convert_to_item = { self.origin = org;
+void(vector org, string class, float ammount, entity slf) convert_to_item = 
+{
+	self.origin = org;
 	self.movetype = MOVETYPE_TOSS;
 	self.angles = self.angles;
 	//	if(!(self.flags &FL_ITEM))
@@ -1982,7 +2211,17 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 		self.ammo_spitter = fang_ammount;
 		self.touch = wammo_touch;
 	}
-
+	if (class == "lances")
+	{
+		self.colormod = '0 1 3';
+		setmodel(self, "models/items/lances.md3");
+		self.classname = "ammo_lance";
+		self.noise = "items/lance.ogg";
+		self.msg = 22;
+		setsizeitem2(self, resin_size);
+		self.ammo_lance = 10;
+		self.touch = wammo_touch;
+	}
 	if (class == "shard")
 	{
 		self.noise = "items/armor_shard3.ogg";
@@ -2192,6 +2431,22 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 		self.msg = 104;
 		self.touch = artifact_touch;
 	}
+	if (class == "trinket")
+	{
+		self.scale = 1;
+		self.movetype = MOVETYPE_BOUNCE;
+		self.solid = SOLID_TRIGGER;
+		self.classname = "artifact_trinket_of_respite";
+		self.cnt = 1;
+		self.origin_z += 12;
+		self.noise = "items/artifacts/artifactG_pickup.ogg";
+		self.modelflags = 8;
+		self.TrinketofRespite = 1;
+		setmodel(self, "models/artifacts/trinket_of_reflection.md3");
+		setsize(self, artifact_nsize, artifact_size);
+		self.msg = 107;
+		self.touch = artifact_touch;
+	}	
 	if (class == "shotgun")
 	{
 		self.items = IT_SHOTGUN;
@@ -2206,7 +2461,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 		self.rwpn = 1;
 		precache_sound(self.noise);
 		self.touch = wammo_touch;
-		self.msg = 33;
+		self.msg = 91;
 		setsize(self, coach_nsize, coach_size);
 	}
 
@@ -2224,7 +2479,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 		self.rwpn = 1;
 		precache_sound(self.noise);
 		self.touch = wammo_touch;
-		self.msg = 3;
+		self.msg = 90;
 		setsize(self, coach_nsize, coach_size);
 	}
 
@@ -2243,7 +2498,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 		self.origin_z += 24;
 		precache_sound(self.noise);
 		self.touch = wammo_touch;
-		self.msg = 25;
+		self.msg = 93;
 	}
 
 	if (class == "spitter")
@@ -2261,7 +2516,7 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 		self.origin_z += 24;
 		precache_sound(self.noise);
 		self.touch = wammo_touch;
-		self.msg = 8;
+		self.msg = 92;
 	}
 
 	if (class == "slagcannon")
@@ -2279,7 +2534,24 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 		self.modelflags = 8;
 		self.origin_z += 24;
 		self.touch = wammo_touch;
-		self.msg = 14;
+		self.msg = 94;
+	}
+	if (class == "lance")
+	{
+		self.items = IT_LANCE;
+		self.spawnflags = self.spawnflags;
+		self.classname = "weapon_lance";
+		self.itemisweapon = 1;
+		setmodel(self, "models/weapons/lance/w_lance.md3");
+		setsize(self, slag_nsize, slag_size);
+		precache_sound(self.noise);
+		self.ammo_cannon = 10;
+		self.rwpn = 1;
+		StartItem(1);
+		self.modelflags = 8;
+		self.origin_z += 24;
+		self.touch = wammo_touch;
+		self.msg = 95;
 	}
 	self.velocity = revel;
 	self.solid = SOLID_TRIGGER;
@@ -2289,12 +2561,16 @@ void(vector org, string class, float ammount, entity slf) convert_to_item = { se
 	
 };
 
-void() item_Sigil = { StartItem(6);
+void() item_Sigil = 
+{
+	StartItem(6);
 	self.touch = artifact_touch;
 	setsize(self, '-14 -14 -14', '14 14 14');
 };
 
-void() key_touch = { if (other.classname != "player")
+void() key_touch = 
+{
+	if (other.classname != "player")
 		return;
 	if ((other.items &self.items))
 	{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
@@ -2356,7 +2632,9 @@ void() key_touch = { if (other.classname != "player")
 	}
 };
 
-void() coffer_key_touch = { if (other.classname != "player")
+void() coffer_key_touch = 
+{
+	if (other.classname != "player")
 		return;
 	if ((other.items &IT_COFFERKEY3))
 	{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
@@ -2406,7 +2684,9 @@ void() coffer_key_touch = { if (other.classname != "player")
 
 	}
 };
-void() key_coffer = { self.modelflags = 8;
+void() key_coffer = 
+{
+	self.modelflags = 8;
 	self.rwpn = 1;
 	self.noise = "items/coffer_key.ogg";
 	precache_sound(self.noise);
@@ -2433,7 +2713,9 @@ Hud element (icon in upper right hand corner where coffer key icon goes) gfx/hud
 Show message on pick up (gfx/hud/msg_glyph_blue.tga)
 */
 
-void() key_red = { self.noise = "items/glyph.ogg";
+void() key_red = 
+{
+	self.noise = "items/glyph.ogg";
 	precache_sound(self.noise);
 	self.items = IT_KEY1;
 	setmodel(self, "models/items/glyph_red.md3");
@@ -2447,7 +2729,9 @@ void() key_red = { self.noise = "items/glyph.ogg";
 	copy_old_data(self);
 };
 
-void() key_blue = { self.noise = "items/glyph.ogg";
+void() key_blue = 
+{
+	self.noise = "items/glyph.ogg";
 	precache_sound(self.noise);
 	self.items = IT_KEY2;
 	setmodel(self, "models/items/glyph_blue.md3");
@@ -2461,7 +2745,9 @@ void() key_blue = { self.noise = "items/glyph.ogg";
 	copy_old_data(self);
 };
 
-void() key_yellow = { self.noise = "items/glyph.ogg";
+void() key_yellow = 
+{
+	self.noise = "items/glyph.ogg";
 	precache_sound(self.noise);
 	self.items = IT_KEY3;
 	setmodel(self, "models/items/glyph_yellow.md3");
@@ -2481,7 +2767,9 @@ void() key_yellow = { self.noise = "items/glyph.ogg";
 .float relic_doze;
 .float relic_unit;
 
-void() relic_touch = { if (other.classname != "player")
+void() relic_touch = 
+{
+	if (other.classname != "player")
 		return;
 	if ((other.relics &self.relics))
 	{if(other.time_emptymessage < time)Hud_message(109, other.origin, other);other.time_emptymessage = time + 2.1;return;}
@@ -2535,7 +2823,9 @@ void() relic_touch = { if (other.classname != "player")
 	remove(self);
 };
 
-void() relic_e1m1 = { self.noise = "items/relic.ogg";
+void() relic_e1m1 = 
+{
+	self.noise = "items/relic.ogg";
 	precache_sound(self.noise);
 	self.relics = RL_E1M1;
 	setmodel(self, "models/items/relic.md3");
@@ -2546,7 +2836,9 @@ void() relic_e1m1 = { self.noise = "items/relic.ogg";
 	self.msg = 50;
 	self.slot_relics = 1;
 };
-void() relic_e1m2 = { self.noise = "items/relic.ogg";
+void() relic_e1m2 = 
+{
+	self.noise = "items/relic.ogg";
 	precache_sound(self.noise);
 	self.relics = RL_E1M2;
 	setmodel(self, "models/items/relic.md3");
@@ -2558,7 +2850,9 @@ void() relic_e1m2 = { self.noise = "items/relic.ogg";
 	self.slot_relics = 2;
 
 };
-void() relic_e1m3 = { self.noise = "items/relic.ogg";
+void() relic_e1m3 = 
+{
+	self.noise = "items/relic.ogg";
 	precache_sound(self.noise);
 	self.relics = RL_E1M3;
 	setmodel(self, "models/items/relic.md3");
@@ -2570,7 +2864,9 @@ void() relic_e1m3 = { self.noise = "items/relic.ogg";
 	self.slot_relics = 3;
 
 };
-void() relic_e1m4 = { self.noise = "items/relic.ogg";
+void() relic_e1m4 = 
+{
+	self.noise = "items/relic.ogg";
 	precache_sound(self.noise);
 	self.relics = RL_E1M4;
 	setmodel(self, "models/items/relic.md3");
@@ -2583,7 +2879,9 @@ void() relic_e1m4 = { self.noise = "items/relic.ogg";
 
 };
 
-void() relic_e1m5 = { self.noise = "items/relic.ogg";
+void() relic_e1m5 = 
+{
+	self.noise = "items/relic.ogg";
 	precache_sound(self.noise);
 	self.relics = RL_E1M5;
 	setmodel(self, "models/items/relic.md3");
@@ -2597,7 +2895,9 @@ void() relic_e1m5 = { self.noise = "items/relic.ogg";
 };
 
 
-void() coffer_item_think = { local entity pl;
+void() coffer_item_think = 
+{
+	local entity pl;
 	pl = find(world, classname, "player");
 	setorigin(self, pl.origin);
 	self.think = SUB_Remove;
@@ -2633,6 +2933,8 @@ void() trigger_coffer_use =
 			drop_item(self.origin + '0 0 32', "theter", 1, self);
 		else if (self.coffer_artifacts == 6)
 			drop_item(self.origin + '0 0 32', "siphon", 1, self);
+		else if (self.coffer_artifacts == 7)
+			drop_item(self.origin + '0 0 32', "trinket", 1, self);
 		else if (self.coffer_artifacts == 8)
 			drop_item(self.origin + '0 0 32', "aegis", 1, self);
 			self.coffer_artifacts = 0;
@@ -2684,10 +2986,10 @@ void() trigger_coffer_use =
 
 };
 
-void() trigger_coffer = { self.use = trigger_coffer_use;
-};
 
-void() manuscript_touch = { if (other.classname != "player")
+void() manuscript_touch = 
+{
+	if (other.classname != "player")
 		return;
 	if (!(other.journal_jmessages &self.journal_jmessages))
 	{
@@ -2705,7 +3007,9 @@ void() manuscript_touch = { if (other.classname != "player")
 .float bestiary;
 .float jmessage;
 .float jmessagem;
-void() item_manuscript = { setmodel(self, "models/items/manuscript.md3");
+void() item_manuscript = 
+{
+	setmodel(self, "models/items/manuscript.md3");
 	setsizeitem(self, '4 4 24');
 	self.noise = "misc/null.wav";
 	precache_sound(self.noise);
@@ -2736,7 +3040,9 @@ void() item_manuscript = { setmodel(self, "models/items/manuscript.md3");
 
 };
 
-void() coffer_model_think = { self.frame = self.owner.frame;
+void() coffer_model_think = 
+{
+	self.frame = self.owner.frame;
 	self.glowmod = self.owner.glowmod;
 	self.think = coffer_model_think;
 	self.nextthink = time + 0.01;
@@ -2749,7 +3055,9 @@ void() coffer_model_think = { self.frame = self.owner.frame;
 	}
 };
 
-void() use_coffer = { local float ft;
+void() use_coffer = 
+{
+	local float ft;
 	//	if(self.frame == -5)
 	//		sound (self, CHAN_AUTO, "objects/coffers/coffer1_locked_activate.ogg", 1, ATTN_NORM);
 	self.frame += 1;
@@ -2802,7 +3110,9 @@ void() use_coffer = { local float ft;
 	}
 };
 
-void() object_coffer = { self.glowmod = '1 1 1';
+void() object_coffer = 
+{
+	self.glowmod = '1 1 1';
 	//self.noise = 
 	self.noise2 = "objects/coffers/coffer1_locked.ogg";
 	self.classname = "coffer";
@@ -2823,6 +3133,123 @@ void() object_coffer = { self.glowmod = '1 1 1';
 	setmodel(self, "models/objects/coffers/coffer1_collision.md3");
 	self.use = use_coffer;
 };
+
+void(float velf) spawn_spining_head =
+{
+	makevectors(self.angles);
+	vector revel = v_forward *(64 + random(32, 64)) * velf * 2;
+	revel += v_right * random (-64 ,64) * velf;
+	revel_z += (32 + random(16,32)) * velf;
+	entity new = spawn();
+	new.origin = self.origin + ' 0 0 16';
+	setmodel(new,"models/enemies/wretch/gibs/gib_head_spin.md3");
+	//setsize(new, '-8 -8 -8', '8 8 8');
+	new.wrathflags += FL_GIB;
+	new.bouncefactor = 0;
+	new.touch = gib_touch2;
+	new.time2 = time + random(3,5); // timing for nextthink alternative
+	new.lifetime = time + wretch_sht;
+	new.movetype = MOVETYPE_BOUNCE;
+	new.bouncefactor = 1;
+	new.velocity = revel;
+	new.solid = SOLID_CORPSE;
+	new.think = wretch_spining_head;
+	new.nextthink = time + 0.05;
+	new.frame = 0;
+	new.flags = 0;
+};
+.entity ent_light;
+void() use_fakecoffer = 
+{
+	local float ft;
+	//	if(self.frame == -5)
+	//		sound (self, CHAN_AUTO, "objects/coffers/coffer1_locked_activate.ogg", 1, ATTN_NORM);
+	self.frame += 1;
+	if (self.frame <= 10)
+	{
+		self.glowmod_x -= 0.11;
+		self.glowmod_y -= 0.11;
+		self.glowmod_z -= 0.11;
+	}
+	if (self.frame < 1)
+		ft = 0.1;
+	if (self.frame == 1)
+	{
+		//	if(self.frame == 17)
+		sound(self, CHAN_AUTO, "objects/coffers/coffer1_unlocked.ogg", 1, ATTN_NORM);
+
+		//	sound (self, CHAN_AUTO, "objects/coffers/coffer1_locked_rotate.ogg", 1, ATTN_NORM);
+		self.use = null;
+		self.classname = "coffer_open";
+	}
+	if ((self.frame >= 1) && (self.frame <= 15))
+	{
+		ft = 0.1;
+	}
+	if (self.frame == 16)
+	{
+		ft = 0.4;
+	}
+	if (self.frame > 16)
+		ft = 0.1;
+
+	if (self.frame == 17)
+		spawn_spining_head (1);
+
+	if (self.frame == 18)
+	{		
+		spawn_spining_head (1.5);
+	}
+	if (self.frame >= 19)
+	{
+
+		spawn_spining_head (2);
+		sound(self, CHAN_WEAPON, "misc/null.wav", 1, 1);
+		self.attached_cloud.think = alphafade;
+		self.attached_cloud.nextthink = time;
+		remove(self.ent_light);	
+		remove(self);
+
+	}
+	else
+	self.think = use_fakecoffer;
+	self.nextthink = time + ft;
+};
+
+void() object_fakecoffer = 
+{
+	self.glowmod = '1 1 1';
+	//self.noise = 
+	self.noise2 = "objects/coffers/coffer1_locked.ogg";
+	self.classname = "coffer_trap";
+	self.usable = 1;
+	self.alpha = -1;
+	local entity coffer_model;
+	coffer_model = spawn();
+	self.attached_cloud = coffer_model;
+	randomsound2("enemies/wraith/proj_loop", 3, 0.25, CHAN_WEAPON, 0, 0.75);
+
+	entity selflight = spawn();
+	selflight.origin = self.origin + '0 0 48';
+	selflight.pflags = 129;
+	selflight.light_lev = 128;
+	selflight.color =  '0.75 0.75 1';
+	selflight.style = 11;
+	self.ent_light = self;
+	coffer_model.usable = 1;
+	coffer_model.owner = self;
+	coffer_model.colormod = '0.75 0.75 1';
+	setmodel(coffer_model, "models/objects/coffers/coffer1_locked.md3");
+	setattachment(coffer_model, self, "");
+	coffer_model.think = coffer_model_think;
+	coffer_model.nextthink = time + 0.05;
+	precache_model("models/objects/coffers/coffer1_collision.md3");
+	self.solid = SOLID_BSP;
+	setmodel(self, "models/objects/coffers/coffer1_collision.md3");
+	self.use = use_fakecoffer;
+	droptofloor();
+};
+
 void() cannon_item_think = {	//void(float effectnum, vector org, vector vel, float howmany) pointparticles 
 
 	if (self.cnt != 1)
@@ -2867,7 +3294,9 @@ void() cannon_item_think = {	//void(float effectnum, vector org, vector vel, flo
 	self.think = cannon_item_think;
 	self.nextthink = time + 0.1;
 };
-void() cannon_item = { setmodel(self, "models/projectiles/proj_cyst.md3");
+void() cannon_item = 
+{
+	setmodel(self, "models/projectiles/proj_cyst.md3");
 	self.glowmod = '0.2 0.2 0.2';
 	self.color = '0.5 1 0.5';
 	self.scale = 1;
@@ -2878,4 +3307,380 @@ void() cannon_item = { setmodel(self, "models/projectiles/proj_cyst.md3");
 	self.nextthink = time + 0.05;
 };
 
+void (string classnme,vector org, float c1, float c2,float c3,float c4,float c5, float coun) write_stuff_monsters =
+{
+	local float	writeparms;
+	local string	s1, s2, s3, s4, s5; 
+	writeparms = fopen (strcat (mapname, "monsters_list.txt"), FILE_APPEND);    //open what file to use in write mode
+	string sorg = vtos (org);
+		if (c1 == 1)
+			s1 = "fallen";
+		if (c1 == 2)
+			s1 = "invader";
+		if (c1 == 3)
+			s1 = "wretch";
+		if (c1 == 4)
+			s1 = "incisor";
+		if (c1 == 5)
+			s1 = "widow";
+		if (c1 == 6)
+			s1 = "wraith";
+		if (c1 == 7)
+			s1 = "heretic";
+		if (c1 == 8)
+			s1 = "fallen";
+		if (c1 == 9)
+			s1 = "oppressor";
+		if (c1 == 10)
+			s1 = "executioner";
+		if (c1 == 11)
+			s1 = "stricken";
+		if (c1 == 12)
+			s1 = "afflicted";
+
+		if (c2 == 1)
+			s2 = "fallen";
+		if (c2 == 2)
+			s2 = "invader";
+		if (c2 == 3)
+			s2 = "wretch";
+		if (c2 == 4)
+			s2 = "incisor";
+		if (c2 == 5)
+			s2 = "widow";
+		if (c2 == 6)
+			s2 = "wraith";
+		if (c2 == 7)
+			s2 = "heretic";
+		if (c2 == 8)
+			s2 = "fallen";
+		if (c2 == 9)
+			s2 = "oppressor";
+		if (c2 == 10)
+			s2 = "executioner";
+		if (c2 == 11)
+			s2 = "stricken";
+		if (c2 == 12)
+			s2 = "afflicted";
+
+		if (c3 == 1)
+			s3 = "fallen";
+		if (c3 == 2)
+			s3 = "invader";
+		if (c3 == 3)
+			s3 = "wretch";
+		if (c3 == 4)
+			s3 = "incisor";
+		if (c3 == 5)
+			s3 = "widow";
+		if (c3 == 6)
+			s3 = "wraith";
+		if (c3 == 7)
+			s3 = "heretic";
+		if (c3 == 8)
+			s3 = "fallen";
+		if (c3 == 9)
+			s3 = "oppressor";
+		if (c3 == 10)
+			s3 = "executioner";
+		if (c3 == 11)
+			s3 = "stricken";
+		if (c3 == 12)
+			s3 = "afflicted";
+
+		if (c4 == 1)
+			s4 = "fallen";
+		if (c4 == 2)
+			s4 = "invader";
+		if (c4 == 3)
+			s4 = "wretch";
+		if (c4 == 4)
+			s4 = "incisor";
+		if (c4 == 5)
+			s4 = "widow";
+		if (c4 == 6)
+			s4 = "wraith";
+		if (c4 == 7)
+			s4 = "heretic";
+		if (c4 == 8)
+			s4 = "fallen";
+		if (c4 == 9)
+			s4 = "oppressor";
+		if (c4 == 10)
+			s4 = "executioner";
+		if (c4 == 11)
+			s4 = "stricken";
+		if (c4 == 12)
+			s4 = "afflicted";
+
+		if (c5 == 1)
+			s5 = "fallen";
+		if (c5 == 2)
+			s5 = "invader";
+		if (c5 == 3)
+			s5 = "wretch";
+		if (c5 == 4)
+			s5 = "incisor";
+		if (c5 == 5)
+			s5 = "widow";
+		if (c5 == 6)
+			s5 = "wraith";
+		if (c5 == 7)
+			s5 = "heretic";
+		if (c5 == 8)
+			s5 = "fallen";
+		if (c5 == 9)
+			s5 = "oppressor";
+		if (c5 == 10)
+			s5 = "executioner";
+		if (c5 == 11)
+			s5 = "stricken";
+		if (c5 == 12)
+			s5 = "afflicted";
+
+	string string1 = strcat (classnme," ","origin ",sorg,"      ",s1," ",s2);
+	string string2 = strcat (" ",s3," ",s4," ",s5,"     count"," ");
+	string string3 = strcat (ftos(coun), "\n");
+	fputs (writeparms, strcat (string1,string2,string3));
+
+	fclose (writeparms);
+};
+
+void() recount_spawner_monsters =
+{
+	local entity spawner;
+	spawner = findradius(self.origin, 1000000);
+	while (spawner)	//Loops through everything put in the missile entit
+	{
+		if ((spawner.wrathflags &FL_SPAWNER))
+		{
+			write_stuff_monsters(spawner.classname,spawner.origin, spawner.classmonster1, spawner.classmonster2, spawner.classmonster3, spawner.classmonster4, spawner.classmonster5, spawner.count);
+		}
+		spawner = spawner.chain;
+	}
+
+};
+
+
+
+
+
+
+
+void (vector org, float c1, float c2,float c3,float c4,float c5) write_stuff_items =
+{
+	local float	writeparms;
+	local string	s1, s2, s3, s4, s5; 
+	writeparms = fopen (strcat (mapname, "items_list.txt"), FILE_APPEND);    //open what file to use in write mode
+	string sorg = vtos (org);
+	s1 =  ftos (c1);
+	s2 =  ftos (c2);
+	s3 =  ftos (c3);
+	s4 =  ftos (c4);
+	s5 =  ftos (c5);
+	string string1 = strcat ("item_spawner ","origin ",sorg," ",s1," ",s2," ");
+	string string2 =  strcat (s3," ",s4," ",s5,"\n");
+	fputs (writeparms, strcat (string1,string2));
+	fclose (writeparms);
+};
+
+void() recount_spawner_itemss =
+{
+	local entity spawner;
+	spawner = findradius(self.origin, 1000000);
+	while (spawner)	//Loops through everything put in the missile entit
+	{
+		if ((spawner.classname == "item_spawner"))
+		{
+			write_stuff_items(spawner.origin, spawner.classitem1, spawner.classitem2, spawner.classitem3, spawner.classitem4, spawner.classitem5);
+		}
+
+		spawner = spawner.chain;
+	}
+
+};
+
+void() recount_spawner_items =
+{
+/*
+1 : "Slugs" - TOTAL AMOUNT IN MAP
+2 : "Cysts" - TOTAL AMOUNT IN MAP
+3 : "Shells" - TOTAL AMOUNT IN MAP
+4 : "Fans" - TOTAL AMOUNT IN MAP
+25 : "Ammo Cannon" - TOTAL AMOUNT IN MAP
+26 : "Ammo Lance" - TOTAL AMOUNT IN MAP
+5 : "Armor Shard" - TOTAL AMOUNT IN MAP
+6 : "Armor Armor" - TOTAL AMOUNT IN MAP
+7 : "Armor Helm" - TOTAL AMOUNT IN MAP
+8 : "Dark Armor Shard" - TOTAL AMOUNT IN MAP
+9 : "Dark Armor Armor" - TOTAL AMOUNT IN MAP
+10 : "Dark Armor Helm" - TOTAL AMOUNT IN MAP
+11 : "Health Vial" - TOTAL AMOUNT IN MAP
+12 : "Health Baker" - TOTAL AMOUNT IN MAP
+20 : "Artifact Apparatus" - TOTAL AMOUNT IN MAP
+21 : "Artifact Theter" - TOTAL AMOUNT IN MAP
+22 : "Artifact Siphon" - TOTAL AMOUNT IN MAP
+23 : "Artifact Aegis" - TOTAL AMOUNT IN MAP
+24 : "Confounding Attar" - TOTAL AMOUNT IN MAP
+*/
+
+
+
+	float ammount1, ammount2, ammount3, ammount4, ammount5;
+	float ammounta1, ammounta2, ammounta3, ammounta4, ammounta5;
+	float ammountb1, ammountb2, ammountb3, ammountb4, ammountb5;
+	float ammountc1, ammountc2, ammountc3, ammountc4, ammountc5;
+	float ammountd1, ammountd2, ammountd3, ammountd4, ammountd5;
+	float ammounte1, ammounte2, ammounte3, ammounte4, ammounte5;
+	float ammountf1, ammountf2, ammountf3, ammountf4, ammountf5;
+	float ammountg1, ammountg2, ammountg3, ammountg4, ammountg5;
+	float ammounth1, ammounth2, ammounth3, ammounth4, ammounth5;
+	float ammountz1, ammountz2, ammountz3, ammountz4, ammountz5;
+	float ammounti1, ammounti2, ammounti3, ammounti4, ammounti5;
+	float ammountj1, ammountj2, ammountj3, ammountj4, ammountj5;
+	float ammountk1, ammountk2, ammountk3, ammountk4, ammountk5;
+	float ammountl1, ammountl2, ammountl3, ammountl4, ammountl5;
+	float ammountm1, ammountm2, ammountm3, ammountm4, ammountm5;
+	float ammountn1, ammountn2, ammountn3, ammountn4, ammountn5;
+	float ammounto1, ammounto2, ammounto3, ammounto4, ammounto5;
+	float ammountp1, ammountp2, ammountp3, ammountp4, ammountp5;
+	float ammountq1, ammountq2, ammountq3, ammountq4, ammountq5;
+	//float ammountr1, ammountr2, ammountr3, ammountr4, ammountr5;
+
+
+
+	local entity spawner;
+	spawner = findradius(self.origin, 1000000);
+	while (spawner)	//Loops through everything put in the missile entit
+	{
+		if ((spawner.classname == "item_spawner"))
+		{
+			if(spawner.classitem1 == 1) ammount1 ++;		if(spawner.classitem2 == 1) ammount2 ++;		if(spawner.classitem3 == 1) ammount3 ++;		if(spawner.classitem4 == 1) ammount4 ++; if(spawner.classitem5 == 1) ammount5 ++;	
+			if(spawner.classitem1 == 2) ammounta1 ++;	if(spawner.classitem2 == 2) ammounta2 ++;	if(spawner.classitem3 == 2) ammounta3 ++;	if(spawner.classitem4 == 2) ammounta4 ++; if(spawner.classitem5 == 2) ammounta5 ++;	
+			if(spawner.classitem1 == 3) ammountb1 ++;	if(spawner.classitem2 == 3) ammountb2 ++;	if(spawner.classitem3 == 3) ammountb3 ++;	if(spawner.classitem4 == 3) ammountb4 ++; if(spawner.classitem5 == 3) ammountb5 ++;	
+			if(spawner.classitem1 == 4) ammountc1 ++;	if(spawner.classitem2 == 4) ammountc2 ++;	if(spawner.classitem3 == 4) ammountc3 ++;	if(spawner.classitem4 == 4) ammountc4 ++; if(spawner.classitem5 == 4) ammountc5 ++;	
+			if(spawner.classitem1 == 25) ammountd1 ++;	if(spawner.classitem2 == 25) ammountd2 ++;	if(spawner.classitem3 == 25) ammountd3 ++;	if(spawner.classitem4 == 25) ammountd4 ++; if(spawner.classitem5 == 25) ammountd5 ++;	
+			if(spawner.classitem1 == 26) ammounte1 ++;	if(spawner.classitem2 == 26) ammounte2 ++;	if(spawner.classitem3 == 26) ammounte3 ++;	if(spawner.classitem4 == 26) ammounte4 ++; if(spawner.classitem5 == 26) ammounte5 ++;	
+			if(spawner.classitem1 == 5) ammountf1 ++;	if(spawner.classitem2 == 5) ammountf2 ++;	if(spawner.classitem3 == 5) ammountf3 ++;	if(spawner.classitem4 == 5) ammountf4 ++; if(spawner.classitem5 == 5) ammountf5 ++;	
+			if(spawner.classitem1 == 6) ammountg1 ++;	if(spawner.classitem2 == 6) ammountg2 ++;	if(spawner.classitem3 == 6) ammountg3 ++;	if(spawner.classitem4 == 6) ammountg4 ++; if(spawner.classitem5 == 6) ammountg5 ++;	
+			if(spawner.classitem1 == 7) ammounth1 ++;	if(spawner.classitem2 == 7) ammounth2 ++;	if(spawner.classitem3 == 7) ammounth3 ++;	if(spawner.classitem4 == 7) ammounth4 ++; if(spawner.classitem5 == 7) ammounth5 ++;	
+			if(spawner.classitem1 == 8) ammountz1 ++;	if(spawner.classitem2 == 8) ammountz2 ++;	if(spawner.classitem3 == 8) ammountz3 ++;		if(spawner.classitem4 == 8) ammountz4 ++; if(spawner.classitem5 == 8) ammountz5 ++;	
+			if(spawner.classitem1 == 9) ammounti1 ++;	if(spawner.classitem2 == 9) ammounti2 ++;	if(spawner.classitem3 == 9) ammounti3 ++;	if(spawner.classitem4 == 9) ammounti4 ++; if(spawner.classitem5 == 9) ammounti5 ++;	
+			if(spawner.classitem1 == 10) ammountj1 ++;	if(spawner.classitem2 == 10) ammountj2 ++;	if(spawner.classitem3 == 10) ammountj3 ++;	if(spawner.classitem4 == 10) ammountj4 ++; if(spawner.classitem5 == 10) ammountj5 ++;	
+			if(spawner.classitem1 == 11) ammountk1 ++;	if(spawner.classitem2 == 11) ammountk2 ++;	if(spawner.classitem3 == 11) ammountk3 ++;	if(spawner.classitem4 == 11) ammountk4 ++; if(spawner.classitem5 == 11) ammountk5 ++;	
+			if(spawner.classitem1 == 12) ammountl1 ++;	if(spawner.classitem2 == 12) ammountl2 ++;	if(spawner.classitem3 == 12) ammountl3 ++;	if(spawner.classitem4 == 12) ammountl4 ++; if(spawner.classitem5 == 12) ammountl5 ++;	
+			if(spawner.classitem1 == 20) ammountm1 ++;	if(spawner.classitem2 == 20) ammountm2 ++;	if(spawner.classitem3 == 20) ammountm3 ++;	if(spawner.classitem4 == 20) ammountm4 ++; if(spawner.classitem5 == 20) ammountm5 ++;	
+			if(spawner.classitem1 == 21) ammountn1 ++;	if(spawner.classitem2 == 21) ammountn2 ++;	if(spawner.classitem3 == 21) ammountn3 ++;	if(spawner.classitem4 == 21) ammountn4 ++; if(spawner.classitem5 == 21) ammountn5 ++;	
+			if(spawner.classitem1 == 22) ammounto1 ++;	if(spawner.classitem2 == 22) ammounto2 ++;	if(spawner.classitem3 == 22) ammounto3 ++;	if(spawner.classitem4 == 22) ammounto4 ++; if(spawner.classitem5 == 22) ammounto5 ++;	
+			if(spawner.classitem1 == 23) ammountp1 ++;	if(spawner.classitem2 == 23) ammountp2 ++;	if(spawner.classitem3 == 23) ammountp3 ++;	if(spawner.classitem4 == 23) ammountp4 ++; if(spawner.classitem5 == 23) ammountp5 ++;	
+			if(spawner.classitem1 == 24) ammountq1 ++;	if(spawner.classitem2 == 24) ammountq2 ++;	if(spawner.classitem3 == 24) ammountq3 ++;	if(spawner.classitem4 == 24) ammountq4 ++; if(spawner.classitem5 == 24) ammountq5 ++;	
+		}
+
+		spawner = spawner.chain;
+	}
+
+
+
+
+	string subline1 =strcat("1: Slugs-", " enc1:",(ftos (ammount1)),  " enc2:",(ftos (ammount2)),  " enc3:",(ftos (ammount3)),  " enc4");
+	string subline1b =strcat((ftos (ammount4)),  " enc5:",(ftos (ammount5)));  
+	string line1 = strcat (subline1, subline1b);
+
+	string subline2 =strcat("2: Cysts -", " enc1:",(ftos (ammounta1)),  " enc2:",(ftos (ammounta2)),  " enc3:",(ftos (ammounta3)),  " enc4");
+	string subline2b =strcat((ftos (ammounta4)),  " enc5:",(ftos (ammounta5)));  
+	string line2 = strcat (subline2, subline2b);
+
+	string subline3 =strcat("3: Shells -", " enc1:",(ftos (ammountb1)),  " enc2:",(ftos (ammountb2)),  " enc3:",(ftos (ammountb3)),  " enc4");
+	string subline3b =strcat((ftos (ammountb4)),  " enc5:",(ftos (ammountb5)));  
+	string line3 = strcat (subline3, subline3b); 
+
+	string subline4 =strcat("4: Fans -", " enc1:",(ftos (ammountc1)),  " enc2:",(ftos (ammountc2)),  " enc3:",(ftos (ammountc3)),  " enc4");
+	string subline4b =strcat((ftos (ammountc4)),  " enc5:",(ftos (ammountc5)));  
+	string line4 = strcat (subline4, subline4b);
+
+	string subline5 =strcat("25: Ammo Cannon -", " enc1:",(ftos (ammountd1)),  " enc2:",(ftos (ammountd2)),  " enc3:",(ftos (ammountd3)),  " enc4");
+	string subline5b =strcat((ftos (ammountd4)),  " enc5:",(ftos (ammountd5)));  
+	string line5 = strcat (subline5, subline5b);
+
+	string subline6 =strcat("26: Ammo Lance -", " enc1:",(ftos (ammounte1)),  " enc2:",(ftos (ammounte2)),  " enc3:",(ftos (ammounte3)),  " enc4");
+	string subline6b =strcat((ftos (ammounte4)),  " enc5:",(ftos (ammounte5)));  
+	string line6 = strcat (subline6, subline6b);
+
+	string subline7 =strcat("5: Armor Shard -", " enc1:",(ftos (ammountf1)),  " enc2:",(ftos (ammountf2)),  " enc3:",(ftos (ammountf3)),  " enc4");
+	string subline7b =strcat((ftos (ammountf4)),  " enc5:",(ftos (ammountf5)));  
+	string line7 = strcat (subline7, subline7b);
+
+	string subline8 =strcat("6: Armor Armor -", " enc1:",(ftos (ammountg1)),  " enc2:",(ftos (ammountg2)),  " enc3:",(ftos (ammountg3)),  " enc4");
+	string subline8b =strcat((ftos (ammountg4)),  " enc5:",(ftos (ammountg5)));  
+	string line8 = strcat (subline8, subline8b);
+
+	string subline9 =strcat("7: Armor Helm -", " enc1:",(ftos (ammounth1)),  " enc2:",(ftos (ammounth2)),  " enc3:",(ftos (ammounth3)),  " enc4");
+	string subline9b =strcat((ftos (ammounth4)),  " enc5:",(ftos (ammounth5)));  
+	string line9 = strcat (subline9, subline9b);
+
+	string subline10 =strcat("8: Dark Armor Shard -", " enc1:",(ftos (ammountz1)),  " enc2:",(ftos (ammountz2)),  " enc3:",(ftos (ammountz3)),  " enc4");
+	string subline10b =strcat((ftos (ammountz4)),  " enc5:",(ftos (ammountz5)));  
+	string line10 = strcat (subline10, subline10b);
+
+	string subline11 =strcat("9: Dark Armor Armor -", " enc1:",(ftos (ammounti1)),  " enc2:",(ftos (ammounti2)),  " enc3:",(ftos (ammounti3)),  " enc4");
+	string subline11b =strcat((ftos (ammounti4)),  " enc5:",(ftos (ammounti5)));  
+	string line11 = strcat (subline11, subline11b);
+
+	string subline12 =strcat("10: Dark Armor Helm -", " enc1:",(ftos (ammountj1)),  " enc2:",(ftos (ammountj2)),  " enc3:",(ftos (ammountj3)),  " enc4");
+	string subline12b =strcat((ftos (ammountj4)),  " enc5:",(ftos (ammountj5)));  
+	string line12 = strcat (subline12, subline12b);
+
+	string subline13 =strcat("11: Health Vial -", " enc1:",(ftos (ammountk1)),  " enc2:",(ftos (ammountk2)),  " enc3:",(ftos (ammountk3)),  " enc4");
+	string subline13b =strcat((ftos (ammountk4)),  " enc5:",(ftos (ammountk5)));  
+	string line13 = strcat (subline13, subline13b);
+
+	string subline14 =strcat("12: Health Baker -", " enc1:",(ftos (ammountl1)),  " enc2:",(ftos (ammountl2)),  " enc3:",(ftos (ammountl3)),  " enc4");
+	string subline14b =strcat((ftos (ammountl4)),  " enc5:",(ftos (ammountl5)));  
+	string line14 = strcat (subline14, subline14b);
+
+	string subline15 =strcat("20: Artifact Apparatus -", " enc1:",(ftos (ammountm1)),  " enc2:",(ftos (ammountm2)),  " enc3:",(ftos (ammountm3)),  " enc4");
+	string subline15b =strcat((ftos (ammountm4)),  " enc5:",(ftos (ammountm5)));  
+	string line15 = strcat (subline15, subline15b);
+
+	string subline16 =strcat("21: Artifact Theter -", " enc1:",(ftos (ammountn1)),  " enc2:",(ftos (ammountn2)),  " enc3:",(ftos (ammountn3)),  " enc4");
+	string subline16b =strcat((ftos (ammountn4)),  " enc5:",(ftos (ammountn5)));  
+	string line16 = strcat (subline16, subline16b);
+
+	string subline17 =strcat("22: Artifact Siphon -", " enc1:",(ftos (ammounto1)),  " enc2:",(ftos (ammounto2)),  " enc3:",(ftos (ammounto3)),  " enc4");
+	string subline17b =strcat((ftos (ammounto4)),  " enc5:",(ftos (ammounto5)));  
+	string line17 = strcat (subline17, subline17b);
+
+	string subline18 =strcat("23: Artifact Aegis -", " enc1:",(ftos (ammountp1)),  " enc2:",(ftos (ammountp2)),  " enc3:",(ftos (ammountp3)),  " enc4");
+	string subline18b =strcat((ftos (ammountp4)),  " enc5:",(ftos (ammountp5)));  
+	string line18 = strcat (subline18, subline18b);
+
+	string subline19 =strcat("24: Confounding Attar -", " enc1:",(ftos (ammountq1)),  " enc2:",(ftos (ammountq2)),  " enc3:",(ftos (ammountq3)),  " enc4");
+	string subline19b =strcat((ftos (ammountq4)),  " enc5:",(ftos (ammountq5)));
+	string line19 = strcat (subline19, subline19b);
+
+	local float	writeparms;
+	writeparms = fopen (strcat (mapname, "items_list.txt"), FILE_APPEND);    //open what file to use in write mode
+	fputs (writeparms, strcat (line1,"\n"));
+	fputs (writeparms, strcat (line2,"\n"));
+	fputs (writeparms, strcat (line3,"\n"));
+	fputs (writeparms, strcat (line4,"\n"));
+	fputs (writeparms, strcat (line5,"\n"));
+	fputs (writeparms, strcat (line6,"\n"));
+	fputs (writeparms, strcat (line7,"\n"));
+	fputs (writeparms, strcat (line8,"\n"));
+	fputs (writeparms, strcat (line9,"\n"));
+	fputs (writeparms, strcat (line10,"\n"));
+	fputs (writeparms, strcat (line11,"\n"));
+	fputs (writeparms, strcat (line12,"\n"));
+	fputs (writeparms, strcat (line13,"\n"));
+	fputs (writeparms, strcat (line14,"\n"));
+	fputs (writeparms, strcat (line15,"\n"));
+	fputs (writeparms, strcat (line16,"\n"));
+	fputs (writeparms, strcat (line17,"\n"));
+	fputs (writeparms, strcat (line18,"\n"));
+	fputs (writeparms, strcat (line19,"\n"));
+	fclose (writeparms);
+
+}
+  
 ///////////////end of qc file

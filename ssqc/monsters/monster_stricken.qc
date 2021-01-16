@@ -221,7 +221,9 @@ void() stricken_walk10 =[$str_run10, stricken_walk1]
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-void(vector org) stricken_dust = { local vector org2;
+void(vector org) stricken_dust = 
+{
+	local vector org2;
 	traceline(org, org + '0 0 320', TRUE, self);
 	if (trace_fraction != 1)
 	{
@@ -230,7 +232,9 @@ void(vector org) stricken_dust = { local vector org2;
 	}
 };
 
-void() stricken_subattack = { local entity head;
+void() stricken_subattack = 
+{
+	local entity head;
 
 	head = findradius(self.origin + '0 0 10', stricken_walkradius);	//send lightning line to anything in 250 radius
 	while (head)	// while looking for head
@@ -341,8 +345,12 @@ void() stricken_run10 =[$str_run10, stricken_run1]
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////projectile attack
-void() projectile_touch_str = { local float damg;
+void() projectile_touch_str = 
+{
+	local float damg;
 	if (other == self.owner)
+		return;
+	if(other.solid == SOLID_TRIGGER)
 		return;
 	//	self.solid = SOLID_NOT;
 	if (pointcontents(self.origin) == CONTENT_SKY)
@@ -366,8 +374,9 @@ void() projectile_touch_str = { local float damg;
 	snd = strcat("impact/projectiles/cyst_bounce", ftos(floor(random() *5) + 1), ".ogg");
 	sound(self, CHAN_AUTO, snd, 1, 0.25);
 };
-void() projectile_touch_str2 = { local float damg;
-	if (other == self.owner)
+void() projectile_touch_str2 = 
+{
+	if(other.solid == SOLID_TRIGGER)
 		return;
 	//	self.solid = SOLID_NOT;
 	if (pointcontents(self.origin) == CONTENT_SKY)
@@ -376,35 +385,37 @@ void() projectile_touch_str2 = { local float damg;
 		return;
 	}
 
-	damg = stricken_ad;
-
-	if (other.flags &FL_MONSTER)
-		T_Damage(other, self, self.owner, stricken_damagetomonsters);
+	if (other.classname == "player")
+		T_Damage(other, self, world, stricken_ad);
 	else
-		T_Damage(other, self, self.owner, damg);
-	Cyxplode(self.cnt, 0);
+		T_Damage(other, self, world, stricken_damagetomonsters);
+	Cyxplode(0, 0);
+		remove(self);
 };
 
-void() CheckCysStricken = { self.fcnt += 0.05;
+void() CheckCysStricken = 
+{
+	
 	if (self.flags &FL_ONGROUND)
 	{
 		self.traileffectnum = particleeffectnum("null");
-		self.gcnt = 1;
 	}
 	else
 		self.traileffectnum = particleeffectnum("retchertrail");
 	local float distancedelta;
 	distancedelta = vlen(self.enemy.origin - self.origin);
 	if (distancedelta < 24)
-		self.fcnt = 3;
-	if (self.fcnt >= 2.5)
+		self.lifetime = 0;
+	if (self.lifetime < time)
 		self.think = PreCyExplosion;
 	else
 		self.think = CheckCys;
 	self.nextthink = time + 0.05;
 };
 
-void(entity ownr) strickenprojectile = { local vector org;
+void(entity ownr) strickenprojectile = 
+{
+	local vector org;
 	local float tagindex;
 	monstersound1("enemies/stricken/cyst", 3, CHAN_AUTO);
 	tagindex = gettagindex(ownr, "tag_mouth");
@@ -416,14 +427,17 @@ void(entity ownr) strickenprojectile = { local vector org;
 	missile = spawn();
 	missile.classentity = "projectiles";
 	missile.owner = ownr;
+	missile.wrathflags += FL_PROJECTILE;
 	missile.movetype = MOVETYPE_BOUNCE;
 	missile.solid = SOLID_TRIGGER;
 	makevectors(ownr.angles);
-	distancedelta = ownr.enemy.origin - ownr.origin;	//work out distance vector  
-	nozdistancedelta = distancedelta;	//copy to no height distance vector 
-	nozdistancedelta_z = 0;	//remove height 
-	missile.velocity = normalize(distancedelta);	//set the velocity to the distance
-	missile.velocity = missile.velocity * stricken_projvel;	//give it more power 
+	distancedelta = ownr.enemy.origin - ownr.origin;
+	nozdistancedelta = distancedelta;
+	nozdistancedelta_z = 0;
+	missile.velocity = normalize(distancedelta);
+	missile.velocity = missile.velocity * stricken_projvel;
+	if (vlen(nozdistancedelta) > 1024)
+	missile.gravity = 1 - (vlen(nozdistancedelta) / 1024) * 0.1;
 	missile.velocity_z = missile.velocity_z + 120 + vlen(nozdistancedelta) *0.15 *(1 + (0.15));
 	missile.avelocity = '300 300 300';
 	missile.enemy = missile.owner.enemy;
@@ -432,13 +446,16 @@ void(entity ownr) strickenprojectile = { local vector org;
 	missile.traileffectnum = particleeffectnum("stricken_cyst_trail");
 	setmodel(missile, "models/projectiles/proj_cyst.md3");
 	missile.scale = 2;
+	missile.lifetime = time + 5;
 	missile.think = CheckCysStricken;
 	missile.nextthink = time;
 	setsize(missile, '0 0 0', '0 0 0');
 	setorigin(missile, org);
 };
 
-void(entity ownr, float spread) strickenprojectile2 = { local vector org;
+void(entity ownr, float spread) strickenprojectile2 = 
+{
+	local vector org;
 	local float tagindex;
 	monstersound1("enemies/stricken/cyst", 3, CHAN_AUTO);
 	tagindex = gettagindex(ownr, "tag_mouth");
@@ -450,6 +467,7 @@ void(entity ownr, float spread) strickenprojectile2 = { local vector org;
 	missile = spawn();
 	missile.classentity = "projectiles";
 	missile.owner = ownr;
+	missile.wrathflags += FL_PROJECTILE;
 	missile.movetype = MOVETYPE_BOUNCE;
 	missile.solid = SOLID_BBOX;
 	makevectors(ownr.angles);
@@ -467,6 +485,7 @@ void(entity ownr, float spread) strickenprojectile2 = { local vector org;
 		missile.velocity_z = missile.velocity_z + 120 + vlen(nozdistancedelta) *0.25;
 	else
 		missile.velocity_z = missile.velocity_z + 120 + vlen(nozdistancedelta) *0.15 *(1 + (0.18));
+	missile.lifetime = time + 5;
 
 	missile.avelocity = '300 300 300';
 	missile.enemy = missile.owner.enemy;
@@ -490,9 +509,13 @@ void() stricken_attack1 =[$str_atk1, stricken_attack1a]
 	monstersound3("enemies/stricken/attack", 3, CHAN_WEAPON);
 
 };
-void() stricken_attack1b = { ai_face();self.think = stricken_attack2;self.nextthink = time + 0.033;
+void() stricken_attack1b = 
+{
+	ai_face();self.think = stricken_attack2;self.nextthink = time + 0.033;
 };
-void() stricken_attack1a = { ai_face();self.think = stricken_attack1b;self.nextthink = time + 0.033;
+void() stricken_attack1a = 
+{
+	ai_face();self.think = stricken_attack1b;self.nextthink = time + 0.033;
 };
 void() stricken_attack2 =[$str_atk2, stricken_attack3]
 {
@@ -606,7 +629,9 @@ void() stricken_preattack5 =[$str_patk5, stricken_attack1]
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////melee attack
 
-void(float wdmg) stricken_melee_attack = { local vector delta;
+void(float wdmg) stricken_melee_attack = 
+{
+	local vector delta;
 	local float dist;
 	if (!self.enemy)
 		return;	// removed before stroke
@@ -681,7 +706,9 @@ void() stricken_spreattack2 =[$str_spatk2, stricken_sattack1]
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-void() stricken_postpain = { self.painframe += 1;
+void() stricken_postpain = 
+{
+	self.painframe += 1;
 
 	self.frame += 1;
 	ai_face();
@@ -713,12 +740,17 @@ void() stricken_postpain = { self.painframe += 1;
 
 };
 .float painanim;
-void(entity enemy, float dmg) stricken_pain = { if (self.pain_finished > time)
+void(entity enemy, float dmg) stricken_pain = 
+{
+	if (self.pain_finished > time)
 		return;
+	if(enemy.weapon != IT_BOIL)
+	{
 	local float rp;
 	rp = random() *100;
 	if (stricken_rtp <= rp)
 		return;
+	}
 	if(enemy.flags & FL_MONSTER)
 		{
 		self.pain_finished = time + 1.75;
@@ -762,7 +794,9 @@ void(entity enemy, float dmg) stricken_pain = { if (self.pain_finished > time)
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-void() stricken_diea1 = { drop_item(self.origin + '0 0 40', "cyst", 2, self);
+void() stricken_diea1 = 
+{
+	drop_item(self.origin + '0 0 40', "cyst", 2, self);
 	decal_monster_gib(self.origin + '0 0 12');
 	self.solid = 0;
 	self.takedamage = 0;
@@ -837,7 +871,9 @@ void() stricken_diea1 = { drop_item(self.origin + '0 0 40', "cyst", 2, self);
 
 /*WRATHED monster_stricken (1 0 0) (-16 -16 -24) (16 16 40) Ambush*/
 .vector bbvv;
-void() precache_monster_stricken = { precache_model("models/enemies/stricken/gibs/gib_arm_l_a.md3");
+void() precache_monster_stricken = 
+{
+	precache_model("models/enemies/stricken/gibs/gib_arm_l_a.md3");
 	precache_model("models/enemies/stricken/gibs/gib_arm_l_b.md3");
 	precache_model("models/enemies/stricken/gibs/gib_arm_r_a.md3");
 	precache_model("models/enemies/stricken/gibs/gib_arm_r_b.md3");
@@ -876,7 +912,9 @@ void() precache_monster_stricken = { precache_model("models/enemies/stricken/gib
 	precache_sound("enemies/stricken/die.ogg");
 	precache_sound("enemies/stricken/explode.ogg");
 };
-void() monster_stricken = { precache_model("models/enemies/stricken/gibs/gib_arm_l_a.md3");
+void() monster_stricken = 
+{
+	precache_model("models/enemies/stricken/gibs/gib_arm_l_a.md3");
 	precache_model("models/enemies/stricken/gibs/gib_arm_l_b.md3");
 	precache_model("models/enemies/stricken/gibs/gib_arm_r_a.md3");
 	precache_model("models/enemies/stricken/gibs/gib_arm_r_b.md3");
